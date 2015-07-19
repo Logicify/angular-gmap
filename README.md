@@ -34,7 +34,7 @@ gm-options  - (javascript object) is google maps options [@google api](https://d
 
 gm-ready - (function) callback function fires when directive is rendered and passes on gmap Object.
 
-#### From controller ####
+- From controller
 ```js
 $scope.ready = function(gmap){
     $scope.gmap = gmap; //it's google maps object (not wrapped)
