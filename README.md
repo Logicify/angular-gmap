@@ -19,6 +19,8 @@ Something like that:
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
 #### You need to be sure that this api is loaded before angular.js ####
+* Directives
+** logicify-gmap
 * Simple example
 ```html
 <!DOCTYPE html>
