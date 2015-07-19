@@ -38,7 +38,7 @@ $scope.ready = function(gmap){
     $scope.gmap = gmap; //it's google maps object (not wrapped)
 };
 ```
-* css-options - is javascript object to inject css into map element
+* css-options - is javascript object is needed for to inject css into map element
 #### Simple example ####
 ```html
 <!DOCTYPE html>
