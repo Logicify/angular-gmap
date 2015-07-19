@@ -64,9 +64,10 @@ Something like that:
                 infowindow.close(true);
             };
             $scope.ready = function (map) {
-                var infowindow = new InfoWindow({templateUrl: 'template.html'});
+                var infowindow = new InfoWindow({templateUrl: 'template.html'}); //create only one infowindow
 
                 function attach(marker) {
+                //var infowindow = new InfoWindow({templateUrl: 'template.html'}); //create infowindow for each marker
                     google.maps.event.addListener(marker, 'click', function (markerObj) {
                         infowindow.$ready(function (wnd) {
                             wnd.open(map, marker);
