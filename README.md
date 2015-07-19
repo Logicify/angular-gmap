@@ -5,21 +5,20 @@ This README would normally document whatever steps are necessary to get your app
 ### What is this repository for? ###
 
 * Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Version 1.0
 
-### How do I get set up? ###
+### Install for developers ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* node.js and npm
+* npm install grunt-cli -g
+* npm install bower -g
+* npm install
+* grunt logicifyGmap
 
-### Contribution guidelines ###
+### How do i use it? ###
 
-* Writing tests
+* At first you need include google api reference into your html file
+    *
 * Code review
 * Other guidelines
 
