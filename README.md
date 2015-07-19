@@ -87,7 +87,7 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
             $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
             $scope.closeInfoWindow = function (infowindow) {
                 //if first parameter is true then when you close infowindow then scope and element will be destroyed.
-                //please carefull with this param, because to render it again takes more time then just apply scope digest.
+                //please careful with this param, because to render it again takes more time then just apply scope digest.
                 infowindow.close(true); //destroy scope and info window element
                 //or
                 //infowindow.close();  //just close info window
@@ -133,13 +133,13 @@ So when you call infowindow.$ready(callback), api passes on ready infowindow obj
 
 * you can use $infoWND object in the template.html. $infoWND.anchor is a marker!
 
-### Closing infowindow can be done in two ways: ###
+### Closing info window can be done in two ways: ###
 
-1) destroy scope and element
+1) Destroy scope and element. Please careful with this param, because to render it again - takes more time then just apply scope digest.
 ```js
 window.close(true)
 ```
-2) just hide window
+2) Just hide window (proper way).
 ```js
 window.close();
 ```
