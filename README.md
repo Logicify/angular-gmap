@@ -10,11 +10,12 @@ This README would normally document whatever steps are necessary to get your app
 ### Install for developers ###
 
 * node.js and npm
-* npm install grunt-cli -g
-* npm install bower -g
-* npm install
-* grunt logicifyGmap
-
+```shell
+ npm install grunt-cli -g
+ npm install bower -g
+ npm install
+ grunt logicifyGmap
+```
 ### How do i use it? ###
 
 * At first you need include google api reference into your html file.
