@@ -48,7 +48,7 @@ Something like that:
 </html>
 ```
 #### Script ####
-```script
+```js
 (function (angular) {
     'use strict';
     /*global google*/
