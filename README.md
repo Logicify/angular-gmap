@@ -92,7 +92,7 @@ $scope.ready = function(gmap){
 </div>
 ```
 
-#### Script ####
+##### Script #####
 ```js
 (function (angular) {
     'use strict';
