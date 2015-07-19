@@ -3,7 +3,7 @@
 * This product is a wrapper for google maps api based on angular.
 * Version 1.0
 
-### Install for developers ###
+### For developers ###
 
 * node.js and npm
 ```shell
@@ -12,7 +12,7 @@
  npm install
  grunt logicifyGmap
 ```
-### How do i use it? ###
+### Usage ###
 * At first you need include google api reference into your html file.
 Something like that:
 ```html
