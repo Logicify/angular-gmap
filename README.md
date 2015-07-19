@@ -55,7 +55,7 @@ $scope.ready = function(gmap){
 </logicify-gmap>
 ```
 
-#### Simple example ####
+## Simple example ##
 ##### Index.html #####
 
 ```html
