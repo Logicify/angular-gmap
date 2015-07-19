@@ -45,6 +45,8 @@ $scope.ready = function(gmap){
 
 ##### Inject map controls (directive) #####
 
+html
+
 ```html
 <logicify-gmap center="gmOpts.center"
                gm-options="gmOpts"
@@ -58,12 +60,18 @@ $scope.ready = function(gmap){
     </logicify-gmap-control>
 </logicify-gmap>
 ```
+
+script
+
 ```js
 $scope.controlEvents = {
                 click: function (event) {
                 }
             };
 ```
+
+controlEvents - it's just a javascript object. Each key should be an event name ('click','mouseover'...) and value is a callback function.
+
 ## Simple example ##
 ##### Index.html #####
 
