@@ -20,7 +20,15 @@ Something like that:
 ```
 #### You need to be sure that this api is loaded before angular.js ####
 * Directives
-** logicify-gmap
+```html
+<logicify-gmap center="gmOpts.center"
+               gm-options="gmOpts"
+               gm-ready="ready"
+               css-options="cssOpts">
+</logicify-gmap>
+```
+center - is center of the map;
+gm-options  - is google maps options @google api(https://developers.google.com/maps/documentation/javascript/tutorial)
 * Simple example
 ```html
 <!DOCTYPE html>
