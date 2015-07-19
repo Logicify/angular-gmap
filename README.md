@@ -54,6 +54,8 @@ $scope.ready = function(gmap){
 ```
 
 #### Simple example ####
+##### Index.html #####
+
 ```html
 <!DOCTYPE html>
 <html ng-app="LogicifyGMap">
@@ -81,6 +83,15 @@ $scope.ready = function(gmap){
 </body>
 </html>
 ```
+
+##### template.html #####
+```html
+<div>
+    <label>{{infoWindowName}} {{$infoWND.anchor.id}}</label>
+    <button ng-click="closeInfoWindow($infoWND)">Close me</button>
+</div>
+```
+
 #### Script ####
 ```js
 (function (angular) {
