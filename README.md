@@ -1,6 +1,3 @@
-# LOGICIFY #
-####brigs order to software####
-
 ### What is this repository for? ###
 
 * This product is a wrapper for google maps api based on angular.
