@@ -13,12 +13,14 @@
  grunt logicifyGmap
 ```
 ### Usage ###
-* At first you need include google api reference into your html file.
+
+#### At first you need include google api reference into your html file. ####
+
 Something like that:
 ```html
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
-#### You need to be sure that this api is loaded before angular.js ####
+###### You need to be sure that this api is loaded before angular.js ######
 ##### Inject map (directive) #####
 ```html
 <logicify-gmap center="gmOpts.center"
@@ -38,7 +40,7 @@ $scope.ready = function(gmap){
     $scope.gmap = gmap; //it's google maps object (not wrapped)
 };
 ```
-* css-options - is javascript object is needed for to inject css into map element
+* css-options - is javascript object is needed for injecting css into map element
 
 ##### Inject map controls (directive implementation is not finished yet) #####
 
@@ -62,22 +64,19 @@ $scope.ready = function(gmap){
 <head lang="en">
     <meta charset="UTF-8">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
-    <script src="../node_modules/angular/angular.js"></script>
-    <script src="../dist/logicify-gmap.js"></script>
+    <script src="angular.js"></script>
+    <script src="logicify-gmap.js"></script>
+    <script src="script.js"></script>
     <title>Test page</title>
 </head>
-<body ng-controller="myCtrl" ng-init="closeMap =false">
-<div style="margin-top: 100px;display: block">
-    <button ng-click="closeMap=true"> Close</button>
-</div>
+<body ng-controller="myCtrl">
 <logicify-gmap ng-if="closeMap==false"
                center="gmOpts.center"
                gm-options="gmOpts"
                gm-ready="ready"
                css-options="cssOpts">
     <logicify-gmap-control control-position="position" control-index="1">
-        <button>Push me
-        </button>
+        <button>Push me</button>
     </logicify-gmap-control>
 </logicify-gmap>
 </body>
@@ -92,13 +91,10 @@ $scope.ready = function(gmap){
 </div>
 ```
 
-##### Script #####
+##### Script (just a controller from script.js) #####
 ```js
-(function (angular) {
-    'use strict';
-    /*global google*/
-    angular.module('LogicifyGMap')
-        .controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
+  module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
+        /*global google*/
             $scope.markers = [];
             $scope.infoWindowName = 'hello native you!';
             $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
@@ -133,7 +129,5 @@ $scope.ready = function(gmap){
                 }
             };
 
-        }])
-})(angular);
+        }]);
 ```
-* Other guidelines
