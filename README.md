@@ -18,7 +18,7 @@ Something like that:
 ```html
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
-            ### You need to be sure that this api is loaded before angular.js ###
+            - You need to be sure that this api is loaded before angular.js
 * Code review
 * Other guidelines
 
