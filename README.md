@@ -117,6 +117,8 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
         }]);
 ```
 
+#### template.html ####
+
 ```html
 <div>
     <label>{{infoWindowName}} {{$infoWND.anchor.id}}</label>
