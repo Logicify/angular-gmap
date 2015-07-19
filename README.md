@@ -76,6 +76,8 @@ controlEvents - it's just a javascript object. Each key should be an event name 
 
 ## Info window ##
 
+It's angular supported. So you can use angular inside info window template (directives, scope, controller...).
+
 #### Inject 'InfoWindow' service from 'logicify-gmap' api. ####
 ```js
 module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
