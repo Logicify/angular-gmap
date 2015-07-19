@@ -1,10 +1,10 @@
 {
   "name": "logicify-gmap",
-  "version": "0.0.1",
+  "version": "1.0",
   "description": "Create google maps based on angular framework.",
   "repository": {
     "type": "git",
-    "url": "https://artemijan@bitbucket.org/artemijan/logicify-gmap.git"
+    "url": "https://github.com/artemijan/logicify-gmap.git"
   },
   "main": "dist/logicify-gmap.js",
   "homepage": "http://logicify.com/",
@@ -39,7 +39,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://bitbucket.org/artemijan/logicify-gmap/src/13c2f7edc459e27c857ad748491ecf54c172cc33/LICENSE"
+      "url": "https://github.com/artemijan/logicify-gmap/blob/master/LICENSE"
     }
   ]
 }

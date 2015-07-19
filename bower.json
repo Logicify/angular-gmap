@@ -1,0 +1,19 @@
+{
+  "name": "logicify-gmap",
+  "description": "logicify-gmap is a wrapper for google maps api based on angular.",
+  "version": "1.0",
+  "homepage": "https://github.com/artemijan/logicify-gmap",
+  "author": "Artem Fedorov <artem.fedorov@logicify.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/artemijan/logicify-gmap.git"
+  },
+  "main": [
+    "dist/logicify-gmap.js"
+  ],
+  "ignore": [],
+  "dependencies": {
+    "angular": ">=1.2"
+  },
+  "devDependencies": {}
+}
