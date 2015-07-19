@@ -30,8 +30,16 @@ Something like that:
 
 center - is center of the map;
 
-gm-options  - is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
+gm-options  - (javascript object) is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
 
+gm-ready - (function) callback function fires when directive is rendered and passes on gmap Object.
+
+#### From controller ####
+```js
+$scope.ready = function(gmap){
+    $scope.gmap = gmap; //it's google maps object (not wrapped)
+};
+```
 * Simple example
 ```html
 <!DOCTYPE html>
