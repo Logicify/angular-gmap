@@ -19,10 +19,32 @@ Something like that:
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
 #### You need to be sure that this api is loaded before angular.js ####
-* Code review
+* Simple example
+```html
+<!DOCTYPE html>
+<html ng-app="LogicifyGMap">
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
+    <script src="../node_modules/angular/angular.js"></script>
+    <script src="../dist/logicify-gmap.js"></script>
+    <title>Test page</title>
+</head>
+<body ng-controller="myCtrl" ng-init="closeMap =false">
+<div style="margin-top: 100px;display: block">
+    <button ng-click="closeMap=true"> Close</button>
+</div>
+<logicify-gmap ng-if="closeMap==false"
+               center="gmOpts.center"
+               gm-options="gmOpts"
+               gm-ready="ready"
+               css-options="cssOpts">
+    <logicify-gmap-control control-position="position" control-index="1">
+        <button>Push me
+        </button>
+    </logicify-gmap-control>
+</logicify-gmap>
+</body>
+</html>
+```
 * Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
