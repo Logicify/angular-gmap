@@ -43,19 +43,27 @@ $scope.ready = function(gmap){
 ```
 * css-options - is javascript object is needed for injecting css into map element
 
-##### Inject map controls (directive implementation is not finished yet) #####
+##### Inject map controls (directive) #####
 
 ```html
 <logicify-gmap center="gmOpts.center"
                gm-options="gmOpts"
                gm-ready="ready"
                css-options="cssOpts">
-    <logicify-gmap-control control-position="position" control-index="1">
+    <logicify-gmap-control
+    control-position="position"
+    control-index="1"
+    events="controlEvents">
         <button>Push me</button>
     </logicify-gmap-control>
 </logicify-gmap>
 ```
-
+```js
+$scope.controlEvents = {
+                click: function (event) {
+                }
+            };
+```
 ## Simple example ##
 ##### Index.html #####
 
