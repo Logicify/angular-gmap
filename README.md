@@ -31,8 +31,8 @@ place it in your html file
 </logicify-gmap>
 ```
 
-* center - is center of the map;
-* gm-options  - (javascript object) is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
+* center - center map (is LatLng object from [google api](https://developers.google.com/maps/documentation/javascript/tutorial));
+* gm-options  - (javascript object) is google maps options [google api](https://developers.google.com/maps/documentation/javascript/tutorial)
 * gm-ready - (function) callback function fires when directive is rendered and passes on gmap Object.
 
 From controller
