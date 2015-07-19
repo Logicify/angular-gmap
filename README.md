@@ -19,7 +19,9 @@ This README would normally document whatever steps are necessary to get your app
 ### How do i use it? ###
 * At first you need include google api reference into your html file.
 Something like that: 
-"<script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>"
+```html
+<script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
+```
 You need to be sure that this api is loaded before angular.js
 * Code review
 * Other guidelines
