@@ -19,7 +19,7 @@ Something like that:
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
 #### You need to be sure that this api is loaded before angular.js ####
-* Directives
+##### Directives #####
 ```html
 <logicify-gmap center="gmOpts.center"
                gm-options="gmOpts"
@@ -28,19 +28,18 @@ Something like that:
 </logicify-gmap>
 ```
 
-center - is center of the map;
+* center - is center of the map;
+* gm-options  - (javascript object) is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
+* gm-ready - (function) callback function fires when directive is rendered and passes on gmap Object.
 
-gm-options  - (javascript object) is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
-
-gm-ready - (function) callback function fires when directive is rendered and passes on gmap Object.
-
-- From controller
+From controller
 ```js
 $scope.ready = function(gmap){
     $scope.gmap = gmap; //it's google maps object (not wrapped)
 };
 ```
-* Simple example
+* css-options - is javascript object to inject css into map element
+#### Simple example ####
 ```html
 <!DOCTYPE html>
 <html ng-app="LogicifyGMap">
