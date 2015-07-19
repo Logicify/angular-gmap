@@ -40,7 +40,7 @@ $scope.ready = function(gmap){
 ```
 * css-options - is javascript object is needed for to inject css into map element
 
-##### Inject map controls (directive) #####
+##### Inject map controls (directive implementation is not finished yet) #####
 
 ```html
 <logicify-gmap center="gmOpts.center"
