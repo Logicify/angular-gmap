@@ -27,8 +27,11 @@ Something like that:
                css-options="cssOpts">
 </logicify-gmap>
 ```
+
 center - is center of the map;
+
 gm-options  - is google maps options [@google api](https://developers.google.com/maps/documentation/javascript/tutorial)
+
 * Simple example
 ```html
 <!DOCTYPE html>
