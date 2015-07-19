@@ -22,6 +22,7 @@ Something like that:
 ```
 ###### You need to be sure that this api is loaded before angular.js ######
 ##### Inject map (directive) #####
+place it in your html file
 ```html
 <logicify-gmap center="gmOpts.center"
                gm-options="gmOpts"
