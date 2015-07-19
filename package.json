@@ -1,0 +1,45 @@
+{
+  "name": "logicify-gmap",
+  "version": "0.0.1",
+  "description": "Create google maps based on angular framework.",
+  "repository": {
+    "type": "git",
+    "url": "https://artemijan@bitbucket.org/artemijan/logicify-gmap.git"
+  },
+  "main": "dist/logicify-gmap.js",
+  "homepage": "http://logicify.com/",
+  "author": "Logicify",
+  "contributors": [
+    "Artem Fedorov <artem.fedorov@logicify.com> (https://bitbucket.org/artemijan)"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "angular": ">= 1.2"
+  },
+  "keywords": [
+    "angular",
+    "angularjs",
+    "gmap",
+    "google map",
+    "map",
+    "logicify gmap"
+  ],
+  "devDependencies": {
+    "bower": "~1.3.12",
+    "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "lodash": "~3.8.0"
+  },
+  "scripts": {
+    "postinstall": "grunt logicifyGmap"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://bitbucket.org/artemijan/logicify-gmap/src/13c2f7edc459e27c857ad748491ecf54c172cc33/LICENSE"
+    }
+  ]
+}
