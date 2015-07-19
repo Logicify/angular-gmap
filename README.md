@@ -4,7 +4,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
+* This product is a wrapper for google maps api based on angular.
 * Version 1.0
 
 ### Install for developers ###
@@ -18,7 +18,7 @@ This README would normally document whatever steps are necessary to get your app
 ### How do i use it? ###
 
 * At first you need include google api reference into your html file
-    *
+    **
 * Code review
 * Other guidelines
 
