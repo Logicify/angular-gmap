@@ -19,7 +19,7 @@ Something like that:
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
 #### You need to be sure that this api is loaded before angular.js ####
-##### Directives #####
+##### Inject map (directive) #####
 ```html
 <logicify-gmap center="gmOpts.center"
                gm-options="gmOpts"
@@ -39,6 +39,20 @@ $scope.ready = function(gmap){
 };
 ```
 * css-options - is javascript object is needed for to inject css into map element
+
+##### Inject map controls (directive) #####
+
+```html
+<logicify-gmap center="gmOpts.center"
+               gm-options="gmOpts"
+               gm-ready="ready"
+               css-options="cssOpts">
+    <logicify-gmap-control control-position="position" control-index="1">
+        <button>Push me</button>
+    </logicify-gmap-control>
+</logicify-gmap>
+```
+
 #### Simple example ####
 ```html
 <!DOCTYPE html>
