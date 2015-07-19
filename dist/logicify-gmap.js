@@ -14,6 +14,11 @@
     angular.module('LogicifyGMap')
         .controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
             $scope.markers = [];
+            $scope.controlEvents = {
+                click: function (event) {
+                    alert('hello');
+                }
+            };
             $scope.infoWindowName = 'hello native you!';
             $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
             $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
@@ -72,7 +77,13 @@
                         /*global google*/
                         var position = scope.$eval(iAttrs['controlPosition']);
                         var index = scope.$eval(iAttrs['controlIndex']);
+                        var events = scope.$eval(iAttrs['events']);
                         var element = angular.element(iElement.html());
+
+                        function attachListener(eventName, callback) {
+                            google.maps.event.addDomListener(element[0], eventName, callback);
+                        }
+
                         element[0].index = index || 0;
                         iElement.empty();
                         ctrl.$mapReady(function (map) {
@@ -80,6 +91,13 @@
                                 throw new Error('Position of control on the map is invalid. Please see google maps spec.');
                             }
                             map.controls[position].push(element[0]);
+                            if (events != null) {
+                                angular.forEach(events, function (value, key) {
+                                    if (typeof value === 'function') {
+                                        attachListener(key, value);
+                                    }
+                                });
+                            }
                         });
 
                     }
