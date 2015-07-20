@@ -3,7 +3,7 @@
  */
 (function (angular) {
     'use strict';
-    angular.module('LogicifyGMap', []);
+    angular.module('LogicifyGMap');
 })(angular);
 /**
  * Created by artem on 6/24/15.
