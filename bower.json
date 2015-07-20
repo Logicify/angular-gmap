@@ -15,9 +15,11 @@
     "angular",
     "angularjs",
     "gmap",
-    "google map",
+    "google",
     "map",
-    "logicify gmap"
+    "logicify",
+    "wrapper",
+    "javascript"
   ],
   "license": "MIT",
   "ignore": [],

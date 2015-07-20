@@ -17,9 +17,11 @@
     "angular",
     "angularjs",
     "gmap",
-    "google map",
+    "google",
     "map",
-    "logicify gmap"
+    "logicify",
+    "wrapper",
+    "javascript"
   ],
   "devDependencies": {
     "bower": "~1.3.12",
