@@ -35,8 +35,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.registerTask('build', 'with params', function (params) {
-        grunt.task.run(['uglify:all']);
         grunt.task.run(['concat:logicifyGmap']);
+        grunt.task.run(['uglify:all']);
     });
     grunt.registerTask('logicifyGmap', 'with params', function (params) {
         grunt.task.run([
