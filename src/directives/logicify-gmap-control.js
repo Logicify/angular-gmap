@@ -23,7 +23,7 @@
                         var position = scope.$eval(iAttrs['controlPosition']);
                         var index = scope.$eval(iAttrs['controlIndex']);
                         var events = scope.$eval(iAttrs['events']);
-                        var element = angular.element(iElement[0].innerHTML);
+                        var element = angular.element(iElement.html());
 
                         function attachListener(eventName, callback) {
                             google.maps.event.addDomListener(element[0], eventName, callback);
