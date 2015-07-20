@@ -91,7 +91,7 @@
                             }
                             //check if we already compiled template then don't need to do it again
                             if (infoWindow.$compiled !== true) {
-                                var compiled = $compile(content)(infoWindow.$scope);
+                                var compiled = $compile(content.trim())(infoWindow.$scope);
                                 infoWindow.$compiled = true;
                                 infoWindow.setContent(compiled[0]);
                             }
