@@ -3,5 +3,5 @@
  */
 (function (angular) {
     'use strict';
-    angular.module('LogicifyGMap', []);
+    angular.module('LogicifyGMap');
 })(angular);
