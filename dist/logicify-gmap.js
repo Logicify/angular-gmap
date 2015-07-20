@@ -3,54 +3,7 @@
  */
 (function (angular) {
     'use strict';
-    angular.module('LogicifyGMap', []);
-})(angular);
-/**
- * Created by artem on 6/19/15.
- */
-(function (angular) {
-    'use strict';
-    /*global google*/
-    angular.module('LogicifyGMap')
-        .controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
-            $scope.markers = [];
-            $scope.controlEvents = {
-                click: function (event) {
-                }
-            };
-            $scope.infoWindowName = 'hello native you!';
-            $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
-            $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
-            $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
-            $scope.index = 1;
-            $scope.closeInfoWindow = function (infowindow) {
-                infowindow.close(true);
-            };
-            $scope.ready = function (map) {
-                var infowindow = new InfoWindow({templateUrl: 'template.html'});
-
-                function attach(marker) {
-                    google.maps.event.addListener(marker, 'click', function (markerObj) {
-                        infowindow.$ready(function (wnd) {
-                            wnd.open(map, marker);
-                        });
-                    });
-                }
-
-                for (var i = 10; i < 15; i++) {
-                    var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);
-                    var marker = new google.maps.Marker({
-                        id: 'marker_' + i,
-                        name: 'is_' + i,
-                        position: pos,
-                        map: map
-                    });
-                    $scope.markers.push(marker);
-                    attach(marker);
-                }
-            };
-
-        }])
+    angular.module('LogicifyGMap',[]);
 })(angular);
 /**
  * Created by artem on 6/24/15.
@@ -77,14 +30,24 @@
                         var position = scope.$eval(iAttrs['controlPosition']);
                         var index = scope.$eval(iAttrs['controlIndex']);
                         var events = scope.$eval(iAttrs['events']);
-                        var element = angular.element(iElement.html());
-
+                        var element = angular.element(iElement.html().trim());
+                        $compile(element)(scope);
+                        $timeout(function () {
+                            scope.$apply();
+                        });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, callback);
+                            google.maps.event.addDomListener(element[0], eventName, function () {
+                                var args = arguments;
+                                var self = this;
+                                //wrap in timeout to run new digest
+                                $timeout(function () {
+                                    callback.apply(self, args);
+                                });
+                            });
                         }
 
                         element[0].index = index || 0;
-                        iElement.empty();
+                        iElement.html('');
                         ctrl.$mapReady(function (map) {
                             if (!map.controls[position]) {
                                 throw new Error('Position of control on the map is invalid. Please see google maps spec.');
@@ -198,7 +161,7 @@
                             }
                             //check if we already compiled template then don't need to do it again
                             if (infoWindow.$compiled !== true) {
-                                var compiled = $compile(content)(infoWindow.$scope);
+                                var compiled = $compile(content.trim())(infoWindow.$scope);
                                 infoWindow.$compiled = true;
                                 infoWindow.setContent(compiled[0]);
                             }
@@ -257,7 +220,7 @@
                     var overrideClose = self['close'];
                     self['close'] = function (destroyScope) {
                         if (!lastMap) {
-                            $log.error('Info window is closed now, ypu can not close it twice!');
+                            $log.error('Info window is closed now, you can not close it twice!');
                             return;
                         }
                         if (typeof lastMap.closeInfoWnd === 'function' && destroyScope === true) {

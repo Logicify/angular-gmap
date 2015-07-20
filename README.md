@@ -14,6 +14,9 @@
 ```
 ### Usage ###
 
+#### JSFiddle example ####
+[example](https://jsfiddle.net/s6s4mbc5/62/)
+
 ```shell
 bower install logicify-gmap
 ```
@@ -25,6 +28,13 @@ Something like that:
 <script src="https://maps.googleapis.com/maps/api/js?v=3.20"></script>
 ```
 ###### You need to be sure that this api is loaded before angular.js ######
+
+##### Inject module into your angular app #####
+
+```js
+var app = angular.module('myApp', [ "LogicifyGMap" ]);
+```
+
 ##### Inject map (directive) #####
 place it in your html file
 ```html
@@ -41,11 +51,26 @@ place it in your html file
 
 From controller
 ```js
-$scope.ready = function(gmap){
-    $scope.gmap = gmap; //it's google maps object (not wrapped)
-};
+var app = angular.module('myApp', [ "LogicifyGMap" ]);
+app.controller('myCtrl',['$scope',function($scope){
+    $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
+    $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
+    $scope.ready = function(gmap){
+        $scope.gmap = gmap; //it's google maps object (not wrapped)
+    };
+}]);
 ```
 * css-options - is javascript object is needed for injecting css into map element
+
+##### Custom X (close) button for info window. #####
+
+```css
+     .gm-style-iw+div{
+         display:none
+         }
+```
+
+where .gm-style-iw is a class of container element, and next div is close button!
 
 ##### Inject map controls (directive) #####
 
@@ -90,8 +115,6 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
             $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
             $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
             $scope.closeInfoWindow = function (infowindow) {
-                //if first parameter is true then when you close infowindow then scope and element will be destroyed.
-                //please careful with this param, because to render it again takes more time then just apply scope digest.
                 infowindow.close(true); //destroy scope and info window element
                 //or
                 //infowindow.close();  //just close info window
@@ -189,9 +212,11 @@ var infowindow = new InfoWindow({templateUrl: 'template.html'}); //in the loop
 
 1) Destroy scope and element. Please careful with this param, because to render it again - takes more time then just apply scope digest.
 ```js
-window.close(true)
+infowindow.close(true)
 ```
 2) Just hide window (proper way).
 ```js
-window.close();
+infowindow.close();
 ```
+
+## Infobubble (is not supported yet)##

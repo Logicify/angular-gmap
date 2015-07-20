@@ -35,7 +35,7 @@
                     var overrideClose = self['close'];
                     self['close'] = function (destroyScope) {
                         if (!lastMap) {
-                            $log.error('Info window is closed now, ypu can not close it twice!');
+                            $log.error('Info window is closed now, you can not close it twice!');
                             return;
                         }
                         if (typeof lastMap.closeInfoWnd === 'function' && destroyScope === true) {

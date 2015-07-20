@@ -23,14 +23,24 @@
                         var position = scope.$eval(iAttrs['controlPosition']);
                         var index = scope.$eval(iAttrs['controlIndex']);
                         var events = scope.$eval(iAttrs['events']);
-                        var element = angular.element(iElement.html());
-
+                        var element = angular.element(iElement.html().trim());
+                        $compile(element)(scope);
+                        $timeout(function () {
+                            scope.$apply();
+                        });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, callback);
+                            google.maps.event.addDomListener(element[0], eventName, function () {
+                                var args = arguments;
+                                var self = this;
+                                //wrap in timeout to run new digest
+                                $timeout(function () {
+                                    callback.apply(self, args);
+                                });
+                            });
                         }
 
                         element[0].index = index || 0;
-                        iElement.empty();
+                        iElement.html('');
                         ctrl.$mapReady(function (map) {
                             if (!map.controls[position]) {
                                 throw new Error('Position of control on the map is invalid. Please see google maps spec.');
