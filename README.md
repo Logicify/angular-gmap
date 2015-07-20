@@ -92,8 +92,6 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
             $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
             $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
             $scope.closeInfoWindow = function (infowindow) {
-                //if first parameter is true then when you close infowindow then scope and element will be destroyed.
-                //please careful with this param, because to render it again takes more time then just apply scope digest.
                 infowindow.close(true); //destroy scope and info window element
                 //or
                 //infowindow.close();  //just close info window
