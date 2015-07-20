@@ -206,4 +206,7 @@ infowindow.close(true)
 infowindow.close();
 ```
 
+### JSFiddle example ###
+[example]("https://jsfiddle.net/s6s4mbc5/15/")
+
 ## Infobubble (is not supported yet)##
