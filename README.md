@@ -15,7 +15,7 @@
 ### Usage ###
 
 #### JSFiddle example ####
-[example](https://jsfiddle.net/s6s4mbc5/15/)
+[example](https://jsfiddle.net/s6s4mbc5/62/)
 
 ```shell
 bower install logicify-gmap
