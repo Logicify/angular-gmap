@@ -11,7 +11,7 @@
   "main": [
     "dist/logicify-gmap.js"
   ],
-  "keywords":[
+  "keywords": [
     "angular",
     "angularjs",
     "gmap",
@@ -19,6 +19,9 @@
     "map",
     "logicify gmap"
   ],
+  "scripts": {
+    "postinstall": "grunt logicifyGmap"
+  },
   "license": "MIT",
   "ignore": [],
   "dependencies": {
