@@ -14,6 +14,12 @@ module.exports = function (grunt) {
                 }
             }
         },
+        uglify:{
+            all:{
+                src:['dist/**.js'],
+                dest:'dist/angular-gmap.min.js'
+            }
+        },
         watch: {
             scripts: {
                 files: ['src/**/*.js'],
@@ -27,8 +33,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.registerTask('build', 'with params', function (params) {
-        grunt.tasks.run(['concat:logicifyGmap']);
+        grunt.task.run(['uglify:all']);
+        grunt.task.run(['concat:logicifyGmap']);
     });
     grunt.registerTask('logicifyGmap', 'with params', function (params) {
         grunt.task.run([
