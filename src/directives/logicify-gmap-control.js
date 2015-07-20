@@ -30,7 +30,7 @@
                         }
 
                         element[0].index = index || 0;
-                        iElement.empty();
+                        iElement.html('');
                         ctrl.$mapReady(function (map) {
                             if (!map.controls[position]) {
                                 throw new Error('Position of control on the map is invalid. Please see google maps spec.');
