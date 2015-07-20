@@ -142,7 +142,7 @@ It's not an infowindow yet. Because rendering template and apply scope digest ta
                         });
 ```
 
-And now it's info window object.
+And now 'wnd' is info window object.
 
 ##### you can use $infoWND object in the template.html. $infoWND.anchor is a marker! #####
 
