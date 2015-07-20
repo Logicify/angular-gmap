@@ -128,10 +128,23 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
 </div>
 ```
 
-* You need use infowindow.$ready because template can be not compiled yet.
-So when you call infowindow.$ready(callback), api passes on ready infowindow object through this callback.
+* when you try to create info window object
 
-* you can use $infoWND object in the template.html. $infoWND.anchor is a marker!
+```js
+var infowindow = new InfoWindow({templateUrl: 'template.html'});
+```
+
+It's not an infowindow yet. Because rendering template and apply scope digest takes some time.
+
+```js
+ infowindow.$ready(function (wnd) {
+                            //do something with 'wnd'
+                        });
+```
+
+And now it's info window object.
+
+##### you can use $infoWND object in the template.html. $infoWND.anchor is a marker! #####
 
 ### Closing info window can be done in two ways: ###
 
