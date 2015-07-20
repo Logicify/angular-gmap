@@ -146,6 +146,41 @@ And now 'wnd' is info window object.
 
 ##### you can use $infoWND object in the template.html. $infoWND.anchor is a marker! #####
 
+### Many info windows in one time: ###
+
+```js
+$scope.ready = function (map) {
+
+                function attach(marker) {
+                    var infowindow = new InfoWindow({templateUrl: 'template.html'}); //create new infowindow for each marker
+                    google.maps.event.addListener(marker, 'click', function (markerObj) { //on marker click
+                        infowindow.$ready(function (wnd) { // pass infowindow object
+                            wnd.open(map, marker); //open infowindow
+                        });
+                    });
+                }
+
+                //loop all markers
+                for (var i = 10; i < 15; i++) {
+                    var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);//random position
+                    var marker = new google.maps.Marker({    //create new marker
+                        id: 'marker_' + i,
+                        name: 'is_' + i,
+                        position: pos,
+                        map: map
+                    });
+                    $scope.markers.push(marker);
+                    attach(marker);//attach listener
+                }
+            };
+```
+
+If you want more than one info window on google map, you just need create it for each marker!
+
+```js
+var infowindow = new InfoWindow({templateUrl: 'template.html'}); //in the loop
+```
+
 ### Closing info window can be done in two ways: ###
 
 1) Destroy scope and element. Please careful with this param, because to render it again - takes more time then just apply scope digest.
