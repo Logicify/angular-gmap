@@ -41,6 +41,8 @@ place it in your html file
 
 From controller
 ```js
+$scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
+$scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
 $scope.ready = function(gmap){
     $scope.gmap = gmap; //it's google maps object (not wrapped)
 };
