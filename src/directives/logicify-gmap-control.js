@@ -25,11 +25,18 @@
                         var events = scope.$eval(iAttrs['events']);
                         var element = angular.element(iElement.html().trim());
                         $compile(element)(scope);
-                        $timeout(function(){
+                        $timeout(function () {
                             scope.$apply();
                         });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, callback);
+                            google.maps.event.addDomListener(element[0], eventName, function () {
+                                var args = arguments;
+                                var self = this;
+                                //wrap in timeout to run new digest
+                                $timeout(function () {
+                                    callback.apply(self, args);
+                                });
+                            });
                         }
 
                         element[0].index = index || 0;

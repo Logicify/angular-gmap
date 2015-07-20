@@ -9,6 +9,7 @@
             $scope.markers = [];
             $scope.controlEvents = {
                 click: function (event) {
+                    $scope.infoWindowName = 'hello you!';
                 }
             };
             $scope.infoWindowName = 'hello native you!';

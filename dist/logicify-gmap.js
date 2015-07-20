@@ -16,6 +16,7 @@
             $scope.markers = [];
             $scope.controlEvents = {
                 click: function (event) {
+                    $scope.infoWindowName = 'hello you!';
                 }
             };
             $scope.infoWindowName = 'hello native you!';
@@ -79,11 +80,17 @@
                         var events = scope.$eval(iAttrs['events']);
                         var element = angular.element(iElement.html().trim());
                         $compile(element)(scope);
-                        $timeout(function(){
+                        $timeout(function () {
                             scope.$apply();
                         });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, callback);
+                            google.maps.event.addDomListener(element[0], eventName, function () {
+                                var args = arguments;
+                                var self = this;
+                                $timeout(function () {
+                                    callback.apply(self, args);
+                                });
+                            });
                         }
 
                         element[0].index = index || 0;
