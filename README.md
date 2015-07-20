@@ -14,6 +14,9 @@
 ```
 ### Usage ###
 
+#### JSFiddle example ####
+[example](https://jsfiddle.net/s6s4mbc5/15/)
+
 ```shell
 bower install logicify-gmap
 ```
@@ -205,8 +208,5 @@ infowindow.close(true)
 ```js
 infowindow.close();
 ```
-
-### JSFiddle example ###
-[example](https://jsfiddle.net/s6s4mbc5/15/)
 
 ## Infobubble (is not supported yet)##
