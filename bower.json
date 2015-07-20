@@ -11,6 +11,15 @@
   "main": [
     "dist/logicify-gmap.js"
   ],
+  "keywords":[
+    "angular",
+    "angularjs",
+    "gmap",
+    "google map",
+    "map",
+    "logicify gmap"
+  ],
+  "license": "MIT",
   "ignore": [],
   "dependencies": {
     "angular": ">=1.2"
