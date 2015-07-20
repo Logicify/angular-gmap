@@ -189,9 +189,9 @@ var infowindow = new InfoWindow({templateUrl: 'template.html'}); //in the loop
 
 1) Destroy scope and element. Please careful with this param, because to render it again - takes more time then just apply scope digest.
 ```js
-window.close(true)
+infowindow.close(true)
 ```
 2) Just hide window (proper way).
 ```js
-window.close();
+infowindow.close();
 ```
