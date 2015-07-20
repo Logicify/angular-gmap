@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "postinstall": "grunt logicifyGmap"
+    "postinstall": "grunt build"
   }
 }
