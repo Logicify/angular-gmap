@@ -49,6 +49,16 @@ $scope.ready = function(gmap){
 ```
 * css-options - is javascript object is needed for injecting css into map element
 
+##### Custom X (close) button for info window. #####
+
+```css
+     .gm-style-iw+div{
+         display:none
+         }
+```
+
+where .gm-style-iw is a class of container element, and next div is close button!
+
 ##### Inject map controls (directive) #####
 
 html
