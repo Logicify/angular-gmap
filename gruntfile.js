@@ -27,6 +27,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.registerTask('build', 'with params', function (params) {
+        grunt.tasks.run(['concat:logicifyGmap']);
+    });
     grunt.registerTask('logicifyGmap', 'with params', function (params) {
         grunt.task.run([
             'concat:logicifyGmap',
