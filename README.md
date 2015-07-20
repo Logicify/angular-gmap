@@ -205,3 +205,5 @@ infowindow.close(true)
 ```js
 infowindow.close();
 ```
+
+## Infobubble (is not supported yet)##
