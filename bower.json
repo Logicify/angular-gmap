@@ -19,9 +19,6 @@
     "map",
     "logicify gmap"
   ],
-  "scripts": {
-    "postinstall": "grunt logicifyGmap"
-  },
   "license": "MIT",
   "ignore": [],
   "dependencies": {
