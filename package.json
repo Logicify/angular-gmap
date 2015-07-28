@@ -8,7 +8,7 @@
   },
   "main": "dist/logicify-gmap.js",
   "homepage": "http://logicify.com/",
-  "author": "Artem Fedorov <artem.fedorov@logicify.com> (https://bitbucket.org/artemijan)",
+  "author": "Artem Fedorov <artem.fedorov@logicify.com> (https://github.com/artemijan)",
   "license": "MIT",
   "dependencies": {
     "angular": ">= 1.2"

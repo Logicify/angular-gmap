@@ -21,6 +21,12 @@
 bower install logicify-gmap
 ```
 
+or
+
+```shell
+npm install logicify-gmap
+```
+
 #### At first you need include google api reference into your html file. ####
 
 Something like that:
