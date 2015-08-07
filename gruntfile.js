@@ -14,10 +14,10 @@ module.exports = function (grunt) {
                 }
             }
         },
-        uglify:{
-            all:{
-                src:['dist/**.js'],
-                dest:'dist/angular-gmap.min.js'
+        uglify: {
+            all: {
+                src: ['dist/**.js'],
+                dest: 'dist/angular-gmap.min.js'
             }
         },
         watch: {
@@ -34,7 +34,16 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.registerTask('update', 'updating dependencies', function () {
+        var exec = require('child_process').exec;
+        var cb = this.async();
+        exec('bower update', null, function (err, stdout, stderr) {
+            console.log(stdout);
+            cb();
+        });
+    });
     grunt.registerTask('build', 'with params', function (params) {
+        grunt.task.run(['update']);
         grunt.task.run(['concat:logicifyGmap']);
         grunt.task.run(['uglify:all']);
     });
