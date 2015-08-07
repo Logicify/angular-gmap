@@ -1,7 +1,7 @@
 ### What is this repository for? ###
 
 * This product is a wrapper for [google maps api](https://developers.google.com/maps/documentation/javascript/tutorial) based on angular.
-* Version 0.1.5
+* Version 1.2
 
 ### For developers ###
 
