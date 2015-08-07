@@ -196,9 +196,8 @@
                     return;
                 }
                 var self = this;
-                //private
-                var readyCallbackHolders = [], isInfoWndReady = false, lastMap = null;
-                //public
+                var readyCallbackHolders = [];
+                var isInfoWndReady = false;
                 self['$ready'] = function (callback) {
                     if (isInfoWndReady === true && callback) {
                         callback(self);
@@ -208,10 +207,9 @@
                         readyCallbackHolders.push(callback);
                     }
                 };
+                var lastMap = null;
 
-                //base logic function
                 function overridesMethods(content) {
-                    //override method 'open'
                     var overrideOpen = self['open'];
                     self['open'] = function (map, marker) {
                         lastMap = map;
@@ -219,7 +217,6 @@
                             map.openInfoWnd(content, map, marker, self, overrideOpen);
                         }
                     };
-                    //override method 'close'
                     var overrideClose = self['close'];
                     self['close'] = function (destroyScope) {
                         if (!lastMap) {
@@ -232,7 +229,6 @@
                             overrideClose.apply(self, []);
                         }
                     };
-                    //notify all registered listeners that info window is ready
                     isInfoWndReady = true;
                     if (readyCallbackHolders.length > 0) {
                         for (var i = 0; i < readyCallbackHolders.length; i++) {
@@ -244,7 +240,6 @@
 
                 //if arguments
                 if (arguments[0]) {
-                    //select logic if info window creates via template url
                     if (arguments[0].templateUrl) {
                         $http.get(arguments[0].templateUrl, {cache: $templateCache})
                             .then(function (response) {
@@ -253,7 +248,6 @@
                                 overridesMethods(response.data);
                             });
                     } else if (arguments[0].content) {
-                        //if via 'content'
                         google.maps.InfoWindow.apply(self, arguments);
                         overridesMethods(arguments[0].content);
                     }
