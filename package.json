@@ -1,6 +1,6 @@
 {
   "name": "logicify-gmap",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Create google maps based on angular framework.",
   "repository": {
     "type": "git",
@@ -11,11 +11,7 @@
   "author": "Artem Fedorov <artem.fedorov@logicify.com> (https://github.com/artemijan)",
   "license": "MIT",
   "dependencies": {
-    "grunt": "^0.4.5",
-    "grunt-cli": "~0.1.13",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-uglify": "^0.9.1"
+    "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.0"
   },
   "keywords": [
     "angular",
