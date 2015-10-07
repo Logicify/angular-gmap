@@ -8,12 +8,9 @@
             '$timeout',
             '$log',
             '$q',
-            'gettextCatalog',
             '$compile',
-            '$templateCache',
             '$http',
-            'InfoWindow',
-            function ($timeout, $log, $q, gettextCatalog, $compile, $templateCache, $http, InfoWindow) {
+            function ($timeout, $log, $q, $compile, $http) {
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',

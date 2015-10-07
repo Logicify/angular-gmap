@@ -76,7 +76,7 @@ if (!!window.google && !!google.maps) {
             var polyline = createPolyline(polylineOptions, this);
             // Bind the polyline properties to the MultiGeometry properties
             this.polylines.push(polyline);
-        }
+    }
     }
 
     MultiGeometry.prototype = new google.maps.MVCObject();
@@ -189,21 +189,21 @@ geoXML3.parser = function (options) {
                 thisDoc.reload = true;
             }
             else {
-                thisDoc = new Object();
+        thisDoc = new Object();
                 thisDoc.baseUrl = baseUrl;
-                internals.docSet.push(thisDoc);
+        internals.docSet.push(thisDoc);
             }
             thisDoc.type = mimeType;
             thisDoc.url = blobUrl;
             thisDoc.internals = internals;
             fetchDoc(thisDoc.url, thisDoc);
-        }
+    }
     };
 
     function fetchDoc(url, doc, resFunc) {
         resFunc = resFunc || function (responseXML) {
             render(responseXML, doc);
-        };
+    };
 
         if (doc.type !== 'application/vnd.google-earth.kml+xml' && typeof ZipFile === 'function' && typeof JSIO === 'object' && typeof JSIO.guessFileType === 'function') {  // KMZ support requires these modules loaded
             contentType = JSIO.guessFileType(doc.baseUrl);
@@ -229,7 +229,7 @@ geoXML3.parser = function (options) {
                 if (!!doc.markers[i].infoWindow) doc.markers[i].infoWindow.close();
                 doc.markers[i].setVisible(false);
             }
-        }
+    }
         if (!!doc.ggroundoverlays) {
             for (i = 0; i < doc.ggroundoverlays.length; i++) {
                 doc.ggroundoverlays[i].setOpacity(0);
@@ -334,7 +334,7 @@ geoXML3.parser = function (options) {
             style.balloon.textColor = nodeValue(getElementsByTagName(styleNodes[0], 'textColor')[0], style.balloon.textColor);
             style.balloon.text = nodeValue(getElementsByTagName(styleNodes[0], 'text')[0], style.balloon.text);
             style.balloon.displayMode = nodeValue(getElementsByTagName(styleNodes[0], 'displayMode')[0], style.balloon.displayMode);
-        }
+    }
 
         // style.list = (unsupported; doesn't make sense in Google Maps)
 
@@ -384,7 +384,7 @@ geoXML3.parser = function (options) {
                             icon.dim.h = this.height;
                         } else {
                             icon.dim.th = this.height;
-                        }
+            }
                     };
                     icon.img.src = icon.url;
 
@@ -395,9 +395,9 @@ geoXML3.parser = function (options) {
                             icon.dim.h = icon.img.height;
                         } else {
                             icon.dim.th = icon.img.height;
-                        }
+            }
                     }
-                }
+        }
             }
         }
 
@@ -412,7 +412,7 @@ geoXML3.parser = function (options) {
             // style.line.outerWidth      = (unsupported; not supported in API)
             // style.line.physicalWidth   = (unsupported; unneccesary in Google Maps)
             // style.line.labelVisibility = (unsupported; possible to implement)
-        }
+    }
 
         styleNodes = getElementsByTagName(thisNode, 'PolyStyle');
         if (!!styleNodes && styleNodes.length > 0) {
@@ -420,7 +420,7 @@ geoXML3.parser = function (options) {
             style.poly.colorMode = nodeValue(getElementsByTagName(styleNodes[0], 'colorMode')[0], style.poly.colorMode);
             style.poly.outline = getBooleanValue(getElementsByTagName(styleNodes[0], 'outline')[0], style.poly.outline);
             style.poly.fill = getBooleanValue(getElementsByTagName(styleNodes[0], 'fill')[0], style.poly.fill);
-        }
+    }
         return style;
     }
 
@@ -471,9 +471,9 @@ geoXML3.parser = function (options) {
             if (!coordNodes) {
                 if (coordListA.length > 0) {
                     break;
-                } else {
+        } else {
                     return [{coordinates: []}];
-                }
+        }
             }
 
             for (var j = 0; j < coordNodes.length; j++) {
@@ -491,10 +491,10 @@ geoXML3.parser = function (options) {
                             alt: parseFloat(coords[2])
                         });
                     }
-                }
+        }
                 coordListA.push({coordinates: coordList});
             }
-        }
+    }
         return coordListA;
     }
 
@@ -705,7 +705,7 @@ geoXML3.parser = function (options) {
                                         placemark.Polygon[pg] = {
                                             outerBoundaryIs: {coordinates: []},
                                             innerBoundaryIs: [{coordinates: []}]
-                                        }
+                    }
                                         placemark.Polygon[pg].outerBoundaryIs = processPlacemarkCoords(polygonNodes[pg], "outerBoundaryIs");
                                         placemark.Polygon[pg].innerBoundaryIs = processPlacemarkCoords(polygonNodes[pg], "innerBoundaryIs");
                                     }
@@ -751,9 +751,9 @@ geoXML3.parser = function (options) {
                                         found = doc.markers[j].active = true;
                                         break;
                                     }
-                                }
+                }
                             }
-                        }
+            }
                     }
                     if (!found) {
                         // Call the marker creator
@@ -761,7 +761,7 @@ geoXML3.parser = function (options) {
                         if (marker) {
                             marker.active = placemark.visibility;
                             marker.id = placemark.id;
-                        }
+            }
                     }
                 }
                 // polygon/line
@@ -870,7 +870,7 @@ geoXML3.parser = function (options) {
                                     (overlays.url_ === groundOverlay.icon.href)) {
                                     found = overlays[i].active = true;
                                     break;
-                                }
+                }
                             }
                         }
                     }
@@ -929,14 +929,14 @@ geoXML3.parser = function (options) {
                         networkLink.link.viewFormat = nodeValue(getElementsByTagName(node, 'refreshMode')[0]);
                         if (!networkLink.link.viewFormat) {
                             networkLink.link.viewFormat = 'BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]';
-                        }
+            }
                     }
-                }
+        }
 
                 if (!/^[\/|http]/.test(networkLink.link.href)) {
                     // Fully-qualify the HREF
                     networkLink.link.href = docPath + '/' + networkLink.link.href;
-                }
+        }
 
                 // Apply the link
                 if ((networkLink.link.refreshMode === 'onInterval') &&
@@ -952,7 +952,7 @@ geoXML3.parser = function (options) {
                         // Reload when the map view changes
 
                     }
-                }
+        }
             }
         }
 
@@ -975,7 +975,7 @@ geoXML3.parser = function (options) {
                     for (var i in docsByUrl[doc.baseUrl]) {
                         docsByUrl[doc.baseUrl][i] = doc[i];
                     }
-                }
+        }
             }
         }
 
@@ -1037,7 +1037,7 @@ geoXML3.parser = function (options) {
                     icon.dim.h = this.height;
                 } else {
                     icon.dim.th = this.height;
-                }
+        }
                 processStyleID(style);
 
                 // we will undoubtedly get some createMarker queuing, so set this up in advance
@@ -1046,7 +1046,7 @@ geoXML3.parser = function (options) {
                     var d = icon.markerBacklog[i][1];
                     createMarker(p, d);
                     if (p.marker) p.marker.active = true;
-                }
+        }
                 delete icon.markerBacklog;
             };
             return;
@@ -1148,7 +1148,7 @@ geoXML3.parser = function (options) {
                 anchor: shadowPoint, // anchor
                 scaledSize: shadowSize // scaledSize
             };
-        }
+    }
         /* else {
          // Other MyMaps KML standard icon
          icon.shadow = new google.maps.MarkerImage(
@@ -1270,7 +1270,7 @@ geoXML3.parser = function (options) {
         placemark.polyline = p;
         if (typeof parserOptions.onAfterCreatePolyLine === 'function') {
             parserOptions.onAfterCreatePolyLine(p, placemark);
-        }
+    }
         return p;
     }
 
@@ -1287,7 +1287,7 @@ geoXML3.parser = function (options) {
                     var pt = new google.maps.LatLng(coords[i].lat, coords[i].lng);
                     path.push(pt);
                     bounds.extend(pt);
-                }
+        }
                 paths.push(path);
                 pathsLength += path.length;
             }
@@ -1298,7 +1298,7 @@ geoXML3.parser = function (options) {
                     var pt = new google.maps.LatLng(coords[i].lat, coords[i].lng);
                     path.push(pt);
                     bounds.extend(pt);
-                }
+        }
                 paths.push(path);
                 pathsLength += path.length;
             }
@@ -1312,7 +1312,7 @@ geoXML3.parser = function (options) {
         if (!placemark.style.poly.outline) {
             strokeWeight = 0;
             kmlStrokeColor.opacity = 0.0;
-        }
+    }
         var polyOptions = geoXML3.combineOptions(parserOptions.polygonOptions, {
             map: parserOptions.map,
             paths: paths,
@@ -1514,7 +1514,7 @@ geoXML3.parserOptions = function (overrides) {
     if (overrides) {
         for (var prop in overrides) {
             if (overrides.hasOwnProperty(prop)) this[prop] = overrides[prop];
-        }
+    }
     }
     return this;
 };
@@ -1532,12 +1532,12 @@ geoXML3.combineOptions = function (overrides, defaults) {
     if (!!overrides) {
         for (var prop in overrides) {
             if (overrides.hasOwnProperty(prop))                              result[prop] = overrides[prop];
-        }
+    }
     }
     if (!!defaults) {
         for (prop in defaults) {
             if (defaults.hasOwnProperty(prop) && result[prop] === undefined) result[prop] = defaults[prop];
-        }
+    }
     }
     return result;
 };
@@ -1667,7 +1667,7 @@ geoXML3.fetchXML = function (url, callback) {
                     }
                 } else {// handle valid xml sent with wrong MIME type
                     xml = geoXML3.xmlParse(xhrFetcher.fetcher.responseText);
-                }
+        }
                 // handle parse errors
                 if (xml.parseError && (xml.parseError.errorCode != 0)) {
                     geoXML3.log("XML parse error " + xml.parseError.errorCode + ", " + xml.parseError.reason + "\nLine:" + xml.parseError.line + ", Position:" + xml.parseError.linepos + ", srcText:" + xml.parseError.srcText);
@@ -1675,12 +1675,12 @@ geoXML3.fetchXML = function (url, callback) {
                 } else if (geoXML3.isParseError(xml)) {
                     geoXML3.log("XML parse error");
                     xml = "failed parse"
-                }
+        }
                 callback(xml);
             }
             // We're done with this fetcher object
             geoXML3.fetchers.push(xhrFetcher);
-        }
+    }
     };
 
     xhrFetcher.xhrtimeout = setTimeout(timeoutHandler, 60000);
@@ -1698,7 +1698,7 @@ var IEversion = function () {
         var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
         if (re.exec(ua) != null) {
             rv = parseFloat(RegExp.$1);
-        }
+    }
     }
     return rv;
 };
@@ -1817,7 +1817,7 @@ geoXML3.fetchZIP = function (url, callback, parser) {
                     kmlProcessing.timer = setTimeout(function () {
                         kmlExtractCb(entry, entryContent);
                     }, 100);
-                }
+        }
                 else {
                     geoXML3.log('KMZ warning extracting ' + url + ': entire ZIP has not been extracted after 10 seconds; running through KML, anyway...');
                     kmlProcessing.extractLeft--;
@@ -1859,7 +1859,7 @@ geoXML3.nodeValue = function (node, defVal) {
     } else if (node.nodeType == 1 || node.nodeType == 9 || node.nodeType == 11) {
         for (var i = 0; i < node.childNodes.length; ++i) {
             retStr += arguments.callee(node.childNodes[i]);
-        }
+    }
     }
     return retStr;
 };
@@ -1915,7 +1915,7 @@ geoXML3.getElementsByTagNameNS = function (node, namespace, tagname) {
                 root.setAttribute('xmlns:defaultNS', namespace);
                 return node.getElementsByTagName('defaultNS:' + tagname);
             }
-        }
+    }
     }
     return geoXML3.getElementsByTagName(node, tagname);  // try the unqualified version
 };
@@ -1960,7 +1960,7 @@ var toAbsURL = function (d, s) {
         s = s.substring(f.length * 3);
         for (i = f.length; i--;) {
             p = p.substring(0, p.lastIndexOf('/'));
-        }
+    }
     }
 
     return h + p + '/' + s;
@@ -2037,15 +2037,15 @@ Array.prototype.hasItemInObj = function (name, item) {
 };
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (obj, fromIndex) {
-        if (fromIndex == null) {
-            fromIndex = 0;
-        } else if (fromIndex < 0) {
-            fromIndex = Math.max(0, this.length + fromIndex);
-        }
-        for (var i = fromIndex, j = this.length; i < j; i++) {
-            if (this[i] === obj) return i;
-        }
-        return -1;
+    if (fromIndex == null) {
+        fromIndex = 0;
+    } else if (fromIndex < 0) {
+        fromIndex = Math.max(0, this.length + fromIndex);
+    }
+    for (var i = fromIndex, j = this.length; i < j; i++) {
+        if (this[i] === obj) return i;
+    }
+    return -1;
     };
 }
 Array.prototype.indexOfObjWithItem = function (name, item, fromIndex) {
