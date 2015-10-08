@@ -58,6 +58,11 @@
                                 if (!newValue) {
                                     return;
                                 }
+                                //if already started
+                                if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
+                                    scope.cancel = true;
+                                }
+                                //if need cancel all.
                                 if (scope.cancel === true) {
                                     var cancellation = scope.$watch('cancel', function (newValue, oldValue) {
                                         //w8 for finish cancellation
@@ -74,7 +79,10 @@
 
                         function afterParse(doc) {
                             if (scope.cancel === true) {
-                                scope.cancel = false;
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
                                 return false;
                             }
                             doc[0].$uid = new Date().getTime() + '-index-' + scope.currentIndex;
@@ -87,7 +95,10 @@
 
                         function failedParse() {
                             if (scope.cancel === true) {
-                                scope.cancel = false;
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
                                 return false;
                             }
                             var error = {message: 'Failed to parse file #' + scope.currentIndex};
@@ -171,7 +182,10 @@
 
                         function downLoadOverlayFile(kmlObject) {
                             if (scope.cancel === true) {
-                                scope.cancel = false;
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
                                 return false;
                             }
                             setValue('downLoadingStarted', true, progress);
@@ -194,7 +208,10 @@
 
                         function onAfterDownload(blob) {
                             if (scope.cancel === true) {
-                                scope.cancel = false;
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
                                 return false;
                             }
                             setValue('parserStarted', true);
