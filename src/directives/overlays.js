@@ -30,6 +30,8 @@
                             opts.map = map;
                             opts.afterParse = afterParse;
                             opts.onAfterCreateGroundOverlay = scope.events.onAfterCreateGroundOverlay;
+                            opts.onAfterCreatePolygon = scope.events.onAfterCreatePolygon;
+                            opts.onAfterCreatePolyLine = scope.events.onAfterCreatePolyLine;
                             opts.failedParse = failedParse;
                             opts.infoWindow = scope.infowindow;
                             return opts;
