@@ -38,13 +38,15 @@
                         }
 
                         ctrl.$mapReady(function (map) {
-                            attachCollectionWatcher();
+                            scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
                             geoXml3Parser = new GeoXML3.parser(getParserOptions(map));
                         });
                         scope.cancel = false;
                         scope.$on('$destroy', function () {
-                            //google.maps.event.clearInstanceListeners(document);
+                            if (typeof scope.collectionsWatcher === 'function') {
+                                scope.collectionsWatcher();//cancel watcher
+                            }
                         });
 
 
