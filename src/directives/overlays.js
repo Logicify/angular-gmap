@@ -4,7 +4,7 @@
 (function (angular, geoXML3) {
     'use strict';
     angular.module('LogicifyGMap')
-        .directive('kmlUploader', [
+        .directive('kmlCollection', [
             '$timeout',
             '$log',
             '$q',
