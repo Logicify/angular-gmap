@@ -189,13 +189,7 @@
                                 return false;
                             }
                             setValue('downLoadingStarted', true, progress);
-                            if (kmlObject.url == null) {
-                                if (kmlObject instanceof Blob) {
-                                    onAfterDownload(kmlObject);
-                                } else {
-                                    $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
-                                }
-                            } else {
+                            if (kmlObject.url != null) {
                                 $http.get(kmlObject.url, {responseType: "arraybuffer"})
                                     .then(function (response) {
                                         var data = new Blob([response.data], {type: response.headers()['content-type']});
@@ -203,10 +197,19 @@
                                         data.name = 'example' + data.lastModifiedDate;
                                         onAfterDownload(data);
                                     });
+
+                            } else if (typeof kmlObject.content === 'String') {
+                                onAfterDownload(null, kmlObject.content);
+                            } else {
+                                if (kmlObject instanceof Blob) {
+                                    onAfterDownload(kmlObject);
+                                } else {
+                                    $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
+                                }
                             }
                         }
 
-                        function onAfterDownload(blob) {
+                        function onAfterDownload(blob, content) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
                                 $timeout(function () {
@@ -216,7 +219,7 @@
                             }
                             setValue('parserStarted', true);
                             setValue('downLoadingStarted', false, progress);
-                            geoXml3Parser.parse(blob);
+                            content == null ? geoXml3Parser.parse(blob) : geoXml3Parser.parseKmlString(content);
                         }
                     }
                 }
