@@ -189,7 +189,7 @@
 (function (angular, geoXML3) {
     'use strict';
     angular.module('LogicifyGMap')
-        .directive('kmlUploader', [
+        .directive('xmlOverlays', [
             '$timeout',
             '$log',
             '$q',
@@ -202,57 +202,96 @@
                     link: function (scope, element, attrs, ctrl) {
                         var geoXml3Parser = null;
                         scope.kmlCollection = scope.$eval(attrs['kmlCollection']) || [];
+                        scope.events = scope.$eval(attrs['gmapEvents']) || {};
+                        scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
                         scope.infowindow = scope.$eval(attrs['infoWindow']);
-                        scope.onAfterCreatePolygon = scope.$eval(attrs['onAfterCreatePolygon']);
-                        scope.onAfterCreatePolyLine = scope.$eval(attrs['onAfterCreatePolyLine']);
-                        scope.onAfterCreateGroundOverlay = scope.$eval(attrs['onAfterCreateGroundOverlay']);
-                        scope.onAfterParse = scope.$eval(attrs['onAfterParse']);
-                        scope.onAfterParseFailed = scope.$eval(attrs['onAfterParseFailed']);
-                        scope.singleInfoWindow = scope.$eval(attrs['singleInfoWindow']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
+
+                        function getParserOptions(map) {
+                            var opts = {};
+                            angular.extend(opts, scope.parserOptions);
+                            //override options
+                            opts.map = map;
+                            opts.afterParse = afterParse;
+                            opts.onAfterCreateGroundOverlay = scope.events.onAfterCreateGroundOverlay;
+                            opts.onAfterCreatePolygon = scope.events.onAfterCreatePolygon;
+                            opts.onAfterCreatePolyLine = scope.events.onAfterCreatePolyLine;
+                            opts.failedParse = failedParse;
+                            opts.infoWindow = scope.infowindow;
+                            return opts;
+                        }
+
                         ctrl.$mapReady(function (map) {
+                            scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
-                            geoXml3Parser = new GeoXML3.parser({
-                                map: map,
-                                afterParse: afterParse,
-                                onAfterCreatePolygon: scope.onAfterCreatePolygon,
-                                onAfterCreatePolyLine: scope.onAfterCreatePolyLine,
-                                onAfterCreateGroundOverlay: scope.onAfterCreateGroundOverlay,
-                                singleInfoWindow: scope.singleInfoWindow !== false, //true by default
-                                failedParse: failedParse,
-                                //you can pass to info window object $onOpen callback
-                                /**
-                                 * $onOpen:function(gObjMVC){
-                                 *
-                                 * }
-                                 */
-                                infoWindow: scope.infowindow,
-                                infoWindowOptions: {pixelOffset: new google.maps.Size(0, 2)}
-                            });
+                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                            //initKmlCollection();
                         });
-                        var cancel = false;
+                        scope.cancel = false;
                         scope.$on('$destroy', function () {
-                            //google.maps.event.clearInstanceListeners(document);
+                            if (typeof scope.collectionsWatcher === 'function') {
+                                scope.collectionsWatcher();//cancel watcher
+                            }
                         });
 
+
+                        /**
+                         * @return {function()|*} listener
+                         */
+                        function attachCollectionWatcher() {
+                            return scope.$watchCollection('kmlCollection', function (newValue, oldValue) {
+                                if (!newValue) {
+                                    return;
+                                }
+                                //if already started
+                                if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
+                                    scope.cancel = true;
+                                }
+                                //if need cancel all.
+                                if (scope.cancel === true) {
+                                    var cancellation = scope.$watch('cancel', function (newValue, oldValue) {
+                                        //w8 for finish cancellation
+                                        if (newValue === true) {
+                                            initKmlCollection();//start init
+                                            cancellation();//clear cancel listener
+                                        }
+                                    });
+                                } else {
+                                    initKmlCollection();
+                                }
+                            }, true);
+                        }
 
                         function afterParse(doc) {
+                            if (scope.cancel === true) {
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
+                                return false;
+                            }
                             doc[0].$uid = new Date().getTime() + '-index-' + scope.currentIndex;
                             scope.kmlCollection[scope.currentIndex].doc = doc;
-                            if (typeof scope.onAfterParse === 'function') {
-                                scope.onAfterParse(doc);
+                            if (typeof scope.events.onAfterParse === 'function') {
+                                scope.events.onAfterParse(doc);
                             }
                             whenParserReadyAgain(null, scope.kmlCollection[scope.currentIndex]);
                         }
 
                         function failedParse() {
+                            if (scope.cancel === true) {
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
+                                return false;
+                            }
                             var error = {message: 'Failed to parse file #' + scope.currentIndex};
                             $log.error(error.message);
-                            if (typeof scope.onAfterParseFailed === 'function') {
-                                scope.onAfterParseFailed(error);
+                            if (typeof scope.events.onAfterParseFailed === 'function') {
+                                scope.events.onAfterParseFailed(error);
                             }
-                            //try to download next file
                             whenParserReadyAgain(error);
                         }
 
@@ -260,11 +299,18 @@
                             setValue('parserStarted', false, progress);
                             if (kmlObject) {
                                 //extend bounds
-                                scope.globalBounds == null ? scope.globalBounds = kmlObject.doc[0].bounds : scope.globalBounds.extend(kmlObject.doc[0].bounds);
+                                if (scope.globalBounds == null) {
+                                    scope.globalBounds = new google.maps.LatLngBounds();
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                } else {
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter())
+                                }
                             }
-                            if (scope.currentIndex === scope.kmlCollection.length && scope.fitBoundsAfterAll !== false) {
+                            if (scope.currentIndex === scope.kmlCollection.length - 1 && scope.fitBoundsAfterAll !== false) {
                                 //if it's last file then
-                                scope.gMap.fitBounds(scope.globalBounds);
+                                $timeout(function () {
+                                    scope.gMap.setCenter(scope.globalBounds.getCenter());
+                                });
                             } else {
                                 //download next file
                                 scope.currentIndex++;
@@ -285,23 +331,33 @@
                             }
                         }
 
+                        function clearAll() {
+                            angular.forEach(geoXml3Parser.docs, function (doc) {
+                                geoXml3Parser.hideDocument(doc);
+                            });
+                            geoXml3Parser.docs.splice(0, geoXml3Parser.length);
+                            geoXml3Parser.docsByUrl = {};
+                            scope.globalBounds = null;
+                            scope.currentIndex = 0;
+                        }
+
                         /**
                          * Download all files by asset
                          */
                         function initKmlCollection() {
-                            if (cancel === true) {
-                                return false;
-                            }
                             if (!Array.isArray(scope.kmlCollection) || scope.kmlCollection.length === 0) {
                                 scope.currentIndex = -1;
-                            }
-                            if (scope.currentIndex == null) {
-                                scope.currentIndex = 0;
                             } else {
-                                return false;
+                                scope['finished'] = false;
+                                //if not first init then clear
+                                if (scope.currentIndex != null) {
+                                    clearAll();
+                                } else {
+                                    scope.currentIndex = 0;
+                                }
+                                //start downloading kml collection
+                                downLoadOverlayFile(scope.kmlCollection[scope.currentIndex]);
                             }
-                            //start downloading kml collection
-                            downLoadOverlayFile(scope.kmlCollection[scope.currentIndex]);
                         }
 
                         /**
@@ -311,20 +367,26 @@
                             if (typeof scope.onProgress === 'function') {
                                 scope.onProgress({
                                     isDownloading: scope['downLoadingStarted'],
-                                    isParsing: scope['parserStarted']
+                                    isParsing: scope['parserStarted'],
+                                    finished: scope['finished']
                                 });
                             }
                         }
 
                         function downLoadOverlayFile(kmlObject) {
+                            if (!kmlObject) {
+                                setValue('finished', true, progress);
+                                return;
+                            }
+                            if (scope.cancel === true) {
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
+                                return false;
+                            }
                             setValue('downLoadingStarted', true, progress);
-                            if (kmlObject.url == null) {
-                                if (kmlObject instanceof Blob) {
-                                    onAfterDownload(kmlObject);
-                                } else {
-                                    $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
-                                }
-                            } else {
+                            if (kmlObject.url != null) {
                                 $http.get(kmlObject.url, {responseType: "arraybuffer"})
                                     .then(function (response) {
                                         var data = new Blob([response.data], {type: response.headers()['content-type']});
@@ -332,16 +394,30 @@
                                         data.name = 'example' + data.lastModifiedDate;
                                         onAfterDownload(data);
                                     });
+
+                            } else if (typeof kmlObject.content === 'String') {
+                                onAfterDownload(null, kmlObject.content);
+                            } else {
+                                if (kmlObject instanceof Blob) {
+                                    onAfterDownload(kmlObject);
+                                } else {
+                                    $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
+                                }
                             }
                         }
 
-                        function onAfterDownload(blob) {
+                        function onAfterDownload(blob, content) {
+                            if (scope.cancel === true) {
+                                //cancel to next digest
+                                $timeout(function () {
+                                    scope.cancel = false;
+                                });
+                                return false;
+                            }
                             setValue('parserStarted', true);
                             setValue('downLoadingStarted', false, progress);
-                            geoXml3Parser.parse(blob);
+                            content == null ? geoXml3Parser.parse(blob) : geoXml3Parser.parseKmlString(content);
                         }
-
-                        initKmlCollection();
                     }
                 }
             }

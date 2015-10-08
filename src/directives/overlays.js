@@ -4,7 +4,7 @@
 (function (angular, geoXML3) {
     'use strict';
     angular.module('LogicifyGMap')
-        .directive('kmlCollection', [
+        .directive('xmlOverlays', [
             '$timeout',
             '$log',
             '$q',
@@ -40,7 +40,8 @@
                         ctrl.$mapReady(function (map) {
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
-                            geoXml3Parser = new GeoXML3.parser(getParserOptions(map));
+                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                            //initKmlCollection();
                         });
                         scope.cancel = false;
                         scope.$on('$destroy', function () {
@@ -54,7 +55,7 @@
                          * @return {function()|*} listener
                          */
                         function attachCollectionWatcher() {
-                            return scope.$watch('kmlCollection', function (newValue, oldValue) {
+                            return scope.$watchCollection('kmlCollection', function (newValue, oldValue) {
                                 if (!newValue) {
                                     return;
                                 }
@@ -106,8 +107,6 @@
                             if (typeof scope.events.onAfterParseFailed === 'function') {
                                 scope.events.onAfterParseFailed(error);
                             }
-                            //try to download next file
-                            scope.currentIndex++;
                             whenParserReadyAgain(error);
                         }
 
@@ -115,11 +114,18 @@
                             setValue('parserStarted', false, progress);
                             if (kmlObject) {
                                 //extend bounds
-                                scope.globalBounds == null ? scope.globalBounds = kmlObject.doc[0].bounds : scope.globalBounds.extend(kmlObject.doc[0].bounds);
+                                if (scope.globalBounds == null) {
+                                    scope.globalBounds = new google.maps.LatLngBounds();
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                } else {
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter())
+                                }
                             }
-                            if (scope.currentIndex === scope.kmlCollection.length && scope.fitBoundsAfterAll !== false) {
+                            if (scope.currentIndex === scope.kmlCollection.length - 1 && scope.fitBoundsAfterAll !== false) {
                                 //if it's last file then
-                                scope.gMap.fitBounds(scope.globalBounds);
+                                $timeout(function () {
+                                    scope.gMap.setCenter(scope.globalBounds.getCenter());
+                                });
                             } else {
                                 //download next file
                                 scope.currentIndex++;
@@ -157,6 +163,7 @@
                             if (!Array.isArray(scope.kmlCollection) || scope.kmlCollection.length === 0) {
                                 scope.currentIndex = -1;
                             } else {
+                                scope['finished'] = false;
                                 //if not first init then clear
                                 if (scope.currentIndex != null) {
                                     clearAll();
@@ -175,12 +182,17 @@
                             if (typeof scope.onProgress === 'function') {
                                 scope.onProgress({
                                     isDownloading: scope['downLoadingStarted'],
-                                    isParsing: scope['parserStarted']
+                                    isParsing: scope['parserStarted'],
+                                    finished: scope['finished']
                                 });
                             }
                         }
 
                         function downLoadOverlayFile(kmlObject) {
+                            if (!kmlObject) {
+                                setValue('finished', true, progress);
+                                return;
+                            }
                             if (scope.cancel === true) {
                                 //cancel to next digest
                                 $timeout(function () {

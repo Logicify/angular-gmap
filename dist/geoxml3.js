@@ -157,7 +157,7 @@ geoXML3.parser = function (options) {
         // Process one or more KML documents
         if (!parserName) {
             parserName = 'geoXML3.instances[' + (geoXML3.instances.push(this) - 1) + ']';
-        }
+    }
         if (typeof urls === 'string') {
             // Single KML document
             urls = [urls];
@@ -214,7 +214,7 @@ geoXML3.parser = function (options) {
                 geoXML3.fetchZIP(url, resFunc, doc.internals.parser);
                 return;
             }
-        }
+    }
         doc.isCompressed = false;
         doc.baseDir = defileURL(doc.baseUrl);
         geoXML3.fetchXML(url, resFunc);
@@ -451,7 +451,7 @@ geoXML3.parser = function (options) {
             } else if (!!pairStyleID && !!styles[pairStyleBaseUrl][pairStyleID]) {
                 map[pairKey] = clone(styles[pairStyleBaseUrl][pairStyleID]);
             }
-        }
+    }
         if (!!map["normal"]) {
             styles[baseUrl][styleID] = clone(map["normal"]);
         } else {
@@ -794,7 +794,7 @@ geoXML3.parser = function (options) {
                     if (!doc.markers[i].active) {
                         if (!!doc.markers[i].infoWindow) {
                             doc.markers[i].infoWindow.close();
-                        }
+            }
                         doc.markers[i].setMap(null);
                         doc.markers.splice(i, 1);
                     }
@@ -872,7 +872,7 @@ geoXML3.parser = function (options) {
                                     break;
                 }
                             }
-                        }
+            }
                     }
 
                     if (!found) {
@@ -887,10 +887,10 @@ geoXML3.parser = function (options) {
                         if (!overlays[i].active) {
                             overlays[i].remove();
                             overlays.splice(i, 1);
-                        }
+            }
                     }
                     doc.groundoverlays = overlays;
-                }
+        }
             }
 
             // Parse network links
@@ -913,7 +913,7 @@ geoXML3.parser = function (options) {
                 // Establish the specific refresh mode
                 if (!networkLink.link.refreshMode) {
                     networkLink.link.refreshMode = 'onChange';
-                }
+        }
                 if (networkLink.link.refreshMode === 'onInterval') {
                     networkLink.link.refreshInterval = parseFloat(nodeValue(getElementsByTagName(node, 'refreshInterval')[0]));
                     if (isNaN(networkLink.link.refreshInterval)) {
@@ -1059,7 +1059,7 @@ geoXML3.parser = function (options) {
                     icon.dim.h = icon.img.height;
                 } else {
                     icon.dim.th = icon.img.height;
-                }
+        }
             }
             else {
                 // settle for a default of 32x32
@@ -1164,7 +1164,7 @@ geoXML3.parser = function (options) {
     var processStyles = function (doc) {
         for (var styleID in doc.styles) {
             processStyleID(doc.styles[styleID]);
-        }
+    }
     };
 
     var createMarker = function (placemark, doc) {
@@ -1240,7 +1240,7 @@ geoXML3.parser = function (options) {
                 bounds.extend(pt);
             }
             paths.push(path);
-        }
+    }
         // point to open the infowindow if triggered
         var point = paths[0][Math.floor(path.length / 2)];
         // Load basic polyline properties
@@ -1261,7 +1261,7 @@ geoXML3.parser = function (options) {
         } else {
             polyOptions.path = paths[0];
             var p = new google.maps.Polyline(polyOptions);
-        }
+    }
         p.bounds = bounds;
 
         // setup and create the infoWindow if it is not suppressed
@@ -1270,7 +1270,7 @@ geoXML3.parser = function (options) {
         placemark.polyline = p;
         if (typeof parserOptions.onAfterCreatePolyLine === 'function') {
             parserOptions.onAfterCreatePolyLine(p, placemark);
-    }
+        }
         return p;
     }
 
@@ -1333,7 +1333,7 @@ geoXML3.parser = function (options) {
         placemark.polygon = p;
         if (typeof parserOptions.onAfterCreatePolygon === 'function') {
             parserOptions.onAfterCreatePolygon(p, placemark);
-        }
+    }
         return p;
     }
 
@@ -1639,7 +1639,7 @@ geoXML3.fetchXML = function (url, callback) {
             catch (e) {
                 continue;
             }
-        }
+    }
         if (!xhrFetcher.fetcher) {
             geoXML3.log('Unable to create XHR object');
             callback(null);
@@ -1822,7 +1822,7 @@ geoXML3.fetchZIP = function (url, callback, parser) {
                     geoXML3.log('KMZ warning extracting ' + url + ': entire ZIP has not been extracted after 10 seconds; running through KML, anyway...');
                     kmlProcessing.extractLeft--;
                     callback(geoXML3.xmlParse(entryContent));
-                }
+        }
             }
             return;
         };
