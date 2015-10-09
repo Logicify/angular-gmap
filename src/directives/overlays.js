@@ -37,6 +37,9 @@
                             return opts;
                         }
 
+                        /**
+                         * get google map object from controller
+                         */
                         ctrl.$mapReady(function (map) {
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
@@ -78,6 +81,10 @@
                             }, true);
                         }
 
+                        /**
+                         * Fires when kml or kmz file has been parsed
+                         * @param doc - Array that contains only one item: [0] = {Document}
+                         */
                         function afterParse(doc) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -94,6 +101,9 @@
                             whenParserReadyAgain(null, scope.kmlCollection[scope.currentIndex]);
                         }
 
+                        /**
+                         * Fires when failed parse kmz or kml
+                         */
                         function failedParse() {
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -110,6 +120,11 @@
                             whenParserReadyAgain(error);
                         }
 
+                        /**
+                         * Calls by "failedParse" or "afterParse" methods
+                         * @param error
+                         * @param kmlObject
+                         */
                         function whenParserReadyAgain(error, kmlObject) {
                             setValue('parserStarted', false, progress);
                             if (kmlObject) {
@@ -146,6 +161,9 @@
                             }
                         }
 
+                        /**
+                         * Cleanup
+                         */
                         function clearAll() {
                             angular.forEach(geoXml3Parser.docs, function (doc) {
                                 geoXml3Parser.hideDocument(doc);
@@ -188,6 +206,11 @@
                             }
                         }
 
+                        /**
+                         * FIred when we need to start downloading of new kml or kmz file
+                         * @param kmlObject
+                         * @return {boolean}
+                         */
                         function downLoadOverlayFile(kmlObject) {
                             if (!kmlObject) {
                                 setValue('finished', true, progress);
@@ -221,6 +244,11 @@
                             }
                         }
 
+                        /**
+                         * When downloading finished we need start parsing
+                         * @param blob - if it's a file
+                         * @param content - if it's a string
+                         */
                         function onAfterDownload(blob, content) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
