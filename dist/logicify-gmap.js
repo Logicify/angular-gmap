@@ -6,6 +6,131 @@
     angular.module('LogicifyGMap',[]);
 })(angular);
 /**
+ * Created by artem on 10/12/15.
+ */
+(function (angular) {
+    'use strict';
+    angular.module('LogicifyGMap')
+        .service('SmartCollection', [function () {
+            /**
+             * Service is a singleton, so we can use global variable to generate uid!
+             */
+            var uid = 0;
+            /**
+             * Redefine isArray method, taken from MDN
+             * @param arg
+             */
+            Array.isArray = function (arg) {
+                return Object.prototype.toString.call(arg) === '[object Array]' ||
+                        //if it's SmartCollection Class
+                    ((arg != null && arg.constructor && arg.constructor.name === 'SmartCollection') &&
+                        //and Base Class is Array!
+                    Object.prototype.toString.call(arg.__proto__.__proto__) === '[object Array]');
+            };
+
+            function SmartCollection(arr) {
+                var self = this;
+                //private property
+                var _iterator = null;
+                /**
+                 * Iterator changes each time when method 'next' called
+                 * If last element reached then iterator resets
+                 * @return {ArrayItem || undefined}
+                 */
+                self['next'] = function () {
+                    if (_iterator == null) {
+                        _iterator = 0;
+                    } else {
+                        _iterator++;
+                    }
+                    if (self[_iterator] !== undefined) {
+                        return self[_iterator];
+                    }
+                    //reset iterator if end of list
+                    _iterator = null;
+                    return undefined;
+                };
+
+                self['setIterator'] = function (index) {
+                    if (angular.isNumber(index) && index !== NaN) {
+                        if (self[index] === undefined) {
+                            throw new Error('Can not reach this element, because it doesn\'t exist. Index: ' + index);
+                        } else {
+                            _iterator = index;
+                        }
+                    }
+                };
+                //init before overriding
+                if (Array.isArray(arr)) {
+                    arr.forEach(function (item, index) {
+                        self.push(item);
+                    });
+                }
+                self._uid = uid++;
+                /**
+                 * Override all methods that are changing an array!
+                 */
+                var push = self.push;
+                self['push'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = push.apply(self, args);
+                    if (typeof self.onAddItem === 'function') {
+                        args.forEach(function (item) {
+                            self.onAddItem.apply(self, [item]);
+                        });
+                    }
+                    return result;
+                };
+                var pop = self.pop;
+                self['pop'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = pop.apply(self, args);
+                    typeof self.onRemoveItem === 'function' ? self.onRemoveItem.apply(self, [result]) : null;
+                    return result;
+                };
+                var unshift = self.unshift;
+                self['unshift'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = unshift.apply(self, args);
+                    if (typeof self.onAddItem === 'function') {
+                        args.forEach(function (item) {
+                            self.onAddItem.apply(self, [item]);
+                        });
+                    }
+                    return result;
+                };
+                var shift = self.shift;
+                self['shift'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = unshift.apply(self, args);
+                    typeof self.onRemoveItem === 'function' ? self.onRemoveItem.apply(self, [result]) : null;
+                    return result;
+                };
+                var splice = self.splice;
+                self['splice'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = splice.apply(self, args);
+                    if (typeof self.onRemoveItem === 'function') {
+                        result.forEach(function (item) {
+                            self.onRemoveItem.apply(self, [item]);
+                        });
+                    }
+                    return result;
+                };
+                /**
+                 * The same as "splice", but does not call onRemove callback
+                 * @return {Array}
+                 */
+                self['removeQuietly'] = splice;
+
+            }
+
+            SmartCollection.prototype = Object.create(Array.prototype);
+            SmartCollection.prototype.constructor = SmartCollection;
+            return SmartCollection;
+        }]);
+})(angular);
+/**
  * Created by artem on 6/24/15.
  */
 (function (angular) {
@@ -195,19 +320,19 @@
             '$q',
             '$compile',
             '$http',
-            function ($timeout, $log, $q, $compile, $http) {
+            'SmartCollection',
+            function ($timeout, $log, $q, $compile, $http, SmartCollection) {
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
                     link: function (scope, element, attrs, ctrl) {
                         var geoXml3Parser = null;
-                        scope.kmlCollection = scope.$eval(attrs['kmlCollection']) || [];
+                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
                         scope.events = scope.$eval(attrs['gmapEvents']) || {};
                         scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
                         scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
-
                         function getParserOptions(map) {
                             var opts = {};
                             angular.extend(opts, scope.parserOptions);
@@ -222,11 +347,14 @@
                             return opts;
                         }
 
+                        /**
+                         * get google map object from controller
+                         */
                         ctrl.$mapReady(function (map) {
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
                             geoXml3Parser = new geoXML3.parser(getParserOptions(map));
-                            //initKmlCollection();
+                            initKmlCollection();
                         });
                         scope.cancel = false;
                         scope.$on('$destroy', function () {
@@ -237,32 +365,49 @@
 
 
                         /**
+                         *
                          * @return {function()|*} listener
                          */
                         function attachCollectionWatcher() {
-                            return scope.$watchCollection('kmlCollection', function (newValue, oldValue) {
-                                if (!newValue) {
-                                    return;
+                            return scope.$watch('kmlCollection._uid', function (newValue, oldValue) {
+                                //watch for top level object reference change
+                                if (newValue != null && oldValue != null && oldValue != newValue) {
+                                    scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                                    if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
+                                        scope.cancel = true;
+                                    }
+                                    //if need cancel all.
+                                    if (scope.cancel === true) {
+                                        var cancellation = scope.$watch('cancel', function (newValue, oldValue) {
+                                            //w8 for finish cancellation
+                                            if (newValue === true) {
+                                                initKmlCollection();//start init
+                                                cancellation();//clear cancel listener
+                                            }
+                                        });
+                                    } else {
+                                        initKmlCollection();
+                                    }
                                 }
-                                //if already started
-                                if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
-                                    scope.cancel = true;
-                                }
-                                //if need cancel all.
-                                if (scope.cancel === true) {
-                                    var cancellation = scope.$watch('cancel', function (newValue, oldValue) {
-                                        //w8 for finish cancellation
-                                        if (newValue === true) {
-                                            initKmlCollection();//start init
-                                            cancellation();//clear cancel listener
-                                        }
-                                    });
-                                } else {
-                                    initKmlCollection();
-                                }
-                            }, true);
+                            });
                         }
 
+                        function onAddArrayItem(item) {
+                            if (item != null) {
+                                item.downloadNext = false;
+                                scope.currentDocument = item;
+                                downLoadOverlayFile(item);
+                            }
+                        }
+
+                        function onRemoveArrayItem(item) {
+                            clearAll(item);
+                        }
+
+                        /**
+                         * Fires when kml or kmz file has been parsed
+                         * @param doc - Array that contains only one item: [0] = {Document}
+                         */
                         function afterParse(doc) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -271,14 +416,17 @@
                                 });
                                 return false;
                             }
-                            doc[0].$uid = new Date().getTime() + '-index-' + scope.currentIndex;
-                            scope.kmlCollection[scope.currentIndex].doc = doc;
+                            doc[0].$uid = new Date().getTime() + '-index-' + Math.floor(Math.random() * ( -9));
+                            scope.currentDocument.doc = doc;
                             if (typeof scope.events.onAfterParse === 'function') {
                                 scope.events.onAfterParse(doc);
                             }
-                            whenParserReadyAgain(null, scope.kmlCollection[scope.currentIndex]);
+                            whenParserReadyAgain(null, scope.currentDocument);
                         }
 
+                        /**
+                         * Fires when failed parse kmz or kml
+                         */
                         function failedParse() {
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -287,7 +435,7 @@
                                 });
                                 return false;
                             }
-                            var error = {message: 'Failed to parse file #' + scope.currentIndex};
+                            var error = {message: 'Failed to parse file url: ' + scope.currentDocument.url};
                             $log.error(error.message);
                             if (typeof scope.events.onAfterParseFailed === 'function') {
                                 scope.events.onAfterParseFailed(error);
@@ -295,26 +443,20 @@
                             whenParserReadyAgain(error);
                         }
 
+                        /**
+                         * Calls by "failedParse" or "afterParse" methods
+                         * @param error
+                         * @param kmlObject
+                         */
                         function whenParserReadyAgain(error, kmlObject) {
                             setValue('parserStarted', false, progress);
-                            if (kmlObject) {
-                                //extend bounds
-                                if (scope.globalBounds == null) {
-                                    scope.globalBounds = new google.maps.LatLngBounds();
-                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
-                                } else {
-                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter())
-                                }
-                            }
-                            if (scope.currentIndex === scope.kmlCollection.length - 1 && scope.fitBoundsAfterAll !== false) {
-                                //if it's last file then
-                                $timeout(function () {
-                                    scope.gMap.setCenter(scope.globalBounds.getCenter());
-                                });
+                            //if there's no reason to download next file
+                            if (scope.currentDocument.downloadNext === false) {
+                                delete scope.currentDocument.downloadNext;
+                                initGlobalBounds();
                             } else {
-                                //download next file
-                                scope.currentIndex++;
-                                downLoadOverlayFile(scope.kmlCollection[scope.currentIndex]);
+                                scope.currentDocument = scope.kmlCollection.next();
+                                downLoadOverlayFile(scope.currentDocument);
                             }
                         }
 
@@ -331,14 +473,39 @@
                             }
                         }
 
-                        function clearAll() {
-                            angular.forEach(geoXml3Parser.docs, function (doc) {
-                                geoXml3Parser.hideDocument(doc);
-                            });
-                            geoXml3Parser.docs.splice(0, geoXml3Parser.length);
-                            geoXml3Parser.docsByUrl = {};
-                            scope.globalBounds = null;
-                            scope.currentIndex = 0;
+                        function initGlobalBounds() {
+                            scope.globalBounds = new google.maps.LatLngBounds();
+                            if (scope.fitBoundsAfterAll !== false) {
+                                scope.kmlCollection.forEach(function (item) {
+                                    scope.globalBounds.extend(item.doc[0].bounds.getCenter());
+                                });
+                                $timeout(function () {
+                                    scope.gMap.setCenter(scope.globalBounds.getCenter());
+                                }, 10);
+                            }
+                        }
+
+                        /**
+                         * Cleanup
+                         */
+                        function clearAll(item) {
+                            if (item) {
+                                geoXml3Parser.hideDocument(item.doc[0]);
+                                var index = geoXml3Parser.docs.indexOf(item.doc[0]);
+                                if (index > -1) {
+                                    delete geoXml3Parser.docsByUrl[item.doc[0].baseUrl];
+                                    geoXml3Parser.docs.splice(index, 1);
+                                    initGlobalBounds();
+                                }
+                            } else {
+                                angular.forEach(geoXml3Parser.docs, function (doc) {
+                                    geoXml3Parser.hideDocument(doc);
+                                });
+                                geoXml3Parser.docs.splice(0, geoXml3Parser.docs.length);
+                                geoXml3Parser.docsByUrl = {};
+                                scope.globalBounds = null;
+                                scope.currentDocument = null;
+                            }
                         }
 
                         /**
@@ -346,17 +513,19 @@
                          */
                         function initKmlCollection() {
                             if (!Array.isArray(scope.kmlCollection) || scope.kmlCollection.length === 0) {
-                                scope.currentIndex = -1;
+                                scope.currentDocument = null;
                             } else {
                                 scope['finished'] = false;
                                 //if not first init then clear
-                                if (scope.currentIndex != null) {
+                                if (scope.currentDocument !== undefined) {
                                     clearAll();
                                 } else {
-                                    scope.currentIndex = 0;
+                                    scope.currentDocument = scope.kmlCollection.next();
                                 }
+                                scope.kmlCollection.onAddItem = onAddArrayItem;
+                                scope.kmlCollection.onRemoveItem = onRemoveArrayItem;
                                 //start downloading kml collection
-                                downLoadOverlayFile(scope.kmlCollection[scope.currentIndex]);
+                                downLoadOverlayFile(scope.currentDocument);
                             }
                         }
 
@@ -373,10 +542,16 @@
                             }
                         }
 
+                        /**
+                         * FIred when we need to start downloading of new kml or kmz file
+                         * @param kmlObject
+                         * @return {boolean}
+                         */
                         function downLoadOverlayFile(kmlObject) {
                             if (!kmlObject) {
                                 setValue('finished', true, progress);
-                                return;
+                                initGlobalBounds();
+                                return false;
                             }
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -406,6 +581,11 @@
                             }
                         }
 
+                        /**
+                         * When downloading finished we need start parsing
+                         * @param blob - if it's a file
+                         * @param content - if it's a string
+                         */
                         function onAfterDownload(blob, content) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
