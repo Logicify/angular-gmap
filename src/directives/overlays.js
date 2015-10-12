@@ -61,7 +61,7 @@
                         function attachCollectionWatcher() {
                             return scope.$watch('kmlCollection._uid', function (newValue, oldValue) {
                                 //watch for top level object reference change
-                                if (newValue != null && oldValue != null && oldValue != newValue) {
+                                if (newValue == null) {
                                     scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
                                     if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
                                         scope.cancel = true;
@@ -165,12 +165,16 @@
 
                         function initGlobalBounds() {
                             scope.globalBounds = new google.maps.LatLngBounds();
-                            if (scope.fitBoundsAfterAll !== false) {
+                            if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
                                 scope.kmlCollection.forEach(function (item) {
                                     scope.globalBounds.extend(item.doc[0].bounds.getCenter());
                                 });
                                 $timeout(function () {
-                                    scope.gMap.setCenter(scope.globalBounds.getCenter());
+                                    scope.gMap.fitBounds(scope.globalBounds);
+                                }, 10);
+                            } else if (scope.kmlCollection.length > 0 && scope.fitBoundsAfterAll !== false) {
+                                $timeout(function () {
+                                    scope.gMap.fitBounds(scope.kmlCollection[0].doc[0].bounds);
                                 }, 10);
                             }
                         }
@@ -209,9 +213,8 @@
                                 //if not first init then clear
                                 if (scope.currentDocument !== undefined) {
                                     clearAll();
-                                } else {
-                                    scope.currentDocument = scope.kmlCollection.next();
                                 }
+                                scope.currentDocument = scope.kmlCollection.next();
                                 scope.kmlCollection.onAddItem = onAddArrayItem;
                                 scope.kmlCollection.onRemoveItem = onRemoveArrayItem;
                                 //start downloading kml collection
