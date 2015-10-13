@@ -9,17 +9,6 @@
              * Service is a singleton, so we can use global variable to generate uid!
              */
             var uid = 0;
-            /**
-             * Redefine isArray method, taken from MDN
-             * @param arg
-             */
-            Array.isArray = function (arg) {
-                return Object.prototype.toString.call(arg) === '[object Array]' ||
-                        //if it's SmartCollection Class
-                    ((arg != null && arg.constructor && arg.constructor.name === 'SmartCollection') &&
-                        //and Base Class is Array!
-                    Object.prototype.toString.call(arg.__proto__.__proto__) === '[object Array]');
-            };
 
             function SmartCollection(arr) {
                 var self = this;

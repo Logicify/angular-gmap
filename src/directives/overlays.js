@@ -213,7 +213,7 @@
                          * Download all files by asset
                          */
                         function initKmlCollection() {
-                            if (!Array.isArray(scope.kmlCollection) || scope.kmlCollection.length === 0) {
+                            if (!(scope.kmlCollection instanceof SmartCollection) || scope.kmlCollection.length === 0) {
                                 scope.currentDocument = null;
                             } else {
                                 scope['finished'] = false;

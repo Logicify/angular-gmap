@@ -16,17 +16,6 @@
              * Service is a singleton, so we can use global variable to generate uid!
              */
             var uid = 0;
-            /**
-             * Redefine isArray method, taken from MDN
-             * @param arg
-             */
-            Array.isArray = function (arg) {
-                return Object.prototype.toString.call(arg) === '[object Array]' ||
-                        //if it's SmartCollection Class
-                    ((arg != null && arg.constructor && arg.constructor.name === 'SmartCollection') &&
-                        //and Base Class is Array!
-                    Object.prototype.toString.call(arg.__proto__.__proto__) === '[object Array]');
-            };
 
             function SmartCollection(arr) {
                 var self = this;
@@ -306,13 +295,6 @@
                                 infoWindow.$compiled = true;
                                 infoWindow.setContent(compiled[0]);
                             }
-                            if (typeof infoWindow.$onOpen !== 'function') {
-                                infoWindow.$onOpen = function (gObj) {
-                                    if (typeof infoWindow.onAfterOpen === 'function') {
-                                        infoWindow.onAfterOpen(gObj);
-                                    }
-                                };
-                            }
                         };
                         map.closeInfoWnd = function (infoWnd, overrideCloseMethod) {
                             if (infoWnd.$scope) {
@@ -546,7 +528,7 @@
                          * Download all files by asset
                          */
                         function initKmlCollection() {
-                            if (!Array.isArray(scope.kmlCollection) || scope.kmlCollection.length === 0) {
+                            if (!(scope.kmlCollection instanceof SmartCollection) || scope.kmlCollection.length === 0) {
                                 scope.currentDocument = null;
                             } else {
                                 scope['finished'] = false;

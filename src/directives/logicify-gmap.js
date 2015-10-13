@@ -95,13 +95,6 @@
                                 infoWindow.$compiled = true;
                                 infoWindow.setContent(compiled[0]);
                             }
-                            if (typeof infoWindow.$onOpen !== 'function') {
-                                infoWindow.$onOpen = function (gObj) {
-                                    if (typeof infoWindow.onAfterOpen === 'function') {
-                                        infoWindow.onAfterOpen(gObj);
-                                    }
-                                };
-                            }
                         };
                         map.closeInfoWnd = function (infoWnd, overrideCloseMethod) {
                             if (infoWnd.$scope) {
