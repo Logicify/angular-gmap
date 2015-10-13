@@ -228,7 +228,7 @@ infowindow.close();
 ## XML overlays support
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files, so all files will be loads synchronously.
-XML files can be: .zip, .kmz, .kml
+XML files can be: .zip, .kmz, .kml, or just a string.
 #### Basic usage:
 ###### HTML
 ```html
@@ -319,3 +319,70 @@ app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function (
         };
     }]);
 ```
+###### Events
+```html
+ <xml-overlays
+                kml-collection="kmlCollection"
+                gmap-events="kmlEvents">
+ </xml-overlays>
+```
+```js
+var kmlEvents = {
+    onAfterParse:function(doc){
+        //doc - array with 1 element (document)
+    },
+    onAfterParseFailed:function(err){
+
+    },
+    onAfterCreateGroundOverlay:function(groundOverlayGMapMVCObject){
+    },
+    onAfterCreatePolygon:function(polygonMVCObject,placemark){
+        //all mvc objects has methods "get" & "set"
+    },
+    onAfterCreatePolyLine:function(polyLineMVCObject,placemark){
+
+    }
+};
+```
+Also you can include all [events from geoxml3 lib](https://github.com/artemijan/geoxml3/blob/wiki/ParserReference.md)
+###### Options:
+all options described on [geoxml3 repository](https://github.com/artemijan/geoxml3/blob/wiki/ParserReference.md)
+
+###### Progress callback
+Html example
+```html
+<xml-overlays
+                kml-collection="kmlCollection"
+                gmap-events="kmlEvents"
+                on-progress="callback">
+</xml-overlays>
+```
+Progress object structure
+```js
+callback = function(progress){
+    progress = {
+            isDownloading: true\false,
+            isParsing: true\false,
+            finished: true\false
+        };
+}
+```
+###### Infowindow
+You can create and inject infowindow to your overlays.
+But if you want to be able to access overlay MVC object from infowindow scope then you need just add property to infowindow object.
+```js
+var infowindow = new Infowindow(options);
+infowindow.$onOpen = function(googleMVCObject){
+    //pass this mvc object to infowindow scope here
+    infowindow.$scope.overlayMVCObject = googleMVCObject;
+};
+```
+HTML
+```html
+<div class="infowindow">
+    {{overlayMVCObject.description}}
+    {{overlayMVCObject.get('fillColor')}}
+    ...etc
+</div>
+```
+see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
