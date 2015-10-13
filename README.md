@@ -382,17 +382,20 @@ callback = function(progress){
 You can create and inject infowindow to your overlays.
 But if you want to be able to access overlay MVC object from infowindow scope then you need just add property to infowindow object.
 ```js
-var infowindow = new Infowindow(options);
-infowindow.$onOpen = function(googleMVCObject){
-    //pass this mvc object to infowindow scope here
-    infowindow.$scope.overlayMVCObject = googleMVCObject;
-};
+ $scope.overlaysInfowindow = new InfoWindow({templateUrl: 'infowindow.html'});
+ $scope.overlaysInfowindow.$ready(overlayInfowindowReady); //w8 for downloading template
+ function overlayInfowindowReady(wnd) {
+     wnd.$onOpen = function (gObj) {   //method "open" of infowindow calls by geoxml3 parser, so you don't need call "infowindow.open(map,marker)" like for markers
+        wnd.$scope.mvcObject = gObj;   //when infowindow opened then calls "$onOpen" callback with google mvc object
+        gObj.setDraggable(true);
+   };
+ }
 ```
 HTML
 ```html
 <div class="infowindow">
-    {{overlayMVCObject.description}}
-    {{overlayMVCObject.get('fillColor')}}
+    {{mvcObject.title}}
+    {{mvcObject.get('fillColor')}}
     ...etc
 </div>
 ```
