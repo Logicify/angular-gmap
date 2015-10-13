@@ -224,3 +224,98 @@ infowindow.close(true)
 ```js
 infowindow.close();
 ```
+
+## XML overlays support
+There is a way to display xml overlays on google map using "xml-overlays" directive.
+Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files, so all files will be loads synchronously.
+XML files can be: .zip, .kmz, .kml
+#### Basic usage:
+###### HTML
+```html
+<div ng-controller="TestController">
+    <script type="text/ng-template" id="template.html">
+        <div>{{infoWindowName}} - {{$infoWND.anchor.id}}</div>
+    </script>
+    <logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-control
+                control-position="position"
+                control-index="1"
+                events="controlEvents">
+            <button>Push me</button>
+        </logicify-gmap-control>
+        <xml-overlays
+                kml-collection="kmlCollection"
+                gmap-events="kmlEvents">
+        </xml-overlays>
+    </logicify-gmap>
+</div>
+```
+###### JS
+```js
+app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
+        $scope.markers = [];
+        $scope.controlEvents = {
+            click: function (event) {
+                $scope.kmlCollection = [
+                    {url: 'tristate_area.kml'}
+                ];
+            }
+        };
+        $scope.infoWindowName = 'hello native you!';
+        $scope.cssOpts = {
+            width: '80%',
+            height: '60%',
+            'min-width': '400px',
+            'min-height': '200px'
+        };
+        $scope.gmOpts = {
+            zoom: 16,
+            center: new google.maps.LatLng(-1, 1)
+        };
+        $scope.kmlCollection = [
+            {url: 'cta.kml'}
+        ];
+        $timeout(function () {
+            $scope.kmlCollection.push({url: 'tristate_area.kml'});
+        }, 3000);
+        $timeout(function () {
+            $scope.kmlCollection.pop();
+        }, 6000);
+        $timeout(function () {
+            $scope.kmlCollection = [{url: 'tristate_area.kml'},{url: 'cta.kml'}];
+        }, 9000);
+        $scope.kmlEvents = {};
+        $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
+        $scope.index = 1;
+        $scope.closeInfoWindow = function (infowindow) {
+            infowindow.close(true);
+        };
+        $scope.ready = function (map) {
+            var infowindow = new InfoWindow({templateUrl: 'template.html'});
+
+            function attach(marker) {
+                google.maps.event.addListener(marker, 'click', function (markerObj) {
+                    infowindow.$ready(function (wnd) {
+                        wnd.open(map, marker);
+                    });
+                });
+            }
+
+            for (var i = 10; i < 15; i++) {
+                var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);
+                var marker = new google.maps.Marker({
+                    id: 'marker_' + i,
+                    name: 'is_' + i,
+                    position: pos,
+                    map: map
+                });
+                $scope.markers.push(marker);
+                attach(marker);
+            }
+        };
+    }]);
+```
