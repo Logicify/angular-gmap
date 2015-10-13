@@ -140,7 +140,7 @@ geoXML3.parser = function (options) {
     if (!parserOptions.infoWindow && parserOptions.singleInfoWindow)
         parserOptions.infoWindow = new google.maps.InfoWindow();
 
-    var parseKmlString = function (kmlString, docSet) {
+    var parseKmlString = function (kmlString, docSet, promise) {
         // Internal values for the set of documents as a whole
         var internals = {
             parser: this,
@@ -151,10 +151,10 @@ geoXML3.parser = function (options) {
         thisDoc = new Object();
         thisDoc.internals = internals;
         internals.docSet.push(thisDoc);
-        render(geoXML3.xmlParse(kmlString), thisDoc);
+        render(geoXML3.xmlParse(kmlString), thisDoc, promise);
     };
 
-    var parse = function (urls, docSet) {
+    var parse = function (urls, docSet, promise) {
         // Process one or more KML documents
         if (!parserName) {
             parserName = 'geoXML3.instances[' + (geoXML3.instances.push(this) - 1) + ']';
@@ -197,13 +197,13 @@ geoXML3.parser = function (options) {
             thisDoc.type = mimeType;
             thisDoc.url = blobUrl;
             thisDoc.internals = internals;
-            fetchDoc(thisDoc.url, thisDoc);
+            fetchDoc(thisDoc.url, thisDoc, null, promise);
         }
     };
 
-    function fetchDoc(url, doc, resFunc) {
+    function fetchDoc(url, doc, resFunc, promise) {
         resFunc = resFunc || function (responseXML) {
-            render(responseXML, doc);
+            render(responseXML, doc, promise);
         };
 
         if (doc.type !== 'application/vnd.google-earth.kml+xml' && typeof ZipFile === 'function' && typeof JSIO === 'object' && typeof JSIO.guessFileType === 'function') {  // KMZ support requires these modules loaded
@@ -498,12 +498,12 @@ geoXML3.parser = function (options) {
         return coordListA;
     }
 
-    var render = function (responseXML, doc) {
+    var render = function (responseXML, doc, promise) {
         // Callback for retrieving a KML document: parse the KML and display it on the map
         if (!responseXML || responseXML == "failed parse") {
             // Error retrieving the data
             geoXML3.log('Unable to retrieve ' + doc.url);
-            if (parserOptions.failedParse) parserOptions.failedParse(doc);
+            if (parserOptions.failedParse) parserOptions.failedParse(doc, promise);
             doc.failed = true;
             return;
         } else if (responseXML.parseError && responseXML.parseError.errorCode != 0) {
@@ -514,13 +514,13 @@ geoXML3.parser = function (options) {
                 'Error Line: ' + err.srcText;
 
             geoXML3.log('Unable to retrieve ' + doc.url + ': ' + msg);
-            if (parserOptions.failedParse) parserOptions.failedParse(doc);
+            if (parserOptions.failedParse) parserOptions.failedParse(doc, promise);
             doc.failed = true;
             return;
         } else if (responseXML.documentElement && responseXML.documentElement.nodeName == 'parsererror') {
             // Firefox parse error
             geoXML3.log('Unable to retrieve ' + doc.url + ': ' + responseXML.documentElement.childNodes[0].nodeValue);
-            if (parserOptions.failedParse) parserOptions.failedParse(doc);
+            if (parserOptions.failedParse) parserOptions.failedParse(doc, promise);
             doc.failed = true;
             return;
         } else if (!doc) {
@@ -567,7 +567,7 @@ geoXML3.parser = function (options) {
                 // render dependent KML first then re-run renderer
                 fetchDoc(rUrl, thisDoc, function (thisResXML) {
                     render(thisResXML, thisDoc);
-                    render(responseXML, doc);
+                    render(responseXML, doc, promise);
                 });
 
                 // to prevent cross-dependency issues, just load the one
@@ -987,7 +987,7 @@ geoXML3.parser = function (options) {
                 parserOptions.map.fitBounds(doc.internals.bounds);
             }
             if (parserOptions.afterParse) {
-                parserOptions.afterParse(doc.internals.docSet);
+                parserOptions.afterParse(doc.internals.docSet, promise);
             }
             google.maps.event.trigger(doc.internals.parser, 'parsed');
         }
@@ -1335,7 +1335,7 @@ geoXML3.parser = function (options) {
             parserOptions.onAfterCreatePolygon(p, placemark);
         }
         return p;
-    }
+    };
 
     var createInfoWindow = function (placemark, doc, gObj) {
         var bStyle = placemark.style.balloon;

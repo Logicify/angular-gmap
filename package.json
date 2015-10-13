@@ -11,7 +11,7 @@
   "author": "Artem Fedorov <artem.fedorov@logicify.com> (https://github.com/artemijan)",
   "license": "MIT",
   "dependencies": {
-    "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.1"
+    "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.2"
   },
   "keywords": [
     "angular",

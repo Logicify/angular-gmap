@@ -20,7 +20,7 @@
             function SmartCollection(arr) {
                 var self = this;
                 //private property
-                var _iterator = null, isLocked = false;
+                var _iterator = null;
                 /**
                  * Iterator changes each time when method 'next' called
                  * If last element reached then iterator resets
@@ -40,15 +40,6 @@
                     return undefined;
                 };
 
-                self['lock'] = function () {
-                    isLocked = true;
-                };
-                self['unlock'] = function () {
-                    isLocked = false;
-                };
-                self['isLocked'] = function () {
-                    return isLocked;
-                };
                 self['setIterator'] = function (index) {
                     if (angular.isNumber(index) && index !== NaN) {
                         if (self[index] === undefined) {
@@ -419,7 +410,7 @@
 
                         function onAddArrayItem(item) {
                             if (item != null) {
-                                item.downloadNext = false;
+                                item.downloadNext = false; //don't need download next file because this callback fires when item added to collection
                                 scope.currentDocument = item;
                                 downLoadOverlayFile(item);
                             }
@@ -433,7 +424,7 @@
                          * Fires when kml or kmz file has been parsed
                          * @param doc - Array that contains only one item: [0] = {Document}
                          */
-                        function afterParse(doc) {
+                        function afterParse(doc, promise) {
                             if (scope.cancel === true) {
                                 //cancel to next digest
                                 $timeout(function () {
@@ -615,6 +606,7 @@
                          * @param content - if it's a string
                          */
                         function onAfterDownload(blob, content) {
+                            var deferred = $q.defer();
                             if (scope.cancel === true) {
                                 //cancel to next digest
                                 $timeout(function () {
@@ -624,7 +616,7 @@
                             }
                             setValue('parserStarted', true);
                             setValue('downLoadingStarted', false, progress);
-                            content == null ? geoXml3Parser.parse(blob) : geoXml3Parser.parseKmlString(content);
+                            content == null ? geoXml3Parser.parse(blob, null, deferred.promise) : geoXml3Parser.parseKmlString(content, null, deferred.promise);
                         }
                     }
                 }

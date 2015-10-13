@@ -13,7 +13,7 @@
             function SmartCollection(arr) {
                 var self = this;
                 //private property
-                var _iterator = null, isLocked = false;
+                var _iterator = null;
                 /**
                  * Iterator changes each time when method 'next' called
                  * If last element reached then iterator resets
@@ -33,15 +33,6 @@
                     return undefined;
                 };
 
-                self['lock'] = function () {
-                    isLocked = true;
-                };
-                self['unlock'] = function () {
-                    isLocked = false;
-                };
-                self['isLocked'] = function () {
-                    return isLocked;
-                };
                 self['setIterator'] = function (index) {
                     if (angular.isNumber(index) && index !== NaN) {
                         if (self[index] === undefined) {
