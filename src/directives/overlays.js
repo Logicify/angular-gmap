@@ -23,7 +23,7 @@
                         scope.onProgress = scope.$eval(attrs['onProgress']);
                         scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
-                        function getParserOptions(map) {
+                        function getParserOptions(map, wnd) {
                             var opts = {};
                             angular.extend(opts, scope.parserOptions);
                             //override options
@@ -33,7 +33,7 @@
                             opts.onAfterCreatePolygon = scope.events.onAfterCreatePolygon;
                             opts.onAfterCreatePolyLine = scope.events.onAfterCreatePolyLine;
                             opts.failedParse = failedParse;
-                            opts.infoWindow = scope.infowindow;
+                            opts.infoWindow = wnd;
                             return opts;
                         }
 
@@ -43,8 +43,15 @@
                         ctrl.$mapReady(function (map) {
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
-                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
-                            initKmlCollection();
+                            if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
+                                scope.infowindow.$ready(function (wnd) {
+                                    geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
+                                    initKmlCollection();
+                                });
+                            } else {
+                                geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
+                                initKmlCollection();
+                            }
                         });
                         scope.cancel = false;
                         scope.$on('$destroy', function () {
