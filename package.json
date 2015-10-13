@@ -1,6 +1,6 @@
 {
   "name": "logicify-gmap",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Create google maps based on angular framework.",
   "repository": {
     "type": "git",
