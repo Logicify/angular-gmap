@@ -21,7 +21,6 @@
                         scope.events = scope.$eval(attrs['gmapEvents']) || {};
                         scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
-                        scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
                         function getParserOptions(map, wnd) {
                             var opts = {};
@@ -41,6 +40,7 @@
                          * get google map object from controller
                          */
                         ctrl.$mapReady(function (map) {
+                            scope.infowindow = scope.$eval(attrs['infoWindow']);
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
                             if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
@@ -49,7 +49,7 @@
                                     initKmlCollection();
                                 });
                             } else {
-                                geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
+                                geoXml3Parser = new geoXML3.parser(getParserOptions(map));
                                 initKmlCollection();
                             }
                         });

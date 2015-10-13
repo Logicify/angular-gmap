@@ -306,6 +306,13 @@
                                 infoWindow.$compiled = true;
                                 infoWindow.setContent(compiled[0]);
                             }
+                            if (typeof infoWindow.$onOpen !== 'function') {
+                                infoWindow.$onOpen = function (gObj) {
+                                    if (typeof infoWindow.onAfterOpen === 'function') {
+                                        infoWindow.onAfterOpen(gObj);
+                                    }
+                                };
+                            }
                         };
                         map.closeInfoWnd = function (infoWnd, overrideCloseMethod) {
                             if (infoWnd.$scope) {
@@ -347,9 +354,8 @@
                         scope.events = scope.$eval(attrs['gmapEvents']) || {};
                         scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
-                        scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
-                        function getParserOptions(map) {
+                        function getParserOptions(map, wnd) {
                             var opts = {};
                             angular.extend(opts, scope.parserOptions);
                             //override options
@@ -359,7 +365,7 @@
                             opts.onAfterCreatePolygon = scope.events.onAfterCreatePolygon;
                             opts.onAfterCreatePolyLine = scope.events.onAfterCreatePolyLine;
                             opts.failedParse = failedParse;
-                            opts.infoWindow = scope.infowindow;
+                            opts.infoWindow = wnd;
                             return opts;
                         }
 
@@ -367,10 +373,18 @@
                          * get google map object from controller
                          */
                         ctrl.$mapReady(function (map) {
+                            scope.infowindow = scope.$eval(attrs['infoWindow']);
                             scope.collectionsWatcher = attachCollectionWatcher();
                             scope.gMap = map;
-                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
-                            initKmlCollection();
+                            if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
+                                scope.infowindow.$ready(function (wnd) {
+                                    geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
+                                    initKmlCollection();
+                                });
+                            } else {
+                                geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                                initKmlCollection();
+                            }
                         });
                         scope.cancel = false;
                         scope.$on('$destroy', function () {
@@ -662,7 +676,6 @@
                     var overrideClose = self['close'];
                     self['close'] = function (destroyScope) {
                         if (!lastMap) {
-                            $log.error('Info window is closed now, you can not close it twice!');
                             return;
                         }
                         if (typeof lastMap.closeInfoWnd === 'function' && destroyScope === true) {
