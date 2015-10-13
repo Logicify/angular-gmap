@@ -10,7 +10,7 @@
         $scope.controlEvents = {
             click: function (event) {
                 $scope.kmlCollection = [
-                    {url: 'tristate_area.kml'}
+                    {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'}
                 ];
             }
         };

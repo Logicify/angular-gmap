@@ -152,7 +152,7 @@
                                 delete scope.currentDocument.downloadNext;
                                 initGlobalBounds();
                             } else {
-                                scope.currentDocument = scope.kmlCollection.next();
+                                scope.currentDocument = scope.kmlCollection.next() || false;
                                 downLoadOverlayFile(scope.currentDocument);
                             }
                         }
@@ -218,7 +218,7 @@
                             } else {
                                 scope['finished'] = false;
                                 //if not first init then clear
-                                if (scope.currentDocument !== undefined) {
+                                if (scope.currentDocument == false || scope.currentDocument != null) {
                                     clearAll();
                                 }
                                 scope.currentDocument = scope.kmlCollection.next();
