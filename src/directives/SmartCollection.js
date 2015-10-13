@@ -60,6 +60,7 @@
                     });
                 }
                 self._uid = uid++;
+                var addCB = [], removeCB = [];
                 /**
                  * Override all methods that are changing an array!
                  */
@@ -67,47 +68,53 @@
                 self['push'] = function () {
                     var args = Array.prototype.slice.call(arguments);
                     var result = push.apply(self, args);
-                    if (typeof self.onAddItem === 'function') {
-                        args.forEach(function (item) {
-                            self.onAddItem.apply(self, [item]);
+                    args.forEach(function (item) {
+                        addCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
                         });
-                    }
+                    });
                     return result;
                 };
                 var pop = self.pop;
                 self['pop'] = function () {
                     var args = Array.prototype.slice.call(arguments);
                     var result = pop.apply(self, args);
-                    typeof self.onRemoveItem === 'function' ? self.onRemoveItem.apply(self, [result]) : null;
+                    removeCB.forEach(function (callback) {
+                        callback.apply(self, [result]);
+                    });
                     return result;
                 };
                 var unshift = self.unshift;
                 self['unshift'] = function () {
                     var args = Array.prototype.slice.call(arguments);
                     var result = unshift.apply(self, args);
-                    if (typeof self.onAddItem === 'function') {
-                        args.forEach(function (item) {
-                            self.onAddItem.apply(self, [item]);
+                    args.forEach(function (item) {
+                        addCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
                         });
-                    }
+                    });
+
                     return result;
                 };
                 var shift = self.shift;
                 self['shift'] = function () {
                     var args = Array.prototype.slice.call(arguments);
                     var result = unshift.apply(self, args);
-                    typeof self.onRemoveItem === 'function' ? self.onRemoveItem.apply(self, [result]) : null;
+                    removeCB.forEach(function (callback) {
+                        callback.apply(self, [result]);
+                    });
                     return result;
                 };
                 var splice = self.splice;
                 self['splice'] = function () {
                     var args = Array.prototype.slice.call(arguments);
                     var result = splice.apply(self, args);
-                    if (typeof self.onRemoveItem === 'function') {
-                        result.forEach(function (item) {
-                            self.onRemoveItem.apply(self, [item]);
+                    result.forEach(function (item) {
+                        removeCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
                         });
-                    }
+                    });
+
                     return result;
                 };
                 /**
@@ -115,7 +122,16 @@
                  * @return {Array}
                  */
                 self['removeQuietly'] = splice;
-
+                self['onRemoveItem'] = function (cb) {
+                    if (typeof cb === 'function') {
+                        removeCB.push(cb);
+                    }
+                };
+                self['onAddItem'] = function (cb) {
+                    if (typeof cb === 'function') {
+                        addCB.push(cb);
+                    }
+                };
             }
 
             SmartCollection.prototype = Object.create(Array.prototype);

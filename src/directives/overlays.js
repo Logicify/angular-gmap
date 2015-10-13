@@ -215,8 +215,8 @@
                                     clearAll();
                                 }
                                 scope.currentDocument = scope.kmlCollection.next();
-                                scope.kmlCollection.onAddItem = onAddArrayItem;
-                                scope.kmlCollection.onRemoveItem = onRemoveArrayItem;
+                                scope.kmlCollection.onAddItem(onAddArrayItem);
+                                scope.kmlCollection.onRemoveItem(onRemoveArrayItem);
                                 //start downloading kml collection
                                 downLoadOverlayFile(scope.currentDocument);
                             }
