@@ -20,7 +20,7 @@
             function SmartCollection(arr) {
                 var self = this;
                 //private property
-                var _iterator = null;
+                var _iterator = null, isLocked = false;
                 /**
                  * Iterator changes each time when method 'next' called
                  * If last element reached then iterator resets
@@ -40,6 +40,15 @@
                     return undefined;
                 };
 
+                self['lock'] = function () {
+                    isLocked = true;
+                };
+                self['unlock'] = function () {
+                    isLocked = false;
+                };
+                self['isLocked'] = function () {
+                    return isLocked;
+                };
                 self['setIterator'] = function (index) {
                     if (angular.isNumber(index) && index !== NaN) {
                         if (self[index] === undefined) {
@@ -333,6 +342,7 @@
                     link: function (scope, element, attrs, ctrl) {
                         var geoXml3Parser = null;
                         scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                        var currentCollectionPrefix = scope.kmlCollection._uid;
                         scope.events = scope.$eval(attrs['gmapEvents']) || {};
                         scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
@@ -383,8 +393,11 @@
                         function attachCollectionWatcher() {
                             return scope.$watch('kmlCollection._uid', function (newValue, oldValue) {
                                 //watch for top level object reference change
-                                if (newValue == null) {
-                                    scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                                if (newValue == null || newValue != currentCollectionPrefix) {
+                                    if (!(scope.kmlCollection instanceof SmartCollection)) {
+                                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                                    }
+                                    currentCollectionPrefix = scope.kmlCollection._uid;
                                     if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
                                         scope.cancel = true;
                                     }

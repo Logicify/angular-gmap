@@ -5,13 +5,13 @@
     'use strict';
     /*global google*/
     var app = angular.module('Application', ['LogicifyGMap']);
-    app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
+    app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', 'SmartCollection', function ($scope, $timeout, InfoWindow, SmartCollection) {
         $scope.markers = [];
         $scope.controlEvents = {
             click: function (event) {
-                $scope.kmlCollection = [
+                $scope.kmlCollection = new SmartCollection([
                     {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'}
-                ];
+                ]);
             }
         };
         $scope.infoWindowName = 'hello native you!';
