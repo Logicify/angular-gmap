@@ -21,7 +21,10 @@
     "map",
     "logicify",
     "wrapper",
-    "javascript"
+    "javascript",
+    "kml",
+    "kmz",
+    "overlays"
   ],
   "devDependencies": {
     "bower": "~1.3.12",
