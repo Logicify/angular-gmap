@@ -347,7 +347,18 @@ var kmlEvents = {
 Also you can include all [events from geoxml3 lib](https://github.com/artemijan/geoxml3/blob/wiki/ParserReference.md)
 ###### Options:
 all options described on [geoxml3 repository](https://github.com/artemijan/geoxml3/blob/wiki/ParserReference.md)
+There is one more option fit-bounds-afterAll
 
+```html
+<xml-overlays
+                kml-collection="kmlCollection"
+                gmap-events="kmlEvents"
+                fit-bounds-afterAll="false">
+</xml-overlays>
+```
+This option is true by default. When you are disabling this option the last layer will be displayed on the map. ]
+To view all layers you need modify zoom and center of the map by mouse.
+If this options is enabled, then all layers will be displayed on the map, and you don't need to scroll and dragging the map to view all layers
 ###### Progress callback
 Html example
 ```html
