@@ -79,7 +79,7 @@
                                         scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
                                     }
                                     currentCollectionPrefix = scope.kmlCollection._uid;
-                                    if (scope['downLoadingStarted'] === true || scope['parserStarted'] === true) {
+                                    if (scope['busy'] === true || geoXml3Parser.docs && geoXml3Parser.docs.length > 0) {
                                         promises.forEach(function (promise) {
                                             promise._abort();
                                         });
@@ -172,7 +172,7 @@
                          */
                         function initKmlCollection() {
                             if (scope.kmlCollection instanceof SmartCollection) {
-                                scope['finished'] = false;
+                                scope['busy'] = true;
                                 scope.kmlCollection.onAddItem(onAddArrayItem);
                                 scope.kmlCollection.onRemoveItem(onRemoveArrayItem);
                                 scope.kmlCollection.forEach(function (kmlFile) {
@@ -182,6 +182,7 @@
                                     initGlobalBounds();
                                     //clear all promises;
                                     promises.splice(0, promises.length);
+                                    scope['busy'] = false;
                                 });
                             }
                         }
