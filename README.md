@@ -230,6 +230,14 @@ infowindow.close();
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files.
 XML files can be: .zip, .kmz, .kml, or just a string.
+Kml\kmz object can contain:
+```js
+ var list = [
+        {url:'some url of kml or kmz file here'},
+        {file: instance of Blob here},
+        {content: just string value}
+ ]
+```
 #### Basic usage:
 ###### HTML
 ```html
@@ -372,3 +380,4 @@ HTML
 </div>
 ```
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
+###### Load kml\kmz file via HTML file input:

@@ -19,6 +19,7 @@
             'min-height': '200px'
         };
         $scope.fileSelected = function (file) {
+            //please check mime type of file to be sure that this file is kml or kmz or zip
             if (file instanceof Blob) {
                 $scope.kmlCollection.push({file: file});
             }
