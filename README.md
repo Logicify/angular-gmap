@@ -239,6 +239,10 @@ Kml\kmz object can contain:
  ]
 ```
 #### Basic usage:
+include those files to your html file (saving order):
+- ProjectedOverlay.js
+- ZipFile.complete.js
+- geoxml3.js
 ###### HTML
 ```html
 <div ng-controller="TestController">
