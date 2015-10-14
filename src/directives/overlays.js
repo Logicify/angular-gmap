@@ -24,7 +24,6 @@
                         scope.onProgress = scope.$eval(attrs['onProgress']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
                         var promises = [], PROMISE_STATUSES = {PENDING: 0, RESOLVED: 1, REJECTED: 2};
-                        ;
 
                         function getParserOptions(map, wnd) {
                             var opts = {};
