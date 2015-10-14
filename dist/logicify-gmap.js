@@ -419,10 +419,13 @@
                         function onAddArrayItem(item) {
                             if (item != null) {
                                 downLoadOverlayFile(item).then(function (kmlObject) {
-                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
-                                    $timeout(function () {
-                                        scope.gMap.fitBounds(scope.globalBounds);
-                                    }, 10);
+                                    if (scope.fitBoundsAfterAll !== false) {
+                                        scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                        $timeout(function () {
+                                            scope.gMap.fitBounds(scope.globalBounds);
+                                        }, 10);
+                                    }
+                                    return kmlObject;
                                 });
                             }
                         }
