@@ -419,13 +419,12 @@
                         function onAddArrayItem(item) {
                             if (item != null) {
                                 downLoadOverlayFile(item).then(function (kmlObject) {
-                                    if (scope.fitBoundsAfterAll !== false) {
+                                    if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
                                         scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
                                         $timeout(function () {
                                             scope.gMap.fitBounds(scope.globalBounds);
                                         }, 10);
                                     }
-                                    return kmlObject;
                                 });
                             }
                         }
@@ -494,7 +493,8 @@
                                 });
                                 geoXml3Parser.docs.splice(0, geoXml3Parser.docs.length);
                                 geoXml3Parser.docsByUrl = {};
-                                scope.globalBounds = null;
+                                scope.globalBounds = new google.maps.LatLngBounds();
+                                ;
                             }
                         }
 

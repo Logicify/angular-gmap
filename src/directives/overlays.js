@@ -96,10 +96,12 @@
                         function onAddArrayItem(item) {
                             if (item != null) {
                                 downLoadOverlayFile(item).then(function (kmlObject) {
-                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
-                                    $timeout(function () {
-                                        scope.gMap.fitBounds(scope.globalBounds);
-                                    }, 10);
+                                    if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
+                                        scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                        $timeout(function () {
+                                            scope.gMap.fitBounds(scope.globalBounds);
+                                        }, 10);
+                                    }
                                 });
                             }
                         }
@@ -168,7 +170,8 @@
                                 });
                                 geoXml3Parser.docs.splice(0, geoXml3Parser.docs.length);
                                 geoXml3Parser.docsByUrl = {};
-                                scope.globalBounds = null;
+                                scope.globalBounds = new google.maps.LatLngBounds();
+                                ;
                             }
                         }
 
