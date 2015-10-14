@@ -23,7 +23,8 @@
                         scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
                         scope.onProgress = scope.$eval(attrs['onProgress']);
                         scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
-                        var promises = [];
+                        var promises = [], PROMISE_STATUSES = {PENDING: 0, RESOLVED: 1, REJECTED: 2};
+                        ;
 
                         function getParserOptions(map, wnd) {
                             var opts = {};
@@ -56,7 +57,6 @@
                                 initKmlCollection();
                             }
                         });
-                        scope.cancel = false;
                         scope.$on('$destroy', function () {
                             if (typeof scope.collectionsWatcher === 'function') {
                                 scope.collectionsWatcher();//cancel watcher
@@ -112,7 +112,6 @@
                             if (promise) {
                                 promise.resolve(doc);
                             }
-                            setValue('parserStarted', false, progress);
                         }
 
                         /**
@@ -124,21 +123,6 @@
                             }
                             if (typeof scope.events.onAfterParseFailed === 'function') {
                                 scope.events.onAfterParseFailed(doc);
-                            }
-                            setValue('parserStarted', false, progress);
-                        }
-
-
-                        /**
-                         * Is needed for automation "onProgress", calling each time when downloading\parsing finished or started
-                         * @param name - could be "downloadingStarted" or "parseStarted"
-                         * @param value - boolean
-                         * @param callProgress - if exist then call it (since it's users callback)
-                         */
-                        function setValue(name, value, callProgress) {
-                            scope[name] = value;
-                            if (typeof callProgress === 'function') {
-                                callProgress();
                             }
                         }
 
@@ -192,8 +176,9 @@
                                     promises.push(downLoadOverlayFile(kmlFile));
                                 });
                                 return $q.all(promises).then(function (results) {
-                                    setValue('finished', true, progress);
                                     initGlobalBounds();
+                                    //clear all promises;
+                                    promises.splice(0, promises.length);
                                 });
                             }
                         }
@@ -204,11 +189,21 @@
                         function progress() {
                             if (typeof scope.onProgress === 'function') {
                                 scope.onProgress({
-                                    isDownloading: scope['downLoadingStarted'],
-                                    isParsing: scope['parserStarted'],
-                                    finished: scope['finished']
+                                    total: promises.length,
+                                    done: getCountOf(PROMISE_STATUSES.RESOLVED),
+                                    errors: getCountOf(PROMISE_STATUSES.REJECTED)
                                 });
                             }
+                        }
+
+                        function getCountOf(statusCode) {
+                            var count = 0;
+                            promises.forEach(function (promise) {
+                                if (promise.$$state.status === statusCode) {
+                                    count++;
+                                }
+                            });
+                            return count;
                         }
 
                         /**
@@ -223,14 +218,6 @@
                                 deferred.reject();
                                 httpCanceler.resolve();
                             };
-                            if (scope.cancel === true) {
-                                //cancel to next digest
-                                $timeout(function () {
-                                    scope.cancel = false;
-                                });
-                                return false;
-                            }
-                            setValue('downLoadingStarted', true, progress);
                             if (kmlObject.url != null) {
                                 $http.get(kmlObject.url, {timeout: httpCanceler.promise, responseType: "arraybuffer"})
                                     .then(function (response) {
@@ -257,7 +244,7 @@
                                     //handle errors here
                                 })
                                 .finally(function () {
-
+                                    progress();
                                 });
                             return promise;
                         }
@@ -268,15 +255,6 @@
                          * @param content - if it's a string
                          */
                         function onAfterDownload(blob, content, deferred) {
-                            if (scope.cancel === true) {
-                                //cancel to next digest
-                                $timeout(function () {
-                                    scope.cancel = false;
-                                });
-                                return false;
-                            }
-                            setValue('parserStarted', true);
-                            setValue('downLoadingStarted', false, progress);
                             content == null ? geoXml3Parser.parse(blob, null, deferred) : geoXml3Parser.parseKmlString(content, null, deferred);
                         }
                     }

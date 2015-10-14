@@ -343,12 +343,13 @@ Progress object structure
 ```js
 callback = function(progress){
     progress = {
-            isDownloading: true\false,
-            isParsing: true\false,
-            finished: true\false
+            done: Integer,
+            errors: Integer,
+            total: Integer
         };
 }
 ```
+Progress callback calls each time when xml file downloaded and parsed (or parsing is failed).
 ###### Infowindow
 You can create and inject infowindow to your overlays.
 But if you want to be able to access overlay MVC object from infowindow scope then you need just add property to infowindow object.
