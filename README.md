@@ -234,9 +234,6 @@ XML files can be: .zip, .kmz, .kml, or just a string.
 ###### HTML
 ```html
 <div ng-controller="TestController">
-    <script type="text/ng-template" id="template.html">
-        <div>{{infoWindowName}} - {{$infoWND.anchor.id}}</div>
-    </script>
     <logicify-gmap
             center="gmOpts.center"
             gm-options="gmOpts"
@@ -266,7 +263,6 @@ app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function (
                 ];
             }
         };
-        $scope.infoWindowName = 'hello native you!';
         $scope.cssOpts = {
             width: '80%',
             height: '60%',
@@ -292,32 +288,6 @@ app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function (
         $scope.kmlEvents = {};
         $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
         $scope.index = 1;
-        $scope.closeInfoWindow = function (infowindow) {
-            infowindow.close(true);
-        };
-        $scope.ready = function (map) {
-            var infowindow = new InfoWindow({templateUrl: 'template.html'});
-
-            function attach(marker) {
-                google.maps.event.addListener(marker, 'click', function (markerObj) {
-                    infowindow.$ready(function (wnd) {
-                        wnd.open(map, marker);
-                    });
-                });
-            }
-
-            for (var i = 10; i < 15; i++) {
-                var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);
-                var marker = new google.maps.Marker({
-                    id: 'marker_' + i,
-                    name: 'is_' + i,
-                    position: pos,
-                    map: map
-                });
-                $scope.markers.push(marker);
-                attach(marker);
-            }
-        };
     }]);
 ```
 ###### Events
@@ -330,7 +300,7 @@ app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', function (
 ```js
 var kmlEvents = {
     onAfterParse:function(doc){
-        //doc - array with 1 element (document)
+        //doc - array with documents
     },
     onAfterParseFailed:function(err){
 
