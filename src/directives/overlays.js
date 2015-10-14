@@ -218,8 +218,10 @@
                          */
                         function downLoadOverlayFile(kmlObject) {
                             var deferred = $q.defer();
+                            var httpCanceler = $q.defer();
                             deferred.promise._abort = function () {
                                 deferred.reject();
+                                httpCanceler.resolve();
                             };
                             if (scope.cancel === true) {
                                 //cancel to next digest
@@ -230,7 +232,7 @@
                             }
                             setValue('downLoadingStarted', true, progress);
                             if (kmlObject.url != null) {
-                                $http.get(kmlObject.url, {responseType: "arraybuffer"})
+                                $http.get(kmlObject.url, {timeout: httpCanceler.promise, responseType: "arraybuffer"})
                                     .then(function (response) {
                                         var data = new Blob([response.data], {type: response.headers()['content-type']});
                                         data.lastModifiedDate = new Date();
