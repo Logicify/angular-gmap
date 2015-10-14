@@ -226,7 +226,7 @@ infowindow.close();
 ```
 
 ## XML overlays support
-[jsfiddle example](https://jsfiddle.net/rfgzw63r/4/)
+[jsfiddle example](https://jsfiddle.net/rfgzw63r/6/)
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files.
 XML files can be: .zip, .kmz, .kml, or just a string.
