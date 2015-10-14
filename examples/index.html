@@ -2,7 +2,8 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Google map</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 </head>
 <body ng-app="Application">
@@ -11,8 +12,35 @@
         <div>{{infoWindowName}} - {{$infoWND.anchor.id}}</div>
     </script>
     <script type="text/ng-template" id="infowindow.html">
-        <div class="infowindow">
-            {{mvcObject.title}}
+        <div class="info-window-container">
+            <div class="title">{{mvcObject.title}}</div>
+            <div>
+                <div>
+                    <label>title</label>
+                    <input type="text" ng-model="mvcObject.title"/>
+                </div>
+                <div>
+                    <label style="color: {{mvcObject.fillColor}}">fill color</label>
+                    <input type="text" ng-model="mvcObject.fillColor"/>
+                </div>
+                <div>
+                    <label style="color: {{mvcObject.strokeColor}}">stroke color</label>
+                    <input type="text" ng-model="mvcObject.strokeColor"/>
+                </div>
+                <div class="set-class">
+                    <label>stroke weight</label>
+                    <input type="text" ng-model="mvcObject.strokeWeight"/>
+                </div>
+                <div>
+                    <label>fill opacity</label>
+                    <input ng-model="mvcObject.fillOpacity"/>
+                </div>
+                <div>
+                    <label>z-index</label>
+                    <input type="number" ng-model="mvcObject.zIndex"/>
+                </div>
+                <button ng-click="applyConfig(mvcObject)">Save</button>
+            </div>
         </div>
     </script>
     <logicify-gmap
@@ -24,7 +52,7 @@
                 control-position="position"
                 control-index="1"
                 events="controlEvents">
-            <button>Push me</button>
+            <input type="file" onchange="angular.element(this).scope().fileSelected(this.files[0])"/>
         </logicify-gmap-control>
         <xml-overlays
                 kml-collection="kmlCollection"

@@ -24,12 +24,20 @@
                         var index = scope.$eval(iAttrs['controlIndex']);
                         var events = scope.$eval(iAttrs['events']);
                         var element = angular.element(iElement.html().trim());
+                        var listeners = [];
                         $compile(element)(scope);
                         $timeout(function () {
                             scope.$apply();
                         });
+                        scope.$on('$destroy', function () {
+                            listeners.forEach(function (listener) {
+                                if (google && google.maps) {
+                                    google.maps.event.removeListener(listener);
+                                }
+                            });
+                        });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, function () {
+                            return google.maps.event.addDomListener(element[0], eventName, function () {
                                 var args = arguments;
                                 var self = this;
                                 //wrap in timeout to run new digest
@@ -49,7 +57,7 @@
                             if (events != null) {
                                 angular.forEach(events, function (value, key) {
                                     if (typeof value === 'function') {
-                                        attachListener(key, value);
+                                        listeners.push(attachListener(key, value));
                                     }
                                 });
                             }

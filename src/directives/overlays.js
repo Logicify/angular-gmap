@@ -95,7 +95,12 @@
 
                         function onAddArrayItem(item) {
                             if (item != null) {
-                                downLoadOverlayFile(item);
+                                downLoadOverlayFile(item).then(function (kmlObject) {
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                    $timeout(function () {
+                                        scope.gMap.fitBounds(scope.globalBounds);
+                                    }, 10);
+                                });
                             }
                         }
 
@@ -234,8 +239,8 @@
                             } else if (typeof kmlObject.content === 'String') {
                                 onAfterDownload(null, kmlObject.content, deferred);
                             } else {
-                                if (kmlObject instanceof Blob) {
-                                    onAfterDownload(kmlObject, null, deferred);
+                                if (kmlObject.file instanceof Blob) {
+                                    onAfterDownload(kmlObject.file, null, deferred);
                                 } else {
                                     $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
                                 }
@@ -243,6 +248,7 @@
                             var promise = deferred.promise
                                 .then(function (doc) {
                                     kmlObject.doc = doc;
+                                    return kmlObject;
                                 })
                                 .catch(function (doc) {
                                     //handle errors here

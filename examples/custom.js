@@ -9,9 +9,6 @@
         $scope.markers = [];
         $scope.controlEvents = {
             click: function (event) {
-                $scope.kmlCollection = new SmartCollection([
-                    {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'}
-                ]);
             }
         };
         $scope.infoWindowName = 'hello native you!';
@@ -21,13 +18,18 @@
             'min-width': '400px',
             'min-height': '200px'
         };
+        $scope.fileSelected = function (file) {
+            if (file instanceof Blob) {
+                $scope.kmlCollection.push({file: file});
+            }
+        };
         $scope.gmOpts = {
             zoom: 16,
             center: new google.maps.LatLng(-1, 1)
         };
         $scope.kmlCollection = [
             {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'},
-            {url: 'http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'}
+            {url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'}
         ];
         $scope.kmlEvents = {};
         $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
@@ -36,9 +38,17 @@
             infowindow.close(true);
         };
 
+        $scope.applyConfig = function (mvcObject) {
+            /**
+             * Redraw overlay
+             */
+            mvcObject.setMap(null);
+            mvcObject.setMap($scope.gmap);
+        };
 
         $scope.ready = function (map) {
             var infowindow = new InfoWindow({templateUrl: 'template.html'});
+            $scope.gmap = map;
             $scope.overlaysInfowindow = new InfoWindow({templateUrl: 'infowindow.html'});
             $scope.overlaysInfowindow.$ready(overlayInfowindowReady);
             function attach(marker) {
@@ -51,6 +61,7 @@
 
             function overlayInfowindowReady(wnd) {
                 wnd.$onOpen = function (gObj) {
+                    gObj.set('zIndex', 100);
                     wnd.$scope.mvcObject = gObj;
                     gObj.setDraggable(true);
                 };

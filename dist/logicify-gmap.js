@@ -161,12 +161,20 @@
                         var index = scope.$eval(iAttrs['controlIndex']);
                         var events = scope.$eval(iAttrs['events']);
                         var element = angular.element(iElement.html().trim());
+                        var listeners = [];
                         $compile(element)(scope);
                         $timeout(function () {
                             scope.$apply();
                         });
+                        scope.$on('$destroy', function () {
+                            listeners.forEach(function (listener) {
+                                if (google && google.maps) {
+                                    google.maps.event.removeListener(listener);
+                                }
+                            });
+                        });
                         function attachListener(eventName, callback) {
-                            google.maps.event.addDomListener(element[0], eventName, function () {
+                            return google.maps.event.addDomListener(element[0], eventName, function () {
                                 var args = arguments;
                                 var self = this;
                                 //wrap in timeout to run new digest
@@ -186,7 +194,7 @@
                             if (events != null) {
                                 angular.forEach(events, function (value, key) {
                                     if (typeof value === 'function') {
-                                        attachListener(key, value);
+                                        listeners.push(attachListener(key, value));
                                     }
                                 });
                             }
@@ -394,7 +402,7 @@
                                         scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
                                     }
                                     currentCollectionPrefix = scope.kmlCollection._uid;
-                                    if (geoXml3Parser.docs && geoXml3Parser.docs.length > 0) {
+                                    if (scope['busy'] === true || geoXml3Parser.docs && geoXml3Parser.docs.length > 0) {
                                         promises.forEach(function (promise) {
                                             promise._abort();
                                         });
@@ -410,7 +418,12 @@
 
                         function onAddArrayItem(item) {
                             if (item != null) {
-                                downLoadOverlayFile(item);
+                                downLoadOverlayFile(item).then(function (kmlObject) {
+                                    scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
+                                    $timeout(function () {
+                                        scope.gMap.fitBounds(scope.globalBounds);
+                                    }, 10);
+                                });
                             }
                         }
 
@@ -549,8 +562,8 @@
                             } else if (typeof kmlObject.content === 'String') {
                                 onAfterDownload(null, kmlObject.content, deferred);
                             } else {
-                                if (kmlObject instanceof Blob) {
-                                    onAfterDownload(kmlObject, null, deferred);
+                                if (kmlObject.file instanceof Blob) {
+                                    onAfterDownload(kmlObject.file, null, deferred);
                                 } else {
                                     $log.error('Incorrect file type. Should be an instance of a Blob or String (url).');
                                 }
@@ -558,6 +571,7 @@
                             var promise = deferred.promise
                                 .then(function (doc) {
                                     kmlObject.doc = doc;
+                                    return kmlObject;
                                 })
                                 .catch(function (doc) {
                                     //handle errors here
