@@ -61,6 +61,10 @@
                             if (typeof scope.collectionsWatcher === 'function') {
                                 scope.collectionsWatcher();//cancel watcher
                             }
+                            //clear all pending promises
+                            promises.forEach(function (promise) {
+                                promise._abort();
+                            });
                         });
 
 
