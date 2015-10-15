@@ -49,20 +49,18 @@
 
                         element[0].index = index || 0;
                         iElement.html('');
-                        ctrl.$mapReady(function (map) {
-                            if (!map.controls[position]) {
-                                throw new Error('Position of control on the map is invalid. Please see google maps spec.');
-                            }
-                            map.controls[position].push(element[0]);
-                            if (events != null) {
-                                angular.forEach(events, function (value, key) {
-                                    if (typeof value === 'function') {
-                                        listeners.push(attachListener(key, value));
-                                    }
-                                });
-                            }
-                        });
-
+                        var map = ctrl.getMap();
+                        if (!map.controls[position]) {
+                            throw new Error('Position of control on the map is invalid. Please see google maps spec.');
+                        }
+                        map.controls[position].push(element[0]);
+                        if (events != null) {
+                            angular.forEach(events, function (value, key) {
+                                if (typeof value === 'function') {
+                                    listeners.push(attachListener(key, value));
+                                }
+                            });
+                        }
                     }
                 }
             }

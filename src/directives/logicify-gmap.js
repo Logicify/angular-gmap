@@ -17,38 +17,21 @@
             function ($compile, $log, $timeout) {
                 return {
                     restrict: 'E',
-                    controller: function () {
-                        var self = this;
-                        var callbackHolders = [];
-                        self.$mapReady = function (callback) {
-                            if (callback && self.map) {
-                                callback(self.map);
-                                return;
-                            }
-                            if (typeof callback === 'function') {
-                                callbackHolders.push(callback);
-                            }
-                        };
-                        self.$setTheMap = function (map) {
-                            //resolve all callbacks
-                            for (var i = 0; i < callbackHolders.length; i++) {
-                                callbackHolders[i](map);
-                            }
-                            callbackHolders = [];
-                            self.map = map;
-                        };
-                        return self;
+                    scope: {
+                        gmOptions: '&gmOptions',
+                        gmReady: '&gmReady',
+                        cssOptions: '&cssOptions'
                     },
-                    link: function (scope, iElement, iAttrs, ctrl) {
+                    controller: function ($scope, $element, $attrs) {
+                        var self = this;
                         /*global google*/
-                        var gmScope = scope.$new();
-                        var options = gmScope.$eval(iAttrs['gmOptions']);
-                        var readyCallback = gmScope.$eval(iAttrs['gmReady']);
+                        var options = $scope.gmOptions();
+                        var readyCallback = $scope.gmReady();
                         var defaultOptions = {
                             zoom: 8,
                             center: new google.maps.LatLng(-34.397, 150.644)
                         };
-                        var cssOpts = gmScope.$eval(iAttrs['cssOptions']);
+                        var cssOpts = $scope.cssOptions();
                         options = options || {};
                         var defaultCssOptions = {
                             height: '100%',
@@ -57,7 +40,7 @@
                         };
                         angular.extend(defaultCssOptions, cssOpts);
                         angular.extend(defaultOptions, options);
-                        iElement.css(defaultCssOptions);
+                        $element.css(defaultCssOptions);
                         var div = angular.element('<div>');
                         div.css({
                             height: '100%',
@@ -65,8 +48,11 @@
                             margin: 0,
                             padding: 0
                         });
-                        iElement.append(div);
+                        $element.append(div);
                         var map = new google.maps.Map(div[0], defaultOptions);
+                        self['getMap'] = function () {
+                            return map;
+                        };
                         if (typeof readyCallback === 'function') {
                             readyCallback(map);
                         }
@@ -78,7 +64,7 @@
                                     infoWindow.$scope.$apply();
                                 });
                             } else {
-                                var childScope = gmScope.$new();
+                                var childScope = $scope.$new();
                                 childScope.$infoWND = infoWindow;
                                 infoWindow.$scope = childScope;
                                 $timeout(function () {
@@ -101,8 +87,7 @@
                             }
                             overrideCloseMethod.apply(infoWnd, []);
                         };
-                        //push map to controller
-                        ctrl.$setTheMap(map);
+                        return self;
                     }
                 }
             }

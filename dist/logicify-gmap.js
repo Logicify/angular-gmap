@@ -173,20 +173,18 @@
 
                         element[0].index = index || 0;
                         iElement.html('');
-                        ctrl.$mapReady(function (map) {
-                            if (!map.controls[position]) {
-                                throw new Error('Position of control on the map is invalid. Please see google maps spec.');
-                            }
-                            map.controls[position].push(element[0]);
-                            if (events != null) {
-                                angular.forEach(events, function (value, key) {
-                                    if (typeof value === 'function') {
-                                        listeners.push(attachListener(key, value));
-                                    }
-                                });
-                            }
-                        });
-
+                        var map = ctrl.getMap();
+                        if (!map.controls[position]) {
+                            throw new Error('Position of control on the map is invalid. Please see google maps spec.');
+                        }
+                        map.controls[position].push(element[0]);
+                        if (events != null) {
+                            angular.forEach(events, function (value, key) {
+                                if (typeof value === 'function') {
+                                    listeners.push(attachListener(key, value));
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -212,38 +210,21 @@
             function ($compile, $log, $timeout) {
                 return {
                     restrict: 'E',
-                    controller: function () {
-                        var self = this;
-                        var callbackHolders = [];
-                        self.$mapReady = function (callback) {
-                            if (callback && self.map) {
-                                callback(self.map);
-                                return;
-                            }
-                            if (typeof callback === 'function') {
-                                callbackHolders.push(callback);
-                            }
-                        };
-                        self.$setTheMap = function (map) {
-                            //resolve all callbacks
-                            for (var i = 0; i < callbackHolders.length; i++) {
-                                callbackHolders[i](map);
-                            }
-                            callbackHolders = [];
-                            self.map = map;
-                        };
-                        return self;
+                    scope: {
+                        gmOptions: '&gmOptions',
+                        gmReady: '&gmReady',
+                        cssOptions: '&cssOptions'
                     },
-                    link: function (scope, iElement, iAttrs, ctrl) {
+                    controller: function ($scope, $element, $attrs) {
+                        var self = this;
                         /*global google*/
-                        var gmScope = scope.$new();
-                        var options = gmScope.$eval(iAttrs['gmOptions']);
-                        var readyCallback = gmScope.$eval(iAttrs['gmReady']);
+                        var options = $scope.gmOptions();
+                        var readyCallback = $scope.gmReady();
                         var defaultOptions = {
                             zoom: 8,
                             center: new google.maps.LatLng(-34.397, 150.644)
                         };
-                        var cssOpts = gmScope.$eval(iAttrs['cssOptions']);
+                        var cssOpts = $scope.cssOptions();
                         options = options || {};
                         var defaultCssOptions = {
                             height: '100%',
@@ -252,7 +233,7 @@
                         };
                         angular.extend(defaultCssOptions, cssOpts);
                         angular.extend(defaultOptions, options);
-                        iElement.css(defaultCssOptions);
+                        $element.css(defaultCssOptions);
                         var div = angular.element('<div>');
                         div.css({
                             height: '100%',
@@ -260,8 +241,11 @@
                             margin: 0,
                             padding: 0
                         });
-                        iElement.append(div);
+                        $element.append(div);
                         var map = new google.maps.Map(div[0], defaultOptions);
+                        self['getMap'] = function () {
+                            return map;
+                        };
                         if (typeof readyCallback === 'function') {
                             readyCallback(map);
                         }
@@ -273,7 +257,7 @@
                                     infoWindow.$scope.$apply();
                                 });
                             } else {
-                                var childScope = gmScope.$new();
+                                var childScope = $scope.$new();
                                 childScope.$infoWND = infoWindow;
                                 infoWindow.$scope = childScope;
                                 $timeout(function () {
@@ -296,8 +280,7 @@
                             }
                             overrideCloseMethod.apply(infoWnd, []);
                         };
-                        //push map to controller
-                        ctrl.$setTheMap(map);
+                        return self;
                     }
                 }
             }
@@ -349,20 +332,18 @@
                         /**
                          * get google map object from controller
                          */
-                        ctrl.$mapReady(function (map) {
-                            scope.infowindow = scope.$eval(attrs['infoWindow']);
-                            scope.collectionsWatcher = attachCollectionWatcher();
-                            scope.gMap = map;
-                            if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
-                                scope.infowindow.$ready(function (wnd) {
-                                    geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
-                                    initKmlCollection();
-                                });
-                            } else {
-                                geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                        scope.gMap = ctrl.getMap();
+                        scope.infowindow = scope.$eval(attrs['infoWindow']);
+                        scope.collectionsWatcher = attachCollectionWatcher();
+                        if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
+                            scope.infowindow.$ready(function (wnd) {
+                                geoXml3Parser = new geoXML3.parser(getParserOptions(scope.gMap, wnd));
                                 initKmlCollection();
-                            }
-                        });
+                            });
+                        } else {
+                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                            initKmlCollection();
+                        }
                         scope.$on('$destroy', function () {
                             if (typeof scope.collectionsWatcher === 'function') {
                                 scope.collectionsWatcher();//cancel watcher
@@ -584,15 +565,11 @@
 /**
  * Created by artem on 6/18/15.
  */
-(function (angular) {
     /*global google*/
+    (function (google, angular) {
     angular.module('LogicifyGMap')
         .service('InfoWindow', ['$log', '$rootScope', '$templateCache', '$timeout', '$http', '$compile', function ($log, $rootScope, $templateCache, $timeout, $http, $compile) {
             function InfoWindow() {
-                if (!google) {
-                    $log.error('Google maps lib is not found. Please check that you load it before angular.');
-                    return;
-                }
                 var self = this;
                 //private
                 var readyCallbackHolders = [], isInfoWndReady = false, lastMap = null;
@@ -666,6 +643,6 @@
             }
             return InfoWindow;
         }])
-})(angular);
+    })(google, angular);
 
 }));

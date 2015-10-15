@@ -43,20 +43,18 @@
                         /**
                          * get google map object from controller
                          */
-                        ctrl.$mapReady(function (map) {
-                            scope.infowindow = scope.$eval(attrs['infoWindow']);
-                            scope.collectionsWatcher = attachCollectionWatcher();
-                            scope.gMap = map;
-                            if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
-                                scope.infowindow.$ready(function (wnd) {
-                                    geoXml3Parser = new geoXML3.parser(getParserOptions(map, wnd));
-                                    initKmlCollection();
-                                });
-                            } else {
-                                geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                        scope.gMap = ctrl.getMap();
+                        scope.infowindow = scope.$eval(attrs['infoWindow']);
+                        scope.collectionsWatcher = attachCollectionWatcher();
+                        if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
+                            scope.infowindow.$ready(function (wnd) {
+                                geoXml3Parser = new geoXML3.parser(getParserOptions(scope.gMap, wnd));
                                 initKmlCollection();
-                            }
-                        });
+                            });
+                        } else {
+                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                            initKmlCollection();
+                        }
                         scope.$on('$destroy', function () {
                             if (typeof scope.collectionsWatcher === 'function') {
                                 scope.collectionsWatcher();//cancel watcher
