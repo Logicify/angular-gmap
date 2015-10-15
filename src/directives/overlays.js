@@ -16,14 +16,23 @@
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
+                    scope: {
+                        kmlCollection: '=kmlCollection',
+                        gmapEvents: '&gmapEvents',
+                        parserOptions: '&parserOptions',
+                        onProgress: '&onProgress',
+                        fitAllLayers: '&fitAllLayers',
+                        'infoWindow': '=infoWindow'
+                    },
                     link: function (scope, element, attrs, ctrl) {
                         var geoXml3Parser = null;
-                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                        scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                         var currentCollectionPrefix = scope.kmlCollection._uid;
-                        scope.events = scope.$eval(attrs['gmapEvents']) || {};
-                        scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
-                        scope.onProgress = scope.$eval(attrs['onProgress']);
-                        scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
+                        scope.events = scope.gmapEvents() || {};
+                        scope.parserOptions = scope.parserOptions() || {};
+                        scope.onProgress = scope.onProgress();
+                        scope.fitBoundsAfterAll = scope.fitAllLayers(); //true by default
+                        scope.infowindow = scope.infoWindow;
                         var promises = [], PROMISE_STATUSES = {PENDING: 0, RESOLVED: 1, REJECTED: 2};
 
                         function getParserOptions(map, wnd) {
@@ -44,7 +53,6 @@
                          * get google map object from controller
                          */
                         scope.gMap = ctrl.getMap();
-                        scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.collectionsWatcher = attachCollectionWatcher();
                         if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
                             scope.infowindow.$ready(function (wnd) {
@@ -75,7 +83,7 @@
                                 //watch for top level object reference change
                                 if (newValue == null || newValue != currentCollectionPrefix) {
                                     if (!(scope.kmlCollection instanceof SmartCollection)) {
-                                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                                        scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                                     }
                                     currentCollectionPrefix = scope.kmlCollection._uid;
                                     if (scope['busy'] === true || geoXml3Parser.docs && geoXml3Parser.docs.length > 0) {

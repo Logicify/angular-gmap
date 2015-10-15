@@ -9,6 +9,12 @@
         $scope.markers = [];
         $scope.controlEvents = {
             click: function (event) {
+            },
+            fileSelect: function (file) {
+                //please check mime type of file to be sure that this file is kml or kmz or zip
+                if (file instanceof Blob) {
+                    $scope.kmlCollection.push({file: file});
+                }
             }
         };
         $scope.infoWindowName = 'hello native you!';
@@ -18,12 +24,7 @@
             'min-width': '400px',
             'min-height': '200px'
         };
-        $scope.fileSelected = function (file) {
-            //please check mime type of file to be sure that this file is kml or kmz or zip
-            if (file instanceof Blob) {
-                $scope.kmlCollection.push({file: file});
-            }
-        };
+
         $scope.gmOpts = {
             zoom: 16,
             center: new google.maps.LatLng(-1, 1)
@@ -39,13 +40,13 @@
             infowindow.close(true);
         };
 
-        $scope.applyConfig = function (mvcObject) {
+        function applyConfig(mvcObject) {
             /**
              * Redraw overlay
              */
             mvcObject.setMap(null);
             mvcObject.setMap($scope.gmap);
-        };
+        }
 
         $scope.ready = function (map) {
             var infowindow = new InfoWindow({templateUrl: 'template.html'});
@@ -65,6 +66,7 @@
                 wnd.$onOpen = function (gObj) {
                     gObj.set('zIndex', 100);
                     wnd.$scope.mvcObject = gObj;
+                    wnd.$scope.applyConfig = applyConfig;
                     gObj.setDraggable(true);
                 };
             }

@@ -41,13 +41,19 @@
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
+                    scope: {
+                        controlPosition: '&controlPosition',
+                        controlIndex: '&controlIndex',
+                        events: '&events',
+                        controlLocals: '&controlLocals'
+                    },
                     link: function (scope, iElement, iAttrs, ctrl) {
                         /*global google*/
-                        var position = scope.$eval(iAttrs['controlPosition']);
-                        var index = scope.$eval(iAttrs['controlIndex']);
-                        var events = scope.$eval(iAttrs['events']);
-                        var element = angular.element(iElement.html().trim());
-                        var listeners = [];
+                        var position = scope.controlPosition(),
+                            index = scope.controlIndex(),
+                            events = scope.events(),
+                            element = angular.element(iElement.html().trim());
+                        var listeners = [], domListeners = [];
                         $compile(element)(scope);
                         $timeout(function () {
                             scope.$apply();
@@ -57,6 +63,9 @@
                                 if (google && google.maps) {
                                     google.maps.event.removeListener(listener);
                                 }
+                            });
+                            domListeners.forEach(function (listener) {
+                                listener.unbind('onchange');
                             });
                         });
                         function attachListener(eventName, callback) {
@@ -80,7 +89,19 @@
                         if (events != null) {
                             angular.forEach(events, function (value, key) {
                                 if (typeof value === 'function') {
-                                    listeners.push(attachListener(key, value));
+                                    if (key === 'fileSelect') {
+                                        if (element[0] instanceof HTMLInputElement && element[0].type === 'file') {
+                                            domListeners.push(element.bind('change', function () {
+                                                value(this.files[0]);
+                                            }));
+                                        } else {
+                                            domListeners.push(element.find('input:file').bind('change', function () {
+                                                value(this.files[0]);
+                                            }));
+                                        }
+                                    } else {
+                                        listeners.push(attachListener(key, value));
+                                    }
                                 }
                             });
                         }
@@ -204,14 +225,23 @@
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
+                    scope: {
+                        kmlCollection: '=kmlCollection',
+                        gmapEvents: '&gmapEvents',
+                        parserOptions: '&parserOptions',
+                        onProgress: '&onProgress',
+                        fitAllLayers: '&fitAllLayers',
+                        'infoWindow': '=infoWindow'
+                    },
                     link: function (scope, element, attrs, ctrl) {
                         var geoXml3Parser = null;
-                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                        scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                         var currentCollectionPrefix = scope.kmlCollection._uid;
-                        scope.events = scope.$eval(attrs['gmapEvents']) || {};
-                        scope.parserOptions = scope.$eval(attrs['parserOptions']) || {};
-                        scope.onProgress = scope.$eval(attrs['onProgress']);
-                        scope.fitBoundsAfterAll = scope.$eval(attrs['fitAllLayers']); //true by default
+                        scope.events = scope.gmapEvents() || {};
+                        scope.parserOptions = scope.parserOptions() || {};
+                        scope.onProgress = scope.onProgress();
+                        scope.fitBoundsAfterAll = scope.fitAllLayers(); //true by default
+                        scope.infowindow = scope.infoWindow;
                         var promises = [], PROMISE_STATUSES = {PENDING: 0, RESOLVED: 1, REJECTED: 2};
 
                         function getParserOptions(map, wnd) {
@@ -232,7 +262,6 @@
                          * get google map object from controller
                          */
                         scope.gMap = ctrl.getMap();
-                        scope.infowindow = scope.$eval(attrs['infoWindow']);
                         scope.collectionsWatcher = attachCollectionWatcher();
                         if (scope.infowindow && typeof scope.infowindow.$ready === 'function') {
                             scope.infowindow.$ready(function (wnd) {
@@ -263,7 +292,7 @@
                                 //watch for top level object reference change
                                 if (newValue == null || newValue != currentCollectionPrefix) {
                                     if (!(scope.kmlCollection instanceof SmartCollection)) {
-                                        scope.kmlCollection = new SmartCollection(scope.$eval(attrs['kmlCollection']));
+                                        scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                                     }
                                     currentCollectionPrefix = scope.kmlCollection._uid;
                                     if (scope['busy'] === true || geoXml3Parser.docs && geoXml3Parser.docs.length > 0) {
@@ -566,17 +595,17 @@
                     }
                     self._uid = uid++;
                     var addCB = [], removeCB = [];
-                    /**
-                     * Override all methods that are changing an array!
-                     */
-                    var push = self.push;
+                /**
+                 * Override all methods that are changing an array!
+                 */
+                var push = self.push;
                     self['push'] = function () {
                         var args = Array.prototype.slice.call(arguments);
                         var result = push.apply(self, args);
                         args.forEach(function (item) {
                             addCB.forEach(function (callback) {
                                 callback.apply(self, [item]);
-                            });
+                        });
                         });
                         return result;
                     };
@@ -596,7 +625,7 @@
                         args.forEach(function (item) {
                             addCB.forEach(function (callback) {
                                 callback.apply(self, [item]);
-                            });
+                        });
                         });
 
                         return result;
@@ -615,9 +644,9 @@
                         var args = Array.prototype.slice.call(arguments);
                         var result = splice.apply(self, args);
                         result.forEach(function (item) {
-                            removeCB.forEach(function (callback) {
-                                callback.apply(self, [item]);
-                            });
+                        removeCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
+                        });
                         });
 
                         return result;

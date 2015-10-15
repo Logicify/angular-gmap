@@ -18,13 +18,19 @@
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
+                    scope: {
+                        controlPosition: '&controlPosition',
+                        controlIndex: '&controlIndex',
+                        events: '&events',
+                        controlLocals: '&controlLocals'
+                    },
                     link: function (scope, iElement, iAttrs, ctrl) {
                         /*global google*/
-                        var position = scope.$eval(iAttrs['controlPosition']);
-                        var index = scope.$eval(iAttrs['controlIndex']);
-                        var events = scope.$eval(iAttrs['events']);
-                        var element = angular.element(iElement.html().trim());
-                        var listeners = [];
+                        var position = scope.controlPosition(),
+                            index = scope.controlIndex(),
+                            events = scope.events(),
+                            element = angular.element(iElement.html().trim());
+                        var listeners = [], domListeners = [];
                         $compile(element)(scope);
                         $timeout(function () {
                             scope.$apply();
@@ -34,6 +40,9 @@
                                 if (google && google.maps) {
                                     google.maps.event.removeListener(listener);
                                 }
+                            });
+                            domListeners.forEach(function (listener) {
+                                listener.unbind('onchange');
                             });
                         });
                         function attachListener(eventName, callback) {
@@ -57,7 +66,19 @@
                         if (events != null) {
                             angular.forEach(events, function (value, key) {
                                 if (typeof value === 'function') {
-                                    listeners.push(attachListener(key, value));
+                                    if (key === 'fileSelect') {
+                                        if (element[0] instanceof HTMLInputElement && element[0].type === 'file') {
+                                            domListeners.push(element.bind('change', function () {
+                                                value(this.files[0]);
+                                            }));
+                                        } else {
+                                            domListeners.push(element.find('input:file').bind('change', function () {
+                                                value(this.files[0]);
+                                            }));
+                                        }
+                                    } else {
+                                        listeners.push(attachListener(key, value));
+                                    }
                                 }
                             });
                         }

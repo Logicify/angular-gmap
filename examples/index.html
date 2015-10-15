@@ -51,8 +51,9 @@
         <logicify-gmap-control
                 control-position="position"
                 control-index="1"
+                control-locals="controlLocals"
                 events="controlEvents">
-            <input type="file" onchange="angular.element(this).scope().fileSelected(this.files[0])"/>
+            <input type="file"/>
         </logicify-gmap-control>
         <xml-overlays
                 kml-collection="kmlCollection"

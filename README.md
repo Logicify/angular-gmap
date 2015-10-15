@@ -92,6 +92,7 @@ html
     control-index="1"
     events="controlEvents">
         <button>Push me</button>
+        <input type="file">
     </logicify-gmap-control>
 </logicify-gmap>
 ```
@@ -103,6 +104,11 @@ $scope.index = 1;
 $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
 $scope.controlEvents = {
                 click: function (event) {
+                    //it's google.maps.event
+                },
+                fileSelect: function(file){
+                    //this method binds on file input inside logicify-gmap-control directive
+                    //it's DOM event
                 }
             };
 ```
@@ -383,4 +389,4 @@ HTML
 ```
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
 ###### Load kml\kmz file via HTML file input:
-[jsfiddle example](https://jsfiddle.net/7gu8cksn/2/)
+[jsfiddle example](https://jsfiddle.net/7gu8cksn/3/)
