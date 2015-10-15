@@ -389,4 +389,4 @@ HTML
 ```
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
 ###### Load kml\kmz file via HTML file input:
-[jsfiddle example](https://jsfiddle.net/7gu8cksn/3/)
+[jsfiddle example](https://jsfiddle.net/7gu8cksn/4/)
