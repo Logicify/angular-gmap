@@ -241,6 +241,7 @@ Kml\kmz object can contain:
 #### Basic usage:
 include this file to your html:
 - geoxml3.js
+
 ###### HTML
 ```html
 <div ng-controller="TestController">
