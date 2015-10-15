@@ -1,15 +1,11 @@
 /**
  * Created by artem on 6/18/15.
  */
-(function (angular) {
-    /*global google*/
+/*global google*/
+(function (google, angular) {
     angular.module('LogicifyGMap')
         .service('InfoWindow', ['$log', '$rootScope', '$templateCache', '$timeout', '$http', '$compile', function ($log, $rootScope, $templateCache, $timeout, $http, $compile) {
             function InfoWindow() {
-                if (!google) {
-                    $log.error('Google maps lib is not found. Please check that you load it before angular.');
-                    return;
-                }
                 var self = this;
                 //private
                 var readyCallbackHolders = [], isInfoWndReady = false, lastMap = null;
@@ -83,4 +79,4 @@
             }
             return InfoWindow;
         }])
-})(angular);
+})(google, angular);
