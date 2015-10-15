@@ -25,6 +25,9 @@
                         'infoWindow': '=infoWindow'
                     },
                     link: function (scope, element, attrs, ctrl) {
+                        if (!geoXML3) {
+                            throw new Error('You should include geoxml3.js to be able to parse xml overlays. Please check that geoxml3.js file loads before logicify-gmap.js');
+                        }
                         var geoXml3Parser = null;
                         scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                         var currentCollectionPrefix = scope.kmlCollection._uid;
