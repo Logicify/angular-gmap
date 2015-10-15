@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                 src: 'dist/logicify-gmap.js',
                 dest: 'dist/logicify-gmap.js', // optional, if missing the src will be used
                 deps: { // optional, `default` is used as a fallback for rest!
-                    default: ['google', 'angular', 'geoXML3']
+                    default: ['google', 'angular']
                 }
             }
         },

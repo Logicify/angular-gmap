@@ -1,18 +1,18 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module unless amdModuleId is set
-        define(["google", "angular", "geoXML3"], function (a0, b1, c2) {
-            return (factory(a0, b1, c2));
+        define(["google", "angular"], function (a0, b1) {
+            return (factory(a0, b1));
         });
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require("google"), require("angular"), require("geoXML3"));
+        module.exports = factory(require("google"), require("angular"));
     } else {
-        factory(google, angular, geoXML3);
+        factory(google, angular);
     }
-}(this, function (google, angular, geoXML3) {
+}(this, function (google, angular) {
 
 /**
  * Created by artem on 5/28/15.
