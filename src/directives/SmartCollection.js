@@ -13,35 +13,6 @@
             function SmartCollection(arr) {
                 var self = this;
                 //private property
-                var _iterator = null;
-                /**
-                 * Iterator changes each time when method 'next' called
-                 * If last element reached then iterator resets
-                 * @return {ArrayItem || undefined}
-                 */
-                self['next'] = function () {
-                    if (_iterator == null) {
-                        _iterator = 0;
-                    } else {
-                        _iterator++;
-                    }
-                    if (self[_iterator] !== undefined) {
-                        return self[_iterator];
-                    }
-                    //reset iterator if end of list
-                    _iterator = null;
-                    return undefined;
-                };
-
-                self['setIterator'] = function (index) {
-                    if (angular.isNumber(index) && index !== NaN) {
-                        if (self[index] === undefined) {
-                            throw new Error('Can not reach this element, because it doesn\'t exist. Index: ' + index);
-                        } else {
-                            _iterator = index;
-                        }
-                    }
-                };
                 //init before overriding
                 if (Array.isArray(arr)) {
                     arr.forEach(function (item, index) {

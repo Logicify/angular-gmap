@@ -1,7 +1,7 @@
 /**
  * Created by artem on 5/28/15.
  */
-(function (angular) {
+(function (google, angular) {
     'use strict';
     /**
      * Note that if you want custom X button for info window you need to add css
@@ -22,7 +22,7 @@
                         var callbackHolders = [];
                         self.$mapReady = function (callback) {
                             if (callback && self.map) {
-                                callback(self.map)
+                                callback(self.map);
                                 return;
                             }
                             if (typeof callback === 'function') {
@@ -41,10 +41,6 @@
                     },
                     link: function (scope, iElement, iAttrs, ctrl) {
                         /*global google*/
-                        if (typeof google === 'undefined') {
-                            $log.error('There is no google maps lib. Please check that you load it before angular.js');
-                            return;
-                        }
                         var gmScope = scope.$new();
                         var options = gmScope.$eval(iAttrs['gmOptions']);
                         var readyCallback = gmScope.$eval(iAttrs['gmReady']);
@@ -111,4 +107,4 @@
                 }
             }
         ]);
-})(angular);
+})(google, angular);

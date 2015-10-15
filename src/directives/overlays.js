@@ -1,7 +1,8 @@
 /**
  * Created by artem on 10/7/15.
  */
-(function (angular, geoXML3) {
+/*global google*/
+(function (google, angular, geoXML3) {
     'use strict';
     angular.module('LogicifyGMap')
         .directive('xmlOverlays', [
@@ -171,7 +172,6 @@
                                 geoXml3Parser.docs.splice(0, geoXml3Parser.docs.length);
                                 geoXml3Parser.docsByUrl = {};
                                 scope.globalBounds = new google.maps.LatLngBounds();
-                                ;
                             }
                         }
 
@@ -274,4 +274,4 @@
                 }
             }
         ]);
-})(angular, geoXML3);
+})(google, angular, geoXML3);

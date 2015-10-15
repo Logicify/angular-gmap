@@ -1,3 +1,19 @@
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module unless amdModuleId is set
+        define(["google", "angular", "geoXML3"], function (a0, b1, c2) {
+            return (factory(a0, b1, c2));
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require("google"), require("angular"), require("geoXML3"));
+    } else {
+        factory(google, angular, geoXML3);
+    }
+}(this, function (google, angular, geoXML3) {
+
 /**
  * Created by artem on 5/28/15.
  */
@@ -20,35 +36,6 @@
             function SmartCollection(arr) {
                 var self = this;
                 //private property
-                var _iterator = null;
-                /**
-                 * Iterator changes each time when method 'next' called
-                 * If last element reached then iterator resets
-                 * @return {ArrayItem || undefined}
-                 */
-                self['next'] = function () {
-                    if (_iterator == null) {
-                        _iterator = 0;
-                    } else {
-                        _iterator++;
-                    }
-                    if (self[_iterator] !== undefined) {
-                        return self[_iterator];
-                    }
-                    //reset iterator if end of list
-                    _iterator = null;
-                    return undefined;
-                };
-
-                self['setIterator'] = function (index) {
-                    if (angular.isNumber(index) && index !== NaN) {
-                        if (self[index] === undefined) {
-                            throw new Error('Can not reach this element, because it doesn\'t exist. Index: ' + index);
-                        } else {
-                            _iterator = index;
-                        }
-                    }
-                };
                 //init before overriding
                 if (Array.isArray(arr)) {
                     arr.forEach(function (item, index) {
@@ -138,7 +125,7 @@
 /**
  * Created by artem on 6/24/15.
  */
-(function (angular) {
+(function (google, angular) {
     'use strict';
     /**
      * Note that if you want custom X button for info window you need to add css
@@ -204,12 +191,12 @@
                 }
             }
         ]);
-})(angular);
+})(google, angular);
 
 /**
  * Created by artem on 5/28/15.
  */
-(function (angular) {
+(function (google, angular) {
     'use strict';
     /**
      * Note that if you want custom X button for info window you need to add css
@@ -230,7 +217,7 @@
                         var callbackHolders = [];
                         self.$mapReady = function (callback) {
                             if (callback && self.map) {
-                                callback(self.map)
+                                callback(self.map);
                                 return;
                             }
                             if (typeof callback === 'function') {
@@ -249,10 +236,6 @@
                     },
                     link: function (scope, iElement, iAttrs, ctrl) {
                         /*global google*/
-                        if (typeof google === 'undefined') {
-                            $log.error('There is no google maps lib. Please check that you load it before angular.js');
-                            return;
-                        }
                         var gmScope = scope.$new();
                         var options = gmScope.$eval(iAttrs['gmOptions']);
                         var readyCallback = gmScope.$eval(iAttrs['gmReady']);
@@ -319,12 +302,13 @@
                 }
             }
         ]);
-})(angular);
+})(google, angular);
 
 /**
  * Created by artem on 10/7/15.
  */
-(function (angular, geoXML3) {
+    /*global google*/
+    (function (google, angular, geoXML3) {
     'use strict';
     angular.module('LogicifyGMap')
         .directive('xmlOverlays', [
@@ -494,7 +478,6 @@
                                 geoXml3Parser.docs.splice(0, geoXml3Parser.docs.length);
                                 geoXml3Parser.docsByUrl = {};
                                 scope.globalBounds = new google.maps.LatLngBounds();
-                                ;
                             }
                         }
 
@@ -597,7 +580,7 @@
                 }
             }
         ]);
-})(angular, geoXML3);
+    })(google, angular, geoXML3);
 /**
  * Created by artem on 6/18/15.
  */
@@ -684,3 +667,5 @@
             return InfoWindow;
         }])
 })(angular);
+
+}));

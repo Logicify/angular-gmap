@@ -1,7 +1,7 @@
 /**
  * Created by artem on 6/24/15.
  */
-(function (angular) {
+(function (google, angular) {
     'use strict';
     /**
      * Note that if you want custom X button for info window you need to add css
@@ -67,4 +67,4 @@
                 }
             }
         ]);
-})(angular);
+})(google, angular);
