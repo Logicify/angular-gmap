@@ -226,7 +226,7 @@ infowindow.close();
 ```
 
 ## XML overlays support
-[jsfiddle example](https://jsfiddle.net/rfgzw63r/6/)
+[jsfiddle example](https://jsfiddle.net/rfgzw63r/7/)
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files.
 XML files can be: .zip, .kmz, .kml, or just a string.
@@ -239,9 +239,7 @@ Kml\kmz object can contain:
  ]
 ```
 #### Basic usage:
-include those files to your html file (saving order):
-- ProjectedOverlay.js
-- ZipFile.complete.js
+include this file to your html:
 - geoxml3.js
 ###### HTML
 ```html
@@ -385,4 +383,4 @@ HTML
 ```
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
 ###### Load kml\kmz file via HTML file input:
-[jsfiddle example](https://jsfiddle.net/7gu8cksn/1/)
+[jsfiddle example](https://jsfiddle.net/7gu8cksn/2/)
