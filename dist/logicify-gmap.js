@@ -44,8 +44,7 @@
                     scope: {
                         controlPosition: '&controlPosition',
                         controlIndex: '&controlIndex',
-                        events: '&events',
-                        controlLocals: '&controlLocals'
+                        events: '&events'
                     },
                     link: function (scope, iElement, iAttrs, ctrl) {
                         /*global google*/
