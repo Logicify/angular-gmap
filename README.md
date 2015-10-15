@@ -15,7 +15,7 @@
 ### Usage ###
 
 #### JSFiddle example ####
-[example](https://jsfiddle.net/s6s4mbc5/62/)
+[example](https://jsfiddle.net/s6s4mbc5/71/)
 
 ```shell
 bower install logicify-gmap
@@ -117,7 +117,6 @@ It's angular supported. So you can use angular inside info window template (dire
 ```js
 module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scope, $timeout, InfoWindow) {
             $scope.markers = [];
-            $scope.infoWindowName = 'hello native you!';
             $scope.cssOpts = {width: '50%', height: '50%', 'min-width': '400px', 'min-height': '200px'};
             $scope.gmOpts = {zoom: 10, center: new google.maps.LatLng(-1, 1)};
             $scope.closeInfoWindow = function (infowindow) {
@@ -156,7 +155,7 @@ module.controller('myCtrl', ['$scope', '$timeout', 'InfoWindow', function ($scop
 
 ```html
 <div>
-    <label>{{infoWindowName}} {{$infoWND.anchor.id}}</label>
+    <label>{{$infoWND.anchor.id}}</label>
     <button ng-click="closeInfoWindow($infoWND)">Close me</button>
 </div>
 ```
