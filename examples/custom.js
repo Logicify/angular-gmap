@@ -55,6 +55,7 @@
             function attach(marker) {
                 google.maps.event.addListener(marker, 'click', function (markerObj) {
                     infowindow.$ready(function (wnd) {
+                        wnd.infoWindowName = 'Hello native you';
                         wnd.open(map, marker);
                     });
                 });

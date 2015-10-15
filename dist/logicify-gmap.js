@@ -291,7 +291,7 @@
  * Created by artem on 10/7/15.
  */
     /*global google*/
-    (function (google, angular, geoXML3) {
+    (function (google, angular) {
     'use strict';
     angular.module('LogicifyGMap')
         .directive('xmlOverlays', [
@@ -561,7 +561,7 @@
                 }
             }
         ]);
-    })(google, angular, geoXML3);
+    })(google, angular);
 /**
  * Created by artem on 6/18/15.
  */
