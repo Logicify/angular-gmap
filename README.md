@@ -390,3 +390,13 @@ HTML
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
 ###### Load kml\kmz file via HTML file input:
 [jsfiddle example](https://jsfiddle.net/7gu8cksn/4/)
+###### How it works
+The kml\kmz collection is instance of "SmartCollection" (you can inject it just by adding "SmartCollection"-service to your dependency).
+SmartCollection - is angular service. SmartCollection instanceOf Array === true.
+```js
+var file1 = {url:'http://some url'}, file2 = {url:'http://some url'}, file3 = {url:'http://some url'};
+scope.kmlCollection = [file1,file2,file3]; //create new collection
+scope.kmlCollection = [file1, file2, file3] //delete old collection and crete new one (all those files will be downloaded again)
+scope.kmlCollection.push({url:'http://different url'}); //only this file will be downloaded and parsed.
+scope.pop(); //just remove item
+```

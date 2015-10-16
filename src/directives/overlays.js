@@ -107,10 +107,7 @@
                             if (item != null) {
                                 downLoadOverlayFile(item).then(function (kmlObject) {
                                     if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
-                                        scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
-                                        $timeout(function () {
-                                            scope.gMap.fitBounds(scope.globalBounds);
-                                        }, 10);
+                                        initGlobalBounds();
                                     }
                                 });
                             }
@@ -150,7 +147,7 @@
                             scope.globalBounds = new google.maps.LatLngBounds();
                             if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
                                 scope.kmlCollection.forEach(function (item) {
-                                    scope.globalBounds.extend(item.doc[0].bounds.getCenter());
+                                    if (item.doc)scope.globalBounds.extend(item.doc[0].bounds.getCenter());
                                 });
                                 $timeout(function () {
                                     scope.gMap.fitBounds(scope.globalBounds);

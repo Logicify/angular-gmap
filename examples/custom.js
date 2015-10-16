@@ -28,6 +28,7 @@
         BaseClass.apply(this, arguments);
         var scope = this.getDependency('$scope');
         var infoWindow = this.getDependency('InfoWindow');
+        var $timeout = this.getDependency('$timeout');
         scope.markers = [];
         scope.controlEvents = {
             click: function (event) {
@@ -52,9 +53,11 @@
             center: new google.maps.LatLng(-1, 1)
         };
         scope.kmlCollection = [
-            {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'},
-            {url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'}
+            {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'}
         ];
+        $timeout(function () {
+            scope.kmlCollection.push({url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'});
+        }, 300);
         scope.kmlEvents = {};
         scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
         scope.index = 1;

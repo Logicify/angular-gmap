@@ -233,6 +233,9 @@
                         'infoWindow': '=infoWindow'
                     },
                     link: function (scope, element, attrs, ctrl) {
+                        if (!geoXML3) {
+                            throw new Error('You should include geoxml3.js to be able to parse xml overlays. Please check that geoxml3.js file loads before logicify-gmap.js');
+                        }
                         var geoXml3Parser = null;
                         scope.kmlCollection = new SmartCollection(scope.kmlCollection);
                         var currentCollectionPrefix = scope.kmlCollection._uid;
@@ -312,10 +315,7 @@
                             if (item != null) {
                                 downLoadOverlayFile(item).then(function (kmlObject) {
                                     if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
-                                        scope.globalBounds.extend(kmlObject.doc[0].bounds.getCenter());
-                                        $timeout(function () {
-                                            scope.gMap.fitBounds(scope.globalBounds);
-                                        }, 10);
+                                        initGlobalBounds();
                                     }
                                 });
                             }
@@ -355,7 +355,7 @@
                             scope.globalBounds = new google.maps.LatLngBounds();
                             if (scope.kmlCollection.length != 1 && scope.fitBoundsAfterAll !== false) {
                                 scope.kmlCollection.forEach(function (item) {
-                                    scope.globalBounds.extend(item.doc[0].bounds.getCenter());
+                                    if (item.doc)scope.globalBounds.extend(item.doc[0].bounds.getCenter());
                                 });
                                 $timeout(function () {
                                     scope.gMap.fitBounds(scope.globalBounds);
