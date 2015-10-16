@@ -3,40 +3,62 @@
  */
 (function (angular) {
     'use strict';
+
+    BaseClass.$inject = ['$scope', '$timeout', 'InfoWindow', 'SmartCollection'];
+    function BaseClass() {
+        var self = this;
+        self.dependencies = {};
+        Array.prototype.slice.call(arguments).forEach(function (dependency, index) {
+            self.dependencies[self.constructor.$inject[index]] = dependency;
+        });
+    }
+
+    BaseClass.prototype.getDependency = function (dependencyName) {
+        if (this.dependencies.hasOwnProperty(dependencyName)) {
+            return this.dependencies[dependencyName];
+        }
+    };
     /*global google*/
     var app = angular.module('Application', ['LogicifyGMap']);
-    app.controller('TestController', ['$scope', '$timeout', 'InfoWindow', 'SmartCollection', function ($scope, $timeout, InfoWindow, SmartCollection) {
-        $scope.markers = [];
-        $scope.controlEvents = {
+
+    ChildrenClass.$name = 'TestController';
+    function ChildrenClass() {
+        /*this.__proto__.__proto__.apply(this, arguments) */
+        //or
+        BaseClass.apply(this, arguments);
+        var scope = this.getDependency('$scope');
+        var infoWindow = this.getDependency('InfoWindow');
+        scope.markers = [];
+        scope.controlEvents = {
             click: function (event) {
             },
             fileSelect: function (file) {
                 //please check mime type of file to be sure that this file is kml or kmz or zip
                 if (file instanceof Blob) {
-                    $scope.kmlCollection.push({file: file});
+                    scope.kmlCollection.push({file: file});
                 }
             }
         };
-        $scope.infoWindowName = 'hello native you!';
-        $scope.cssOpts = {
+        scope.infoWindowName = 'hello native you!';
+        scope.cssOpts = {
             width: '80%',
             height: '60%',
             'min-width': '400px',
             'min-height': '200px'
         };
 
-        $scope.gmOpts = {
+        scope.gmOpts = {
             zoom: 16,
             center: new google.maps.LatLng(-1, 1)
         };
-        $scope.kmlCollection = [
+        scope.kmlCollection = [
             {url: 'https://dl.dropboxusercontent.com/u/124860071/tristate_area.kml'},
             {url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'}
         ];
-        $scope.kmlEvents = {};
-        $scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
-        $scope.index = 1;
-        $scope.closeInfoWindow = function (infowindow) {
+        scope.kmlEvents = {};
+        scope.position = google.maps.ControlPosition.BOTTOM_LEFT;
+        scope.index = 1;
+        scope.closeInfoWindow = function (infowindow) {
             infowindow.close(true);
         };
 
@@ -45,14 +67,14 @@
              * Redraw overlay
              */
             mvcObject.setMap(null);
-            mvcObject.setMap($scope.gmap);
+            mvcObject.setMap(scope.gmap);
         }
 
-        $scope.ready = function (map) {
-            var infowindow = new InfoWindow({templateUrl: 'template.html'});
-            $scope.gmap = map;
-            $scope.overlaysInfowindow = new InfoWindow({templateUrl: 'infowindow.html'});
-            $scope.overlaysInfowindow.$ready(overlayInfowindowReady);
+        scope.ready = function (map) {
+            var infowindow = new infoWindow({templateUrl: 'template.html'});
+            scope.gmap = map;
+            scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
+            scope.overlaysInfowindow.$ready(overlayInfowindowReady);
             function attach(marker) {
                 google.maps.event.addListener(marker, 'click', function (markerObj) {
                     infowindow.$ready(function (wnd) {
@@ -79,9 +101,17 @@
                     position: pos,
                     map: map
                 });
-                $scope.markers.push(marker);
+                scope.markers.push(marker);
                 attach(marker);
             }
         };
-    }]);
+    }
+
+    //inherit base class
+    ChildrenClass.prototype = Object.create(BaseClass.prototype);
+    //set constructor to current class
+    ChildrenClass.prototype.constructor = ChildrenClass;
+    //inherit injection
+    ChildrenClass.$inject = BaseClass.$inject;
+    app.controller(ChildrenClass.$name, ChildrenClass);
 })(angular);

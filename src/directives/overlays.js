@@ -63,7 +63,7 @@
                                 initKmlCollection();
                             });
                         } else {
-                            geoXml3Parser = new geoXML3.parser(getParserOptions(map));
+                            geoXml3Parser = new geoXML3.parser(getParserOptions(scope.gMap));
                             initKmlCollection();
                         }
                         scope.$on('$destroy', function () {
