@@ -57,6 +57,7 @@
         ];
         $timeout(function () {
             scope.kmlCollection.push({url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'});
+            scope.kmlCollection.push({content: '<Placemark><name>Simple place mark</name><description>Put detailed information here</description><Point><coordinates>-122.0822035425683,37.42228990140251,0</coordinates></Point></Placemark>'});
         }, 300);
         scope.kmlEvents = {};
         scope.position = google.maps.ControlPosition.BOTTOM_LEFT;

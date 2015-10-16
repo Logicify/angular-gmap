@@ -453,7 +453,7 @@
                                         onAfterDownload(data, null, deferred);
                                     });
 
-                            } else if (typeof kmlObject.content === 'String') {
+                            } else if (typeof kmlObject.content === 'string') {
                                 onAfterDownload(null, kmlObject.content, deferred);
                             } else {
                                 if (kmlObject.file instanceof Blob) {
