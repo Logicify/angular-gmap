@@ -398,5 +398,7 @@ var file1 = {url:'http://some url'}, file2 = {url:'http://some url'}, file3 = {u
 scope.kmlCollection = [file1,file2,file3]; //create new collection
 scope.kmlCollection = [file1, file2, file3] //delete old collection and crete new one (all those files will be downloaded again)
 scope.kmlCollection.push({url:'http://different url'}); //only this file will be downloaded and parsed.
-scope.pop(); //just remove item
+//next example
+scope.kmlCollection.splice(1,scope.kmlCollection.length) // delete last 2 items (file1 wouldn't be reloaded)
+scope.kmlCollection = [file1]; //reload file1
 ```
