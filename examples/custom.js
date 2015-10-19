@@ -40,6 +40,46 @@
                 }
             }
         };
+        scope.draw = {
+            events: {
+                drawing: {},
+                overlays: {
+                    click: function (e, map) {
+                        var self = this;
+                        if (scope.overlaysInfowindow) {
+                            scope.overlaysInfowindow.$ready(function (wnd) {
+                                wnd.setPosition(self.center || self.position);//info window position
+                                wnd.open(map);
+                                wnd.$scope.mvcObject = self;
+                                wnd.$scope.applyConfig = applyConfig;
+                            });
+                        }
+                    }
+                }
+            },
+            options: {
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.CIRCLE,
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE,
+                        google.maps.drawing.OverlayType.RECTANGLE
+                    ]
+                },
+                markerOptions: {icon: 'beachflag.png'},
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    editable: true,
+                    zIndex: 1
+                }
+            }
+        };
         scope.infoWindowName = 'hello native you!';
         scope.cssOpts = {
             width: '80%',
@@ -57,7 +97,7 @@
         ];
         $timeout(function () {
             scope.kmlCollection.push({url: 'https://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml'});
-            scope.kmlCollection.push({content: '<Placemark><name>Simple place mark</name><description>Put detailed information here</description><Point><coordinates>-122.0822035425683,37.42228990140251,0</coordinates></Point></Placemark>'});
+            scope.kmlCollection.push({content: '<Placemark><name>Simple place mark</name><description>Put detailed information here</description><Point><coordinates>-110.0822035425683,37.42228990140251,0</coordinates></Point></Placemark>'});
         }, 300);
         scope.kmlEvents = {};
         scope.position = google.maps.ControlPosition.BOTTOM_LEFT;

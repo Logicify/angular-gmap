@@ -1,25 +1,95 @@
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module unless amdModuleId is set
-        define(["google", "angular"], function (a0, b1) {
-            return (factory(a0, b1));
-        });
-    } else if (typeof exports === 'object') {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory(require("google"), require("angular"));
-    } else {
-        factory(google, angular);
-    }
-}(this, function (google, angular) {
-
 /**
  * Created by artem on 5/28/15.
  */
 (function (angular) {
     'use strict';
     angular.module('LogicifyGMap', []);
+})(angular);
+/**
+ * Created by artem on 10/16/15.
+ */
+(function (angular) {
+    'use strict';
+    /*global google*/
+    angular.module('LogicifyGMap')
+        .directive('logicifyGmapDraw', [
+            '$timeout',
+            '$log',
+            '$q',
+            function ($timeout, $log, $q) {
+                return {
+                    restrict: 'E',
+                    require: '^logicifyGmap',
+                    scope: {
+                        gmapEvents: '&gmapEvents',
+                        drawOptions: '&drawOptions'
+                    },
+                    link: function (scope, element, attrs, ctrl) {
+                        var map = ctrl.getMap();
+                        var events = scope.gmapEvents();
+                        var drawManagerListeners = [], overlaysListeners = [];
+
+                        function assignListener(listener, eventName) {
+                            return google.maps.event.addListener(drawManager, eventName, listener);
+                        }
+
+                        function assignOverlayListeners(overlay) {
+                            if (events && events.overlays) {
+                                angular.forEach(events.overlays, function (listener, eventName) {
+                                    if (typeof listener === 'function') {
+                                        overlaysListeners.push(google.maps.event.addListener(overlay, eventName, function (e) {
+                                            var self = this;
+                                            listener.apply(self, [e, map]);
+                                        }));
+                                    }
+                                });
+                            }
+                        }
+
+                        function detachListener(listener) {
+                            if (google && google.maps) {
+                                google.maps.event.removeListener(listener);
+                            }
+                        }
+
+                        scope.$on('$destroy', function () {
+                            /**
+                             * Cleanup
+                             */
+                            drawManagerListeners.forEach(detachListener);
+                            overlaysListeners.forEach(detachListener)
+                        });
+                        var minimalOptions = {
+                            drawingMode: google.maps.drawing.OverlayType.MARKER,
+                            drawingControl: true,
+                            drawingControlOptions: {
+                                position: google.maps.ControlPosition.TOP_CENTER,
+                                drawingModes: [
+                                    google.maps.drawing.OverlayType.MARKER
+                                ]
+                            }
+                        };
+                        var options = angular.extend(minimalOptions, scope.drawOptions());
+                        var drawManager = new google.maps.drawing.DrawingManager(options);
+                        drawManager.setMap(map);
+                        if (events) {
+                            if (events.drawing) {
+                                angular.forEach(events.drawing, function (liestener, eventName) {
+                                    if (typeof liestener === 'function') {
+                                        drawManagerListeners.push(assignListener(liestener, eventName));
+                                    }
+                                });
+                            }
+                            if (events.overlays) {
+                                drawManagerListeners.push(google.maps.event.addListener(drawManager, 'overlaycomplete', function (e) {
+                                    assignOverlayListeners(e.overlay);
+                                }))
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
 })(angular);
 /**
  * Created by artem on 6/24/15.
@@ -209,8 +279,8 @@
 /**
  * Created by artem on 10/7/15.
  */
-    /*global google*/
-    (function (google, angular) {
+/*global google*/
+(function (google, angular) {
     'use strict';
     angular.module('LogicifyGMap')
         .directive('xmlOverlays', [
@@ -488,12 +558,12 @@
                 }
             }
         ]);
-    })(google, angular);
+})(google, angular);
 /**
  * Created by artem on 6/18/15.
  */
-    /*global google*/
-    (function (google, angular) {
+/*global google*/
+(function (google, angular) {
     angular.module('LogicifyGMap')
         .service('InfoWindow', ['$log', '$rootScope', '$templateCache', '$timeout', '$http', '$compile', function ($log, $rootScope, $templateCache, $timeout, $http, $compile) {
             function InfoWindow() {
@@ -570,107 +640,105 @@
             }
             return InfoWindow;
         }])
-    })(google, angular);
-    /**
-     * Created by artem on 10/12/15.
-     */
-    (function (angular) {
-        'use strict';
-        angular.module('LogicifyGMap')
-            .service('SmartCollection', [function () {
-                /**
-                 * Service is a singleton, so we can use global variable to generate uid!
-                 */
-                var uid = 0;
+})(google, angular);
+/**
+ * Created by artem on 10/12/15.
+ */
+(function (angular) {
+    'use strict';
+    angular.module('LogicifyGMap')
+        .service('SmartCollection', [function () {
+            /**
+             * Service is a singleton, so we can use global variable to generate uid!
+             */
+            var uid = 0;
 
-                function SmartCollection(arr) {
-                    var self = this;
-                    //private property
-                    //init before overriding
-                    if (Array.isArray(arr)) {
-                        arr.forEach(function (item, index) {
-                            self.push(item);
-                        });
-                    }
-                    self._uid = uid++;
-                    var addCB = [], removeCB = [];
+            function SmartCollection(arr) {
+                var self = this;
+                //private property
+                //init before overriding
+                if (Array.isArray(arr)) {
+                    arr.forEach(function (item, index) {
+                        self.push(item);
+                    });
+                }
+                self._uid = uid++;
+                var addCB = [], removeCB = [];
                 /**
                  * Override all methods that are changing an array!
                  */
                 var push = self.push;
-                    self['push'] = function () {
-                        var args = Array.prototype.slice.call(arguments);
-                        var result = push.apply(self, args);
-                        args.forEach(function (item) {
-                            addCB.forEach(function (callback) {
-                                callback.apply(self, [item]);
+                self['push'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = push.apply(self, args);
+                    args.forEach(function (item) {
+                        addCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
                         });
+                    });
+                    return result;
+                };
+                var pop = self.pop;
+                self['pop'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = pop.apply(self, args);
+                    removeCB.forEach(function (callback) {
+                        callback.apply(self, [result]);
+                    });
+                    return result;
+                };
+                var unshift = self.unshift;
+                self['unshift'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = unshift.apply(self, args);
+                    args.forEach(function (item) {
+                        addCB.forEach(function (callback) {
+                            callback.apply(self, [item]);
                         });
-                        return result;
-                    };
-                    var pop = self.pop;
-                    self['pop'] = function () {
-                        var args = Array.prototype.slice.call(arguments);
-                        var result = pop.apply(self, args);
-                        removeCB.forEach(function (callback) {
-                            callback.apply(self, [result]);
-                        });
-                        return result;
-                    };
-                    var unshift = self.unshift;
-                    self['unshift'] = function () {
-                        var args = Array.prototype.slice.call(arguments);
-                        var result = unshift.apply(self, args);
-                        args.forEach(function (item) {
-                            addCB.forEach(function (callback) {
-                                callback.apply(self, [item]);
-                        });
-                        });
+                    });
 
-                        return result;
-                    };
-                    var shift = self.shift;
-                    self['shift'] = function () {
-                        var args = Array.prototype.slice.call(arguments);
-                        var result = unshift.apply(self, args);
-                        removeCB.forEach(function (callback) {
-                            callback.apply(self, [result]);
-                        });
-                        return result;
-                    };
-                    var splice = self.splice;
-                    self['splice'] = function () {
-                        var args = Array.prototype.slice.call(arguments);
-                        var result = splice.apply(self, args);
-                        result.forEach(function (item) {
+                    return result;
+                };
+                var shift = self.shift;
+                self['shift'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = unshift.apply(self, args);
+                    removeCB.forEach(function (callback) {
+                        callback.apply(self, [result]);
+                    });
+                    return result;
+                };
+                var splice = self.splice;
+                self['splice'] = function () {
+                    var args = Array.prototype.slice.call(arguments);
+                    var result = splice.apply(self, args);
+                    result.forEach(function (item) {
                         removeCB.forEach(function (callback) {
                             callback.apply(self, [item]);
                         });
-                        });
+                    });
 
-                        return result;
-                    };
-                    /**
-                     * The same as "splice", but does not call onRemove callback
-                     * @return {Array}
-                     */
-                    self['removeQuietly'] = splice;
-                    self['onRemoveItem'] = function (cb) {
-                        if (typeof cb === 'function') {
-                            removeCB.push(cb);
-                        }
-                    };
-                    self['onAddItem'] = function (cb) {
-                        if (typeof cb === 'function') {
-                            addCB.push(cb);
-                        }
-                    };
-                }
+                    return result;
+                };
+                /**
+                 * The same as "splice", but does not call onRemove callback
+                 * @return {Array}
+                 */
+                self['removeQuietly'] = splice;
+                self['onRemoveItem'] = function (cb) {
+                    if (typeof cb === 'function') {
+                        removeCB.push(cb);
+                    }
+                };
+                self['onAddItem'] = function (cb) {
+                    if (typeof cb === 'function') {
+                        addCB.push(cb);
+                    }
+                };
+            }
 
-                SmartCollection.prototype = Object.create(Array.prototype);
-                SmartCollection.prototype.constructor = SmartCollection;
-                return SmartCollection;
-            }]);
-    })(angular);
-
-}));
+            SmartCollection.prototype = Object.create(Array.prototype);
+            SmartCollection.prototype.constructor = SmartCollection;
+            return SmartCollection;
+        }]);
+})(angular);
