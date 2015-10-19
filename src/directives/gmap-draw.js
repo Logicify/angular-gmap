@@ -18,6 +18,9 @@
                         drawOptions: '&drawOptions'
                     },
                     link: function (scope, element, attrs, ctrl) {
+                        if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
+                            throw new Error('"Drawing" API of google maps is not available! Probably you forgot load it. Please check google maps spec. to load "Drawing" API.');
+                        }
                         var map = ctrl.getMap();
                         var events = scope.gmapEvents();
                         var drawManagerListeners = [], overlaysListeners = [];
