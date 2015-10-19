@@ -26,7 +26,7 @@
                     var overrideOpen = self['open'];
                     self['open'] = function (map, marker) {
                         lastMap = map;
-                        if (typeof map.openInfoWnd === 'function') {
+                        if (map != null && typeof map.openInfoWnd === 'function') {
                             map.openInfoWnd(content, map, marker, self, overrideOpen);
                         }
                     };
