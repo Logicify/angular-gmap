@@ -411,7 +411,7 @@ First of all you need to see [google maps spec](https://developers.google.com/ma
   src="https://maps.googleapis.com/maps/api/js?&libraries=drawing">
 </script>
 ```
-As can you see dependency injection is just url param.
+As can you see dependency injection it's just url param.
 - Include this html into gmap directive:
 ```html
 <logicify-gmap
