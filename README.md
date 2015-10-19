@@ -229,6 +229,8 @@ infowindow.close(true)
 ```js
 infowindow.close();
 ```
+###### Note that after opening info window (wnd.open(map)) you can access to wnd.$scope (property "$scope" only, not "scope")!
+why only after opening? Because "open" method rewrites infowindow scope and applies digest. So you can access the scope only after calling method "open".
 
 ## XML overlays support
 [jsfiddle example](https://jsfiddle.net/rfgzw63r/7/)
