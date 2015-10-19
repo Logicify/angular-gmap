@@ -400,5 +400,97 @@ scope.kmlCollection = [file1, file2, file3] //delete old collection and crete ne
 scope.kmlCollection.push({url:'http://different url'}); //only this file will be downloaded and parsed.
 //next example
 scope.kmlCollection.splice(1,scope.kmlCollection.length) // delete last 2 items (file1 wouldn't be reloaded)
-scope.kmlCollection = [file1]; //reload file1
+scope.kmlCollection = [file1]; //reload file1 and delete rest
+```
+#### Drawing support
+First of all you need to see [google maps spec](https://developers.google.com/maps/documentation/javascript/drawinglayer).
+###### Usage:
+- Add dependency injection for google maps drawing api (taken from google maps drawing spec):
+```html
+<script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?&libraries=drawing">
+</script>
+```
+As can you see dependency injection is just url param.
+- Include this html into gmap directive:
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-draw
+                gmap-events="draw.events"
+                draw-options="draw.options">
+        </logicify-gmap-draw>
+</logicify-gmap>
+```
+- Implement JS logic to be able manipulate the map (controller code):
+
+```js
+scope.draw = {
+            //put all drawing things in one place
+            events: {
+                drawing: {},
+                overlays: {
+                    click: function (e, map) {
+                        var self = this;
+                        //note that "this" can be overlay or marker, you need to be careful, because marker doesn't have "center" property and overlay has.
+                        if (scope.overlaysInfowindow) {
+                            scope.overlaysInfowindow.$ready(function (wnd) {
+                                wnd.setPosition(self.center || self.position);//info window position
+                                wnd.open(map);
+                                wnd.$scope.mvcObject = self;
+                                wnd.$scope.applyConfig = applyConfig;
+                            });
+                        }
+                    }
+                }
+            },
+            //see google maps spec about drawing options
+            options: {
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.CIRCLE,
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE,
+                        google.maps.drawing.OverlayType.RECTANGLE
+                    ]
+                },
+                markerOptions: {icon: 'beachflag.png'},
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    editable: true,
+                    zIndex: 1
+                }
+            }
+        };
+        scope.cssOpts = {
+            width: '80%',
+            height: '60%',
+            'min-width': '400px',
+            'min-height': '200px'
+        };
+        scope.gmOpts = {
+            zoom: 16,
+            center: new google.maps.LatLng(-1, 1)
+        };
+        function applyConfig(mvcObject) {
+            /**
+             * Redraw overlay
+             */
+            mvcObject.setMap(null);
+            mvcObject.setMap(scope.gmap);
+        }
+
+        scope.ready = function (map) {
+            scope.gmap = map;
+            scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
+        };
 ```
