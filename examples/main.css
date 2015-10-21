@@ -18,3 +18,81 @@
 .info-window-container input {
     width: 140px;
 }
+
+/*.gmap-dropdown-holder {
+    margin-top: 5px;
+    height: 16px;
+}
+
+.gmap-nav ul {
+    border-radius: 5px;
+    *zoom: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #ffffff;
+}
+
+.gmap-nav ul:before, .gmap-nav ul:after {
+    content: "";
+    display: table;
+}
+
+.gmap-nav ul:after {
+    clear: both;
+}
+
+.gmap-nav ul > li {
+    float: left;
+    position: relative;
+}
+
+.gmap-nav a {
+    display: block;
+    line-height: 1.2em;
+    color: #000000;
+    padding: 5px 6px;
+    border-radius: 5px;
+}
+
+.gmap-nav a:hover {
+    text-decoration: none;
+    background: #afafaf;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.gmap-nav li ul {
+    background: #fefcff;
+}
+
+.gmap-nav li ul li {
+    width: 100px;
+}
+
+.gmap-nav li ul a {
+    border: none;
+}
+
+.gmap-nav li ul a:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.gmap-nav li ul {
+    position: absolute;
+    left: 0;
+    z-index: 9999;
+}
+
+.gmap-nav li ul li {
+    overflow: hidden;
+    max-height: 0;
+    -webkit-transition: max-height 500ms ease;
+    -moz-transition: max-height 500ms ease;
+    -o-transition: max-height 500ms ease;
+    transition: max-height 500ms ease;
+}
+
+.gmap-nav ul > li:hover ul li {
+    max-height: 150px;
+}*/

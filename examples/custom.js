@@ -42,7 +42,26 @@
         };
         scope.draw = {
             events: {
-                drawing: {},
+                drawing: {
+                    overlaycomplete: function (e) {
+                        //var arrow = {
+                        //    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                        //    strokeOpacity: 1
+                        //};
+                        //var otherLineSymbol = {
+                        //    path: 'M 0,-1 0,1',
+                        //    strokeOpacity: 1,
+                        //    strokeWeight: 4,
+                        //    scale: 0.2
+                        //};
+                        //e.overlay.set('icons', [{
+                        //    icon: arrow,
+                        //    offset: '100%', repeat: 'none'
+                        //}, {icon: otherLineSymbol, offset: '0', repeat: '50px'}]);
+                        //e.overlay.set('strokeOpacity', 0);
+                        applyConfig(e.overlay);
+                    }
+                },
                 overlays: {
                     click: function (e, map) {
                         var self = this;
