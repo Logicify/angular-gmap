@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Google map</title>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <link rel="stylesheet" type="text/css" href="gmap-minimum-ui.css">
+    <link rel="stylesheet" type="text/css" href="../dist/gmap-minimum-ui.css">
     <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing"></script>
 </head>
 <body ng-app="Application">
@@ -63,7 +63,7 @@
         <logicify-gmap-draw
                 gmap-events="draw.events"
                 draw-options="draw.options"
-                gmap-line-types="true">
+                gmap-custom-lines="true">
         </logicify-gmap-draw>
     </logicify-gmap>
 </div>

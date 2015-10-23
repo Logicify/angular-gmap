@@ -24,7 +24,8 @@
                     scope: {
                         gmapEvents: '&gmapEvents',
                         drawOptions: '&drawOptions',
-                        gmapLineTypes: '&gmapLineTypes'
+                        gmapCustomLines: '&gmapCustomLines',
+                        gmapLineTypes: '=gmapLineTypes'
                     },
                     link: function (scope, element, attrs, ctrl) {
                         if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
@@ -34,7 +35,7 @@
                             events = scope.gmapEvents(),
                             drawManagerListeners = [],
                             overlaysListeners = [],
-                            isLineTypesEnabled = scope.gmapLineTypes();
+                            isLineTypesEnabled = scope.gmapCustomLines();
                         scope.gmapLineStyles = scope.gmapLineStyles || {};
                         var lines = {
                             dashed: {
@@ -58,22 +59,30 @@
                             {
                                 name: '-----',
                                 icons: [],
-                                parentStrokeOpacity: 1
+                                parentOptions: {
+                                    strokeOpacity: 1
+                                }
                             },
                             {
                                 name: '---->',
                                 icons: [{icon: lines.arrow, offset: '100%', repeat: 'none'}],
-                                parentStrokeOpacity: 1
+                                parentOptions: {
+                                    strokeOpacity: 1
+                                }
                             },
                             {
                                 name: '· · · ·',
                                 icons: [{icon: lines.dotted, offset: '0', repeat: '20px'}],
-                                parentStrokeOpacity: 0
+                                parentOptions: {
+                                    strokeOpacity: 0
+                                }
                             },
                             {
                                 name: '- - - -',
                                 icons: [{icon: lines.dashed, offset: '0', repeat: '20px'}],
-                                parentStrokeOpacity: 0
+                                parentOptions: {
+                                    strokeOpacity: 0
+                                }
                             },
                             {
                                 name: '· · ·>',
@@ -81,7 +90,9 @@
                                     {icon: lines.arrow, offset: '100%', repeat: 'none'},
                                     {icon: lines.dotted, offset: '0', repeat: '20px'}
                                 ],
-                                parentStrokeOpacity: 0
+                                parentOptions: {
+                                    strokeOpacity: 0
+                                }
                             },
                             {
                                 name: '- - ->',
@@ -89,10 +100,17 @@
                                     {icon: lines.arrow, offset: '100%', repeat: 'none'},
                                     {icon: lines.dashed, offset: '0', repeat: '20px'}
                                 ],
-                                parentStrokeOpacity: 0
+                                parentOptions: {
+                                    strokeOpacity: 0
+                                }
 
                             }
                         ];
+                        if (Array.isArray(scope.gmapLineTypes)) {
+                            scope.gmapLineTypes = scope.polyLineTypes.concat(scope.gmapLineTypes);
+                            scope.polyLineTypes = scope.gmapLineTypes;
+                        }
+                        scope.currentLineType = scope.polyLineTypes[0];
                         function assignListener(listener, eventName) {
                             return google.maps.event.addListener(drawManager, eventName, listener);
                         }
@@ -108,9 +126,37 @@
                                     }
                                 });
                             }
-                            if (isLineTypesEnabled === true) {
-                                overlay.set('icons', scope.currentLineType.icons);
-                                overlay.set('strokeOpacity', scope.currentLineType.parentStrokeOpacity);
+                        }
+
+                        function customStyling(overlay, type) {
+                            if (isLineTypesEnabled === true && type !== 'marker') {
+                                var points = null;
+                                if (type !== 'polyline') {
+                                    switch (type) {
+                                        case 'polygon':
+                                            points = overlay.getPath().getArray();
+                                            points.push(points[0]);//circular
+                                            break;
+                                        case 'rectangle':
+                                            var NE = overlay.bounds.getNorthEast();
+                                            var SW = overlay.bounds.getSouthWest();
+                                            var SE = new google.maps.LatLng(NE.lat(), SW.lng());
+                                            var NW = new google.maps.LatLng(SW.lat(), NE.lng());
+                                            points = [NE, SE, SW, NW, NE];
+                                            break;
+                                    }
+                                    var polyLine = new google.maps.Polyline({
+                                        path: points
+                                    });
+                                    polyLine.set('icons', scope.currentLineType.icons);
+                                    polyLine.setOptions(scope.currentLineType.parentOptions);
+                                    //polyLine.set('strokeOpacity', 1);
+                                    overlay.set('strokeOpacity', 0);//hide border
+                                    polyLine.setMap(map);
+                                } else {
+                                    overlay.set('icons', scope.currentLineType.icons);
+                                    overlay.setOptions(scope.currentLineType.parentOptions);
+                                }
                             }
                         }
 
@@ -160,6 +206,7 @@
                             if (events.overlays) {
                                 drawManagerListeners.push(google.maps.event.addListener(drawManager, 'overlaycomplete', function (e) {
                                     assignOverlayListeners(e.overlay);
+                                    customStyling(e.overlay, e.type);
                                 }))
                             }
                         }
