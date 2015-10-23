@@ -33,8 +33,7 @@
                         var lines = {
                             dashed: {
                                 path: 'M 0,-1 0,1',
-                                strokeOpacity: 1,
-                                scale: 4
+                                strokeOpacity: 1
                             },
                             arrow: {
                                 path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -122,7 +121,7 @@
                         }
 
                         function customStyling(overlay, type) {
-                            if (isLineTypesEnabled === true && type !== 'marker') {
+                            if (isLineTypesEnabled === true && type !== 'marker' && type !== 'circle') {
                                 var points = null;
                                 if (type !== 'polyline') {
                                     switch (type) {
@@ -142,9 +141,8 @@
                                         path: points
                                     });
                                     polyLine.set('icons', scope.currentLineType.icons);
-                                    polyLine.setOptions(scope.currentLineType.parentOptions);
-                                    //polyLine.set('strokeOpacity', 1);
-                                    overlay.set('strokeOpacity', 0);//hide border
+                                    polyLine.setOptions(scope.currentLineType.parentOptions);//hide border
+                                    overlay.setOptions(scope.currentLineType.parentOptions);//hide border
                                     polyLine.setMap(map);
                                 } else {
                                     overlay.set('icons', scope.currentLineType.icons);

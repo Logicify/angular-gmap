@@ -94,7 +94,7 @@
                     fillColor: '#ffff00',
                     fillOpacity: 1,
                     strokeWeight: 5,
-                    editable: true,
+                    editable: false,
                     zIndex: 1
                 }
             }

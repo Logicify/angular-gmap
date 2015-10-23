@@ -1,19 +1,3 @@
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module unless amdModuleId is set
-        define(["google", "angular"], function (a0, b1) {
-            return (factory(a0, b1));
-        });
-    } else if (typeof exports === 'object') {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory(require("google"), require("angular"));
-    } else {
-        factory(google, angular);
-    }
-}(this, function (google, angular) {
-
 /**
  * Created by artem on 5/28/15.
  */
@@ -56,8 +40,7 @@
                         var lines = {
                             dashed: {
                                 path: 'M 0,-1 0,1',
-                                strokeOpacity: 1,
-                                scale: 4
+                                strokeOpacity: 1
                             },
                             arrow: {
                                 path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -145,7 +128,7 @@
                         }
 
                         function customStyling(overlay, type) {
-                            if (isLineTypesEnabled === true && type !== 'marker') {
+                            if (isLineTypesEnabled === true && type !== 'marker' && type !== 'circle') {
                                 var points = null;
                                 if (type !== 'polyline') {
                                     switch (type) {
@@ -165,9 +148,8 @@
                                         path: points
                                     });
                                     polyLine.set('icons', scope.currentLineType.icons);
-                                    polyLine.setOptions(scope.currentLineType.parentOptions);
-                                    //polyLine.set('strokeOpacity', 1);
-                                    overlay.set('strokeOpacity', 0);//hide border
+                                    polyLine.setOptions(scope.currentLineType.parentOptions);//hide border
+                                    overlay.setOptions(scope.currentLineType.parentOptions);//hide border
                                     polyLine.setMap(map);
                                 } else {
                                     overlay.set('icons', scope.currentLineType.icons);
@@ -917,5 +899,3 @@
             return SmartCollection;
         }]);
 })(angular);
-
-}));
