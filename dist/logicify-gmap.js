@@ -3,7 +3,7 @@
  */
 (function (angular) {
     'use strict';
-    angular.module('LogicifyGMap',[]);
+    angular.module('LogicifyGMap', []);
 })(angular);
 /**
  * Created by artem on 10/16/15.
@@ -108,9 +108,8 @@
                         ];
                         if (Array.isArray(scope.gmapLineTypes)) {
                             scope.gmapLineTypes = scope.polyLineTypes.concat(scope.gmapLineTypes);
-                            scope.polyLineTypes = scope.gmapLineTypes;
                         }
-                        scope.currentLineType = scope.polyLineTypes[0];
+                        scope.currentLineType = scope.gmapLineTypes[0];
                         function assignListener(listener, eventName) {
                             return google.maps.event.addListener(drawManager, eventName, listener);
                         }
@@ -191,7 +190,7 @@
                             scope.onSelectPolyLineType = function (item) {
                                 scope.currentLineType = item;
                             };
-                            control = angular.element('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
+                            control = angular.element('<div gmap-dropdown gmap-dropdown-items="gmapLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
                             $compile(control)(scope);
                         }
                         map.controls[google.maps.ControlPosition.TOP_CENTER].push(control[0]);
