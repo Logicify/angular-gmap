@@ -1,3 +1,19 @@
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module unless amdModuleId is set
+        define(["google", "angular"], function (a0, b1) {
+            return (factory(a0, b1));
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require("google"), require("angular"));
+    } else {
+        factory(google, angular);
+    }
+}(this, function (google, angular) {
+
 /**
  * Created by artem on 5/28/15.
  */
@@ -108,8 +124,9 @@
                         ];
                         if (Array.isArray(scope.gmapLineTypes)) {
                             scope.gmapLineTypes = scope.polyLineTypes.concat(scope.gmapLineTypes);
+                            scope.polyLineTypes = scope.gmapLineTypes;
                         }
-                        scope.currentLineType = scope.gmapLineTypes[0];
+                        scope.currentLineType = scope.polyLineTypes[0];
                         function assignListener(listener, eventName) {
                             return google.maps.event.addListener(drawManager, eventName, listener);
                         }
@@ -190,7 +207,7 @@
                             scope.onSelectPolyLineType = function (item) {
                                 scope.currentLineType = item;
                             };
-                            control = angular.element('<div gmap-dropdown gmap-dropdown-items="gmapLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
+                            control = angular.element('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
                             $compile(control)(scope);
                         }
                         map.controls[google.maps.ControlPosition.TOP_CENTER].push(control[0]);
@@ -900,3 +917,5 @@
             return SmartCollection;
         }]);
 })(angular);
+
+}));
