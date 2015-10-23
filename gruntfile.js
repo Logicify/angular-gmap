@@ -32,7 +32,13 @@ module.exports = function (grunt) {
                 }
             }
         },
-        copy: {},
+        copy: {
+            all: {
+                files: [
+                    {expand: true, flatten: true, src: 'src/**/*.css', dest: '<%= distDir%>'}
+                ]
+            }
+        },
         uglify: {
             all: {
                 src: ['dist/logicify-gmap.js'],
@@ -57,6 +63,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'with params', function (params) {
         grunt.task.run(['concat:logicifyGmap']);
         grunt.task.run(['concat:geoXML3']);
+        grunt.task.run(['copy:all']);
         grunt.task.run(['umd:all']);
         grunt.task.run(['uglify:all']);
     });
@@ -64,6 +71,7 @@ module.exports = function (grunt) {
         grunt.task.run([
             'concat:logicifyGmap',
             'concat:geoXML3',
+            'copy:all',
             'umd:all',
             'watch'
         ])

@@ -101,8 +101,8 @@
         };
         scope.infoWindowName = 'hello native you!';
         scope.cssOpts = {
-            width: '80%',
-            height: '60%',
+            width: '90%',
+            height: '90%',
             'min-width': '400px',
             'min-height': '200px'
         };

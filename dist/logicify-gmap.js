@@ -11,16 +11,6 @@
 (function (angular) {
     'use strict';
     /*global google*/
-    /*var style = document.createElement('style');
-     style.type = 'text/css';
-     style.innerHTML = '.gmap-dropdown-holder{margin-top: 5px;height: 16px;}.nav ul {border-radius: 5px;*zoom: 1;list-style: none;padding: 0;margin: 0;' +
-     'background: #ffffff;}.nav ul:before, .nav ul:after {content: "";display: table;}.nav ul:after {clear: both;}.nav ul > li {float: left;position: relative;}' +
-     '.nav a {display: block;line-height: 1.2em;color: #000000;padding: 5px 6px;border-radius: 5px;}.nav a:hover {text-decoration: none;' +
-     'background: #afafaf;border-radius: 5px;}.nav li ul{background: #fefcff;}.nav li ul li {width: 100px;}.nav li ul a {border: none;}' +
-     '.nav li ul a:hover {background: rgba(0, 0, 0, 0.2);}.nav li ul {position: absolute;left: 0;z-index: 9999;}.nav li ul li {overflow: hidden;max-height: 0;' +
-     '-webkit-transition: max-height 500ms ease;-moz-transition: max-height 500ms ease;-o-transition: max-height 500ms ease;transition: max-height 500ms ease;}' +
-     '.nav ul > li:hover ul li {max-height: 150px;}';
-     document.getElementsByTagName('head')[0].appendChild(style);*/
     angular.module('LogicifyGMap')
         .directive('logicifyGmapDraw', [
             '$timeout',
@@ -190,17 +180,6 @@
                  * Create styling once
                  * @type {HTMLElement}
                  */
-                var style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = '.gmap-dropdown-holder {margin-top: 5px;height: 16px;}.gmap-nav ul {border-radius: 5px;*zoom: 1;list-style: none;' +
-                'padding: 0;margin: 0;background: #ffffff;}.gmap-nav ul:before, .gmap-nav ul:after {content: "";display: table;}.gmap-nav ul:after {' +
-                'clear: both;}.gmap-nav ul > li {float: left;position: relative;}.gmap-nav a {display: block;line-height: 1.2em;color: #000000;' +
-                'padding: 5px 6px;border-radius: 5px;}.gmap-nav a:hover {text-decoration: none;background: #afafaf;border-radius: 5px;cursor: pointer;}' +
-                '.gmap-nav li ul {background: #fefcff;}.gmap-nav li ul li {width: 100px;}.gmap-nav li ul a {border: none;}.gmap-nav li ul a:hover {' +
-                'background: rgba(0, 0, 0, 0.2);}.gmap-nav li ul {position: absolute;left: 0;z-index: 9999;}.gmap-nav li ul li {overflow: hidden;' +
-                'max-height: 0;-webkit-transition: max-height 500ms ease;-moz-transition: max-height 500ms ease;-o-transition: max-height 500ms ease;' +
-                'transition: max-height 500ms ease;}.gmap-nav ul > li:hover ul li {max-height: 150px;}';
-                document.head.appendChild(style);
                 return {
                     restrict: 'EA',
                     link: function (scope, element, attrs, ctrl) {
