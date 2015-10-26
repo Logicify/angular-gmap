@@ -30,6 +30,7 @@
         var infoWindow = this.getDependency('InfoWindow');
         var $timeout = this.getDependency('$timeout');
         scope.markers = [];
+        scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
         scope.controlEvents = {
             click: function (event) {
             },

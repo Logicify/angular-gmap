@@ -1,77 +1,76 @@
 .gmap-dropdown-holder {
-    margin-top: 5px;
+    margin: 5px;
     height: 16px;
 }
 
-.gmap-nav ul {
+.gmap-dropdown-header {
+    background-color: #ffffff;
+    width: 100%;
     border-radius: 5px;
-    *zoom: 1;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    background: #ffffff;
-}
-
-.gmap-nav ul:before, .gmap-nav ul:after {
-    content: "";
-    display: table;
-}
-
-.gmap-nav ul:after {
-    clear: both;
-}
-
-.gmap-nav ul > li {
-    float: left;
-    position: relative;
-}
-
-.gmap-nav a {
-    display: block;
-    line-height: 1.2em;
-    color: #000000;
-    padding: 5px 6px;
-    border-radius: 5px;
-}
-
-.gmap-nav a:hover {
-    text-decoration: none;
-    background: #afafaf;
-    border-radius: 5px;
+    height: 19px;
+    padding-top: 5px;
+    text-align: center;
     cursor: pointer;
 }
 
-.gmap-nav li ul {
-    background: #fefcff;
+.gmap-nav {
+    height: 0;
 }
 
-.gmap-nav li ul li {
-    width: 100px;
+.gmap-nav:hover {
+    height: auto;
 }
 
-.gmap-nav li ul a {
-    border: none;
+.gmap-nav li:hover {
+    background-color: #afafaf;
 }
 
-.gmap-nav li ul a:hover {
-    background: rgba(0, 0, 0, 0.2);
+.gmap-nav li {
+    padding-left: 5px;
+    list-style-type: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-.gmap-nav li ul {
-    position: absolute;
-    left: 0;
-    z-index: 9999;
+.gmap-nav ul {
+    padding: 0;
+    border-radius: 5px;
+    margin: 0;
+    min-width: 50px;
+    background-color: #fefcff;
+    -webkit-transform: scaleY(0);
+    -o-transform: scaleY(0);
+    -ms-transform: scaleY(0);
+    transform: scaleY(0);
+
+    -webkit-transform-origin: top;
+    -o-transform-origin: top;
+    -ms-transform-origin: top;
+    transform-origin: top;
+    -webkit-transition: -webkit-transform 0.26s ease-out;
+    -o-transition: -o-transform 0.26s ease;
+    -ms-transition: -ms-transform 0.26s ease;
+    transition: transform 0.26s ease;
 }
 
-.gmap-nav li ul li {
-    overflow: hidden;
-    max-height: 0;
-    -webkit-transition: max-height 500ms ease;
-    -moz-transition: max-height 500ms ease;
-    -o-transition: max-height 500ms ease;
-    transition: max-height 500ms ease;
+.gmap-nav.dropup ul {
+    margin-top: -25px;
 }
 
-.gmap-nav ul > li:hover ul li {
-    max-height: 150px;
+[gmap-dropdown] {
+    bottom: 5px !important;
+}
+
+.gmap-nav:not(.dropup):not(.clicked):hover ul {
+    -webkit-transform: scaleY(1);
+    -o-transform: scaleY(1);
+    -ms-transform: scaleY(1);
+    transform: scaleY(1);
+}
+
+.gmap-nav.dropup:not(.clicked):hover ul {
+    -webkit-transform: scaleY(-1);
+    -o-transform: scaleY(-1);
+    -ms-transform: scaleY(-1);
+    transform: scaleY(-1);
 }

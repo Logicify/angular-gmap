@@ -6,37 +6,38 @@
     angular.module('LogicifyGMap', []);
 })(angular);
 /**
- * Created by artem on 10/16/15.
+ * Created by artem on 10/26/15.
  */
 (function (angular) {
     'use strict';
     /*global google*/
     angular.module('LogicifyGMap')
-        .directive('logicifyGmapDraw', [
+        .directive('gmapExtendedDraw', [
             '$timeout',
             '$log',
             '$q',
             '$compile',
             function ($timeout, $log, $q, $compile) {
                 return {
-                    restrict: 'E',
-                    require: '^logicifyGmap',
-                    scope: {
-                        gmapEvents: '&gmapEvents',
-                        drawOptions: '&drawOptions',
-                        gmapCustomLines: '&gmapCustomLines',
-                        gmapLineTypes: '=gmapLineTypes'
-                    },
-                    link: function (scope, element, attrs, ctrl) {
-                        if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
-                            throw new Error('"Drawing" API of google maps is not available! Probably you forgot load it. Please check google maps spec. to load "Drawing" API.');
-                        }
-                        var map = ctrl.getMap(),
-                            events = scope.gmapEvents(),
-                            drawManagerListeners = [],
-                            overlaysListeners = [],
-                            isLineTypesEnabled = scope.gmapCustomLines();
-                        scope.gmapLineStyles = scope.gmapLineStyles || {};
+                    restrict: 'EA',
+                    require: ['^logicifyGmap', '^logicifyGmapDraw'],
+                    link: function (scope, element, attrs, ctrls) {
+                        var mapCtrl = ctrls[0],
+                            drawController = ctrls[1],
+                            map = mapCtrl.getMap(),
+                            listeners = [],
+                            drawManager = drawController.getDrawingManager(),
+                            gmapLineTypes = drawController.getLineTypes(),
+                            position = scope.$eval(attrs['lineTypesControlPosition']);
+                        /**
+                         * Cleanup
+                         */
+                        scope.$on('$destroy', function () {
+                            listeners.forEach(mapCtrl.detachListener);
+                        });
+                        /**
+                         * Private declarations
+                         */
                         var lines = {
                             dashed: {
                                 path: 'M 0,-1 0,1',
@@ -105,30 +106,17 @@
 
                             }
                         ];
-                        if (Array.isArray(scope.gmapLineTypes)) {
-                            scope.gmapLineTypes = scope.polyLineTypes.concat(scope.gmapLineTypes);
-                            scope.polyLineTypes = scope.gmapLineTypes;
+                        if (Array.isArray(gmapLineTypes)) {
+                            gmapLineTypes = scope.polyLineTypes.concat(gmapLineTypes);
+                        } else {
+                            gmapLineTypes = scope.polyLineTypes;
                         }
-                        scope.currentLineType = scope.polyLineTypes[0];
-                        function assignListener(listener, eventName) {
-                            return google.maps.event.addListener(drawManager, eventName, listener);
-                        }
-
-                        function assignOverlayListeners(overlay) {
-                            if (events && events.overlays) {
-                                angular.forEach(events.overlays, function (listener, eventName) {
-                                    if (typeof listener === 'function') {
-                                        overlaysListeners.push(google.maps.event.addListener(overlay, eventName, function (e) {
-                                            var self = this;
-                                            listener.apply(self, [e, map]);
-                                        }));
-                                    }
-                                });
-                            }
-                        }
+                        scope.polyLineTypes = gmapLineTypes;
+                        drawController.setLineTypes(gmapLineTypes);
+                        scope.currentLineType = gmapLineTypes[0];
 
                         function customStyling(overlay, type) {
-                            if (isLineTypesEnabled === true && type !== 'marker' && type !== 'circle') {
+                            if (type !== 'marker' && type !== 'circle') {
                                 var points = null;
                                 if (type !== 'polyline') {
                                     switch (type) {
@@ -158,19 +146,66 @@
                             }
                         }
 
-                        function detachListener(listener) {
-                            if (google && google.maps) {
-                                google.maps.event.removeListener(listener);
-                            }
+                        var control = null;
+                        scope.onSelectPolyLineType = function (item) {
+                            scope.currentLineType = item;
+                        };
+                        control = angular.element('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
+                        //if position is google maps position then append it to map
+                        var controlPosition = null;
+                        if (typeof position !== 'string') {
+                            Object.keys(google.maps.ControlPosition).forEach(function (key) {
+                                if (google.maps.ControlPosition[key] == position) {
+                                    controlPosition = key;
+                                }
+                            });
+                        } else {
+                            controlPosition = position;
                         }
-
-                        scope.$on('$destroy', function () {
-                            /**
-                             * Cleanup
-                             */
-                            drawManagerListeners.forEach(detachListener);
-                            overlaysListeners.forEach(detachListener)
-                        });
+                        if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
+                            if (controlPosition.indexOf('BOTTOM') > -1) {
+                                control.attr('dropup', true);
+                            }
+                            map.controls[google.maps.ControlPosition[controlPosition]].push(control[0]);
+                        } else {
+                            //else append it to current element
+                            element.append(control);
+                        }
+                        //Each overlay should be styled based on settings
+                        listeners.push(google.maps.event.addListener(drawManager, 'overlaycomplete', function (e) {
+                            customStyling(e.overlay, e.type);
+                        }));
+                        if (control) {
+                            $compile(control)(scope);
+                        }
+                    }
+                };
+            }
+        ]);
+})(angular);
+/**
+ * Created by artem on 10/16/15.
+ */
+(function (angular) {
+    'use strict';
+    /*global google*/
+    angular.module('LogicifyGMap')
+        .directive('logicifyGmapDraw', [
+            '$timeout',
+            '$log',
+            '$q',
+            '$compile',
+            function ($timeout, $log, $q, $compile) {
+                return {
+                    restrict: 'E',
+                    require: '^logicifyGmap',
+                    scope: {
+                        gmapEvents: '&gmapEvents',
+                        drawOptions: '&drawOptions',
+                        gmapLineTypes: '=gmapLineTypes'
+                    },
+                    controller: function ($scope, $element, $attrs) {
+                        var self = this;
                         var minimalOptions = {
                             drawingMode: google.maps.drawing.OverlayType.MARKER,
                             drawingControl: true,
@@ -181,18 +216,61 @@
                                 ]
                             }
                         };
-                        var options = angular.extend(minimalOptions, scope.drawOptions());
+                        var options = angular.extend(minimalOptions, $scope.drawOptions());
                         var drawManager = new google.maps.drawing.DrawingManager(options);
-                        drawManager.setMap(map);
-                        var control = null;
-                        if (isLineTypesEnabled === true) {
-                            scope.onSelectPolyLineType = function (item) {
-                                scope.currentLineType = item;
-                            };
-                            control = angular.element('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
-                            $compile(control)(scope);
+                        $scope.drawingManager = drawManager;
+                        self.getDrawingManager = function () {
+                            return $scope.drawingManager;
+                        };
+                        self.getDrawOptions = function () {
+                            return $scope.drawOptions();
+                        };
+                        self.getEvents = function () {
+                            return $scope.gmapEvents();
+                        };
+                        self.getLineTypes = function () {
+                            return $scope.gmapLineTypes;
+                        };
+                        self.setLineTypes = function (lineTypes) {
+                            $scope.gmapLineTypes = lineTypes;
+                            return $scope.gmapLineTypes;
                         }
-                        map.controls[google.maps.ControlPosition.TOP_CENTER].push(control[0]);
+                    },
+                    link: function (scope, element, attrs, ctrl) {
+                        if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
+                            throw new Error('"Drawing" API of google maps is not available! Probably you forgot load it. Please check google maps spec. to load "Drawing" API.');
+                        }
+                        var map = ctrl.getMap(),
+                            events = scope.gmapEvents(),
+                            drawManagerListeners = [],
+                            overlaysListeners = [];
+
+                        function assignListener(listener, eventName) {
+                            return google.maps.event.addListener(scope.drawingManager, eventName, listener);
+                        }
+
+                        function assignOverlayListeners(overlay) {
+                            if (events && events.overlays) {
+                                angular.forEach(events.overlays, function (listener, eventName) {
+                                    if (typeof listener === 'function') {
+                                        overlaysListeners.push(google.maps.event.addListener(overlay, eventName, function (e) {
+                                            var self = this;
+                                            listener.apply(self, [e, map]);
+                                        }));
+                                    }
+                                });
+                            }
+                        }
+
+
+                        scope.$on('$destroy', function () {
+                            /**
+                             * Cleanup
+                             */
+                            drawManagerListeners.forEach(ctrl.detachListener);
+                            overlaysListeners.forEach(ctrl.detachListener);
+                        });
+                        scope.drawingManager.setMap(map);
                         if (events) {
                             if (events.drawing) {
                                 angular.forEach(events.drawing, function (liestener, eventName) {
@@ -202,9 +280,8 @@
                                 });
                             }
                             if (events.overlays) {
-                                drawManagerListeners.push(google.maps.event.addListener(drawManager, 'overlaycomplete', function (e) {
+                                drawManagerListeners.push(google.maps.event.addListener(scope.drawingManager, 'overlaycomplete', function (e) {
                                     assignOverlayListeners(e.overlay);
-                                    customStyling(e.overlay, e.type);
                                 }))
                             }
                         }
@@ -230,19 +307,36 @@
                     link: function (scope, element, attrs, ctrl) {
                         scope.dropDownItems = scope.$eval(attrs['gmapDropdownItems']) || [];
                         scope.onItemSelected = scope.$eval(attrs['onDropdownSelectItem']);
+                        var dropup = scope.$eval(attrs['dropup']);
                         scope.current = scope.dropDownItems[0];
+                        var nav = null;
                         scope.onSelectItemLocally = function (item) {
                             if (typeof scope.onItemSelected === 'function') {
                                 scope.onItemSelected(item);
                             }
+                            if (!nav) {
+                                nav = angular.element(element[0].getElementsByClassName('gmap-nav'));
+                            }
+                            nav.addClass('clicked');
                             scope.current = item;
                         };
                         element.addClass('gmap-dropdown-holder');
-                        element[0].innerHTML = '<nav class="gmap-nav">' +
-                        '<ul><li><a ng-bind="current.name||current"></a><ul>' +
+                        var dropupClass = '';
+                        dropup === true ? dropupClass = 'dropup' : void 0;
+                        element[0].innerHTML = '<div class="gmap-nav ' + dropupClass + '">' +
+                        '<div class="gmap-dropdown-header" ng-bind="current.name||current"></div>' +
+                        '<ul>' +
                         '<li ng-repeat="item in dropDownItems" ng-click="onSelectItemLocally(item)"><a ng-bind="item.name || item"></a></li>' +
-                        '</ul></ul></nav>';
+                        '</ul>' +
+                        '</div>';
+
                         $compile(element.contents())(scope);
+                        angular.element(element[0].getElementsByClassName('gmap-dropdown-header')).on('mouseover', function () {
+                            if (!nav) {
+                                nav = angular.element(element[0].getElementsByClassName('gmap-nav'));
+                            }
+                            nav.removeClass('clicked');
+                        })
                     }
                 }
             }
@@ -376,6 +470,11 @@
                             height: '100%',
                             width: '100%',
                             position: 'absolute'
+                        };
+                        self.detachListener = function (listener) {
+                            if (google && google.maps) {
+                                google.maps.event.removeListener(listener);
+                            }
                         };
                         angular.extend(defaultCssOptions, cssOpts);
                         angular.extend(defaultOptions, options);

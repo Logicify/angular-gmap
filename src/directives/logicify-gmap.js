@@ -38,6 +38,11 @@
                             width: '100%',
                             position: 'absolute'
                         };
+                        self.detachListener = function (listener) {
+                            if (google && google.maps) {
+                                google.maps.event.removeListener(listener);
+                            }
+                        };
                         angular.extend(defaultCssOptions, cssOpts);
                         angular.extend(defaultOptions, options);
                         $element.css(defaultCssOptions);
