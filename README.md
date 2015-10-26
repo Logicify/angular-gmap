@@ -496,3 +496,80 @@ scope.draw = {
             scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
         };
 ```
+##### Custom lines (requires drawing manager)
+If you want custom lines, overlay borders then you need to do the next:
+- include css file to your html (gmap-minimum-ui.css) to allow dropdown to work correctly (gmap-dropdown based on css transitions)
+- include html code to your gmap directive (into logicify-gmap-draw directive):
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-draw
+                gmap-events="draw.events"
+                draw-options="draw.options">
+            <gmap-extended-draw
+                    line-types-control-position="lineTypesControlPosition"
+                    gmap-dropdown-template-url="dropDownTemplate">
+                    gmap-dropdown-template="dropDownContent">
+            </gmap-extended-draw>
+        </logicify-gmap-draw>
+    </logicify-gmap>
+```
+if you wouldn't define line-types-control-position attribute, then directive will append this dropdown to current element, so you will be able to draw it out of map
+- write some javascript in your controller:
+```js
+scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER; //let's say that it will be at top-center
+//scope.dropDownTemplate = 'dropdown.html'; //you can define your own dropdown template(bootstrap for example)
+//scope.dropDownContent = <div>Dropdown here</div> //define dropdown template as string
+//if you wouldn't define any template, then 'gmap-extended-draw' directive will use internal directive 'gmap-dropdown', so you don't need define your own dropdown
+scope.draw = {
+            events: {
+                drawing: {
+                    overlaycomplete: function (e) {
+                    }
+                },
+                overlays: {
+                    click: function (e, map) {
+                    }
+                }
+            },
+            options: {
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.CIRCLE,
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE,
+                        google.maps.drawing.OverlayType.RECTANGLE
+                    ]
+                },
+                markerOptions: {icon: 'beachflag.png'},
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    editable: false,
+                    zIndex: 1
+                }
+            }
+        };
+        scope.cssOpts = {
+            width: '90%',
+            height: '90%',
+            'min-width': '400px',
+            'min-height': '200px'
+        };
+
+        scope.gmOpts = {
+            zoom: 16,
+            center: new google.maps.LatLng(-1, 1)
+        };
+        scope.ready = function (map) {
+            scope.gmap = map;
+        };
+```
