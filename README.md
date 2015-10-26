@@ -534,52 +534,19 @@ scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER; //let's
 //define dropdown template as string
 //if you wouldn't define any template, then 'gmap-extended-draw' directive will use internal directive 'gmap-dropdown',
 //so you don't need define your own dropdown
-scope.draw = {
-            events: {
-                drawing: {
-                    overlaycomplete: function (e) {
-                    }
-                },
-                overlays: {
-                    click: function (e, map) {
-                    }
-                }
-            },
-            options: {
-                drawingMode: google.maps.drawing.OverlayType.MARKER,
-                drawingControl: true,
-                drawingControlOptions: {
-                    position: google.maps.ControlPosition.TOP_CENTER,
-                    drawingModes: [
-                        google.maps.drawing.OverlayType.MARKER,
-                        google.maps.drawing.OverlayType.CIRCLE,
-                        google.maps.drawing.OverlayType.POLYGON,
-                        google.maps.drawing.OverlayType.POLYLINE,
-                        google.maps.drawing.OverlayType.RECTANGLE
-                    ]
-                },
-                markerOptions: {icon: 'beachflag.png'},
-                circleOptions: {
-                    fillColor: '#ffff00',
-                    fillOpacity: 1,
-                    strokeWeight: 5,
-                    editable: false,
-                    zIndex: 1
-                }
-            }
-        };
-        scope.cssOpts = {
-            width: '90%',
-            height: '90%',
-            'min-width': '400px',
-            'min-height': '200px'
-        };
+scope.draw = {//draw options here, see example above};
+scope.cssOpts = {
+    width: '90%',
+    height: '90%',
+    'min-width': '400px',
+    'min-height': '200px'
+;
 
-        scope.gmOpts = {
-            zoom: 16,
-            center: new google.maps.LatLng(-1, 1)
-        };
-        scope.ready = function (map) {
-            scope.gmap = map;
-        };
+scope.gmOpts = {
+    zoom: 16,
+    center: new google.maps.LatLng(-1, 1)
+};
+scope.ready = function (map) {
+    scope.gmap = map;
+};
 ```
