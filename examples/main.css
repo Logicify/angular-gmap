@@ -18,3 +18,20 @@
 .info-window-container input {
     width: 140px;
 }
+
+.custom-holder {
+    margin-top: 10px;
+}
+
+.custom-title {
+    color: black;
+    padding: 2px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #25aeff;
+    border-radius: 5px;
+}
+
+.custom-title:hover {
+    background-color: #31beff;
+}
