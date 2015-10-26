@@ -550,3 +550,4 @@ scope.ready = function (map) {
     scope.gmap = map;
 };
 ```
+[jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
