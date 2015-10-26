@@ -501,6 +501,12 @@ If you want custom lines, overlay borders then you need to do the next:
 - include css file to your html (gmap-minimum-ui.css) to allow dropdown to work correctly (gmap-dropdown based on css transitions)
 - include html code to your gmap directive (into logicify-gmap-draw directive):
 ```html
+<!--<script type="text/ng-template" id="dropdown.html">
+        <div class="custom-holder">
+            <span class="custom-title" title="it's google baby <(^_^)>">G(.)(.)gle</span>
+            <div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>
+        </div>
+    </script>-->
 <logicify-gmap
             center="gmOpts.center"
             gm-options="gmOpts"
