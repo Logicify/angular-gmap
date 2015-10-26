@@ -517,13 +517,17 @@ If you want custom lines, overlay borders then you need to do the next:
         </logicify-gmap-draw>
     </logicify-gmap>
 ```
-if you wouldn't define line-types-control-position attribute, then directive will append this dropdown to current element, so you will be able to draw it out of map
+if you wouldn't define line-types-control-position attribute, then directive will append this
+dropdown to current element, so you will be able to draw it out of map
 - write some javascript in your controller:
 ```js
 scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER; //let's say that it will be at top-center
-//scope.dropDownTemplate = 'dropdown.html'; //you can define your own dropdown template(bootstrap for example)
-//scope.dropDownContent = <div>Dropdown here</div> //define dropdown template as string
-//if you wouldn't define any template, then 'gmap-extended-draw' directive will use internal directive 'gmap-dropdown', so you don't need define your own dropdown
+//scope.dropDownTemplate = 'dropdown.html';
+//you can define your own dropdown template(bootstrap for example)
+//scope.dropDownContent = <div>Dropdown here</div>
+//define dropdown template as string
+//if you wouldn't define any template, then 'gmap-extended-draw' directive will use internal directive 'gmap-dropdown',
+//so you don't need define your own dropdown
 scope.draw = {
             events: {
                 drawing: {
