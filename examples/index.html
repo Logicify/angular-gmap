@@ -44,6 +44,9 @@
             </div>
         </div>
     </script>
+    <script type="text/ng-template" id="dropdown.html">
+        <div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>
+    </script>
     <logicify-gmap
             center="gmOpts.center"
             gm-options="gmOpts"
@@ -65,7 +68,8 @@
                 draw-options="draw.options"
                 gmap-custom-lines="true">
             <gmap-extended-draw
-                    line-types-control-position="lineTypesControlPosition">
+                    line-types-control-position="lineTypesControlPosition"
+                    gmap-dropdown-template-url="dropDownTemplate">
             </gmap-extended-draw>
         </logicify-gmap-draw>
     </logicify-gmap>

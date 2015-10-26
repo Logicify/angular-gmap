@@ -7,10 +7,12 @@
     angular.module('LogicifyGMap')
         .directive('gmapExtendedDraw', [
             '$timeout',
+            '$http',
+            '$templateCache',
             '$log',
             '$q',
             '$compile',
-            function ($timeout, $log, $q, $compile) {
+            function ($timeout, $http, $templateCache, $log, $q, $compile) {
                 return {
                     restrict: 'EA',
                     require: ['^logicifyGmap', '^logicifyGmapDraw'],
@@ -21,7 +23,9 @@
                             listeners = [],
                             drawManager = drawController.getDrawingManager(),
                             gmapLineTypes = drawController.getLineTypes(),
-                            position = scope.$eval(attrs['lineTypesControlPosition']);
+                            position = scope.$eval(attrs['lineTypesControlPosition']),
+                            dropDownContentUrl = scope.$eval(attrs['gmapDropdownTemplateUrl']),
+                            dropdownContent = scope.$eval(attrs['gmapDropdownTemplate']);
                         /**
                          * Cleanup
                          */
@@ -139,38 +143,54 @@
                             }
                         }
 
-                        var control = null;
+                        var controlPosition = null;
                         scope.onSelectPolyLineType = function (item) {
+                            //if position is google maps position then append it to map
                             scope.currentLineType = item;
                         };
-                        control = angular.element('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
-                        //if position is google maps position then append it to map
-                        var controlPosition = null;
-                        if (typeof position !== 'string') {
-                            Object.keys(google.maps.ControlPosition).forEach(function (key) {
-                                if (google.maps.ControlPosition[key] == position) {
-                                    controlPosition = key;
-                                }
-                            });
-                        } else {
-                            controlPosition = position;
-                        }
-                        if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
-                            if (controlPosition.indexOf('BOTTOM') > -1) {
-                                control.attr('dropup', true);
+                        function buildElement(content) {
+                            var control = angular.element(content);
+                            if (typeof position !== 'string') {
+                                Object.keys(google.maps.ControlPosition).forEach(function (key) {
+                                    if (google.maps.ControlPosition[key] == position) {
+                                        controlPosition = key;
+                                    }
+                                });
+                            } else {
+                                controlPosition = position;
                             }
-                            map.controls[google.maps.ControlPosition[controlPosition]].push(control[0]);
+                            if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
+                                if (controlPosition.indexOf('BOTTOM') > -1) {
+                                    control.attr('dropup', true);
+                                }
+                                map.controls[google.maps.ControlPosition[controlPosition]].push(control[0]);
+                            } else {
+                                //else append it to current element
+                                element.append(control);
+                            }
+                            if (control) {
+                                $compile(control)(scope);
+                            }
+                            return control;
+                        }
+
+                        /**
+                         * Allow user to add custom dropdowns, bootstrap for example
+                         */
+                        if (dropDownContentUrl) {
+                            $http.get(dropDownContentUrl, {cache: $templateCache})
+                                .then(function (response) {
+                                    buildElement(response.data);
+                                });
+                        } else if (dropdownContent) {
+                            buildElement(dropdownContent);
                         } else {
-                            //else append it to current element
-                            element.append(control);
+                            buildElement('<div gmap-dropdown gmap-dropdown-items="polyLineTypes" on-dropdown-select-item="onSelectPolyLineType"></div>');
                         }
                         //Each overlay should be styled based on settings
                         listeners.push(google.maps.event.addListener(drawManager, 'overlaycomplete', function (e) {
                             customStyling(e.overlay, e.type);
                         }));
-                        if (control) {
-                            $compile(control)(scope);
-                        }
                     }
                 };
             }
