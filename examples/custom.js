@@ -63,35 +63,30 @@
             events: {
                 drawing: {
                     overlaycomplete: function (e) {
-                        //var arrow = {
-                        //    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                        //    strokeOpacity: 1
-                        //};
-                        //var otherLineSymbol = {
-                        //    path: 'M 0,-1 0,1',
-                        //    strokeOpacity: 1,
-                        //    strokeWeight: 4,
-                        //    scale: 0.2
-                        //};
-                        //e.overlay.set('icons', [{
-                        //    icon: arrow,
-                        //    offset: '100%', repeat: 'none'
-                        //}, {icon: otherLineSymbol, offset: '0', repeat: '50px'}]);
-                        //e.overlay.set('strokeOpacity', 0);
-                        applyConfig(e.overlay);
+                        //add listener
+                        google.maps.event.addListener(e.overlay, 'click', function (e) {
+                            if (window.event.ctrlKey) {
+                                this.setMap(null);
+                                if (this.border && typeof this.border.setMap === 'function') {
+                                    this.border.setMap(null);
+                                }
+                                //when overlay removed, we don't need any listeners on it
+                                google.maps.event.clearInstanceListeners(this);
+                            }
+                        });
                     }
                 },
                 overlays: {
                     /*click: function (e, map) {
-                        var self = this;
-                        if (scope.overlaysInfowindow) {
-                            scope.overlaysInfowindow.$ready(function (wnd) {
+                     var self = this;
+                     if (scope.overlaysInfowindow) {
+                     scope.overlaysInfowindow.$ready(function (wnd) {
                      wnd.setPosition(e.latLng);//info window position
-                                wnd.open(map);
-                                wnd.$scope.mvcObject = self;
-                                wnd.$scope.applyConfig = applyConfig;
-                            });
-                        }
+                     wnd.open(map);
+                     wnd.$scope.mvcObject = self;
+                     wnd.$scope.applyConfig = applyConfig;
+                     });
+                     }
                      }*/
                 }
             },
@@ -156,35 +151,35 @@
             //var infowindow = new infoWindow({templateUrl: 'template.html'});
             scope.gmap = map;
             /* scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
-            scope.overlaysInfowindow.$ready(overlayInfowindowReady);
-            function attach(marker) {
-                google.maps.event.addListener(marker, 'click', function (markerObj) {
-                    infowindow.$ready(function (wnd) {
-                        wnd.infoWindowName = 'Hello native you';
-                        wnd.open(map, marker);
-                    });
-                });
-            }
+             scope.overlaysInfowindow.$ready(overlayInfowindowReady);
+             function attach(marker) {
+             google.maps.event.addListener(marker, 'click', function (markerObj) {
+             infowindow.$ready(function (wnd) {
+             wnd.infoWindowName = 'Hello native you';
+             wnd.open(map, marker);
+             });
+             });
+             }
 
-            function overlayInfowindowReady(wnd) {
-                wnd.$onOpen = function (gObj) {
-                    gObj.set('zIndex', 100);
-                    wnd.$scope.mvcObject = gObj;
-                    wnd.$scope.applyConfig = applyConfig;
-                    gObj.setDraggable(true);
-                };
-            }
+             function overlayInfowindowReady(wnd) {
+             wnd.$onOpen = function (gObj) {
+             gObj.set('zIndex', 100);
+             wnd.$scope.mvcObject = gObj;
+             wnd.$scope.applyConfig = applyConfig;
+             gObj.setDraggable(true);
+             };
+             }
 
-            for (var i = 10; i < 15; i++) {
-                var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);
-                var marker = new google.maps.Marker({
-                    id: 'marker_' + i,
-                    name: 'is_' + i,
-                    position: pos,
-                    map: map
-                });
-                scope.markers.push(marker);
-                attach(marker);
+             for (var i = 10; i < 15; i++) {
+             var pos = new google.maps.LatLng(-1 + 1 / i, 1 + 1 / i);
+             var marker = new google.maps.Marker({
+             id: 'marker_' + i,
+             name: 'is_' + i,
+             position: pos,
+             map: map
+             });
+             scope.markers.push(marker);
+             attach(marker);
              }*/
         };
     }

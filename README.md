@@ -639,7 +639,7 @@ $scope.draw = {
                                 this.border.setMap(null);
                             }
                             //when overlay removed, we don't need any listeners on it
-                            google.maps.event.clearInstanceListeners(e.overlay);
+                            google.maps.event.clearInstanceListeners(this);
                         }
                     });
                 }
@@ -648,5 +648,5 @@ $scope.draw = {
 	};
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
-[jsfiddle example](https://jsfiddle.net/nzm72vLh/4/)
+[jsfiddle example](https://jsfiddle.net/nzm72vLh/5/)
 ######
