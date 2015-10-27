@@ -57,7 +57,6 @@
                                 rectangleOptions = drawManager.get('rectangleOptions') || {},
                                 polygonOptions = drawManager.get('polygonOptions') || {},
                                 polylineOptions = drawManager.get('polylineOptions') || {};
-                            var options = {};
                             angular.extend(circleOptions, colorOrOpacity);
                             angular.extend(rectangleOptions, colorOrOpacity);
                             angular.extend(polygonOptions, colorOrOpacity);
