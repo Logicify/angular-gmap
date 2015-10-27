@@ -624,3 +624,5 @@ var lineType = {
 ###### Please see on-after-drawing-overlay callback.
 This callback fires when custom lines applied to overlay (rectangle, polyline, polygon only).
 Border of shapes can't be styled as dotted or dashed for example, so we decided replace border of the shape overlay, and draw polyline instead.
+
+###### If you want to remove overlay just click on it with control pressed.
