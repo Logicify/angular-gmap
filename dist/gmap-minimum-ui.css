@@ -81,10 +81,13 @@
 }
 
 .gmap-color-picker-container input {
-    border-radius: 5px;
     height: 20px;
     cursor: pointer;
     float: left;
+}
+
+.gmap-color-picker-container input[type="color"] {
+    border-radius: 5px;
 }
 
 .gmap-color-picker-container .toggle-color-button {

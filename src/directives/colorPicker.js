@@ -58,7 +58,7 @@
                         scope.onSelectOpacity = function () {
                             extendedDrawCtrl.setOpacity(scope.destinations[scope.destination].opacity.property, scope.destinations[scope.destination].opacity.value);
                             if (typeof onColorOrOpacityChanged === 'function') {
-                                onColorOrOpacityChanged(scope.destinations[scope.destination].color);
+                                onColorOrOpacityChanged(scope.destinations[scope.destination].opacity);
                             }
                         };
                         scope.toggleDestination = function () {
@@ -103,7 +103,7 @@
                             buildElement(colorPickerContent);
                         } else {
                             var opacityRangeContent = '';
-                            if (opacityRange !== false) {
+                            if (opacityRange === true) {
                                 opacityRangeContent = '<input min="1" max="100" type="range" ng-change="onSelectOpacity()" ng-model="destinations[destination].opacity.value"/>';
                             }
                             buildElement(

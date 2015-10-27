@@ -22,12 +22,14 @@
                         $scope.defaultOpacity = {};
                         self.setColor = function (destination, value) {
                             $scope.defaultColors[destination] = value;
+                            $scope.setDefault($scope.defaultColors);
                         };
                         self.getColor = function (destination) {
                             return $scope.defaultColors[destination];
                         };
                         self.setOpacity = function (destination, value) {
                             $scope.defaultOpacity[destination] = value / 100;
+                            $scope.setDefault($scope.defaultOpacity);
                         };
                         self.getOpacity = function (destination) {
                             return $scope.defaultOpacity[destination];
@@ -50,6 +52,14 @@
                         scope.$on('$destroy', function () {
                             listeners.forEach(mapCtrl.detachListener);
                         });
+                        scope.setDefault = function (colorOrOpacity) {
+                            drawManager.setOptions({
+                                circleOptions: colorOrOpacity,
+                                rectangleOptions: colorOrOpacity,
+                                polygonOptions: colorOrOpacity,
+                                polylineOptions: colorOrOpacity
+                            });
+                        };
                         /**
                          * Private declarations
                          */
