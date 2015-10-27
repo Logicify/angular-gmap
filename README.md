@@ -540,7 +540,7 @@ scope.cssOpts = {
     height: '90%',
     'min-width': '400px',
     'min-height': '200px'
-;
+};
 
 scope.gmOpts = {
     zoom: 16,
