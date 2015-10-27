@@ -625,4 +625,27 @@ var lineType = {
 This callback fires when custom lines applied to overlay (rectangle, polyline, polygon only).
 Border of shapes can't be styled as dotted or dashed for example, so we decided replace border of the shape overlay, and draw polyline instead.
 
-###### If you want to remove overlay just click on it with control pressed.
+###### If you want remove overlay you can do the next:
+```js
+$scope.draw = {
+    	events: {
+            drawing: {
+                overlaycomplete: function (e) {
+                    //add listener
+                    google.maps.event.addListener(e.overlay, 'click', function (e) {
+                        if (window.event.ctrlKey) {
+                            this.setMap(null);
+                            if (this.border && typeof this.border.setMap === 'function') {
+                                this.border.setMap(null);
+                            }
+                            //when overlay removed, we don't need any listeners on it
+                            google.maps.event.clearInstanceListeners(e.overlay);
+                        }
+                    });
+                }
+            }
+        }
+	};
+```
+###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
+[jsfiddle example](https://jsfiddle.net/nzm72vLh/4/)

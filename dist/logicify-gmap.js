@@ -28,7 +28,6 @@
                             drawController = ctrls[1],
                             map = mapCtrl.getMap(),
                             listeners = [],
-                            overlayListeners = [],
                             drawManager = drawController.getDrawingManager(),
                             overrideLineTypes = scope.$eval(attrs['overrideLineTypes']),
                             position = scope.$eval(attrs['lineTypesControlPosition']),
@@ -158,14 +157,6 @@
                                 if (typeof onAfterDrawingOverlay === 'function') {
                                     onAfterDrawingOverlay.apply(overlay, [scope.currentLineType]);
                                 }
-                                overlayListeners.push(google.maps.event.addListener(overlay, 'click', function (e) {
-                                    if (window.event.ctrlKey) {
-                                        this.setMap(null);
-                                        if (this.border && typeof this.border.setMap === 'function') {
-                                            this.border.setMap(null);
-                                        }
-                                    }
-                                }));
                             }
                         }
 
