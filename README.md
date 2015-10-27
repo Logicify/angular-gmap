@@ -550,6 +550,9 @@ scope.ready = function (map) {
     scope.gmap = map;
 };
 ```
+######Note that if you would use yor own dropdown, then please keep following rules:
+- "onSelectPolyLineType(item)" use this callback name in your html to select
+- "polyLineTypes" use this object name to display poly line types in the dropdown
 [jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
 ###### Extending line types
 You can extend list of supported line types (dotted, dashed, arrow-dotted etc.)
@@ -649,4 +652,61 @@ $scope.draw = {
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
 [jsfiddle example](https://jsfiddle.net/nzm72vLh/5/)
-######
+###### Color picker
+You can pick a color for lines and shapes. You need to do the next:
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-draw
+                gmap-events="draw.events"
+                draw-options="draw.options">
+            <gmap-extended-draw
+                    line-types-control-position="lineTypesControlPosition"
+                    gmap-dropdown-template-url="dropDownTemplate"
+                    override-line-types="overrideLineTypes"
+                    on-after-drawing-overlay="onAfterDraw"
+                    gmap-color-picker=""
+                    color-picker-control-position="colorPickerControlPosition"
+                    enable-opacity-range="true">
+            </gmap-extended-draw>
+        </logicify-gmap-draw>
+    </logicify-gmap>
+```
+Or
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-draw
+                gmap-events="draw.events"
+                draw-options="draw.options">
+            <gmap-extended-draw
+                    line-types-control-position="lineTypesControlPosition"
+                    gmap-dropdown-template-url="dropDownTemplate"
+                    override-line-types="overrideLineTypes"
+                    on-after-drawing-overlay="onAfterDraw">
+                        <gmap-color-picker
+                                color-picker-control-position="colorPickerControlPosition"
+                                enable-opacity-range="true"
+                                gmap-color-picker-template-url="dropDownTemplate"
+                                gmap-color-picker-template="dropDownContent">
+                        </gmap-color-picker>
+            </gmap-extended-draw>
+        </logicify-gmap-draw>
+    </logicify-gmap>
+```
+```js
+scope.colorPickerControlPosition = google.maps.ControlPosition.TOP_CENTER;
+//scope.colorPickerTemplate = 'colorPicker.html';
+//you can define your own color picker template(bootstrap for example)
+//scope.colorPickerContent = <div>Color picker here</div>
+//define colorPicker template as string
+//if you wouldn't define any template, then 'gmap-color-picker' directive will use internal html,
+//so you don't need define your own color picker
+```
+###### Internal color picker - it's html5 input (type="color"). Please see browser capability
