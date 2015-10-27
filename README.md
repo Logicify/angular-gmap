@@ -651,7 +651,7 @@ $scope.draw = {
 	};
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
-[jsfiddle example](https://jsfiddle.net/nzm72vLh/5/)
+[jsfiddle example](https://jsfiddle.net/nzm72vLh/9/)
 ###### Color picker
 You can pick a color for lines and shapes. You need to do the next:
 ```html

@@ -191,11 +191,20 @@
                             listeners.forEach(mapCtrl.detachListener);
                         });
                         scope.setDefault = function (colorOrOpacity) {
+                            var circleOptions = drawManager.get('circleOptions') || {},
+                                rectangleOptions = drawManager.get('rectangleOptions') || {},
+                                polygonOptions = drawManager.get('polygonOptions') || {},
+                                polylineOptions = drawManager.get('polylineOptions') || {};
+                            var options = {};
+                            angular.extend(circleOptions, colorOrOpacity);
+                            angular.extend(rectangleOptions, colorOrOpacity);
+                            angular.extend(polygonOptions, colorOrOpacity);
+                            angular.extend(polylineOptions, colorOrOpacity);
                             drawManager.setOptions({
-                                circleOptions: colorOrOpacity,
-                                rectangleOptions: colorOrOpacity,
-                                polygonOptions: colorOrOpacity,
-                                polylineOptions: colorOrOpacity
+                                circleOptions: circleOptions,
+                                rectangleOptions: rectangleOptions,
+                                polygonOptions: polygonOptions,
+                                polylineOptions: polylineOptions
                             });
                         };
                         /**
