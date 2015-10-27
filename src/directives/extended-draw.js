@@ -22,8 +22,9 @@
                             map = mapCtrl.getMap(),
                             listeners = [],
                             drawManager = drawController.getDrawingManager(),
-                            gmapLineTypes = drawController.getLineTypes(),
+                            overrideLineTypes = scope.$eval(attrs['overrideLineTypes']),
                             position = scope.$eval(attrs['lineTypesControlPosition']),
+                            onAfterDrawingOverlay = scope.$eval(attrs['onAfterDrawingOverlay']),
                             dropDownContentUrl = scope.$eval(attrs['gmapDropdownTemplateUrl']),
                             dropdownContent = scope.$eval(attrs['gmapDropdownTemplate']);
                         /**
@@ -103,18 +104,22 @@
 
                             }
                         ];
-                        if (Array.isArray(gmapLineTypes)) {
-                            gmapLineTypes = scope.polyLineTypes.concat(gmapLineTypes);
-                        } else {
-                            gmapLineTypes = scope.polyLineTypes;
+
+                        /**
+                         * Allow user to override all line types
+                         */
+                        if (typeof overrideLineTypes === 'function') {
+                            scope.polyLineTypes = overrideLineTypes(scope.polyLineTypes);
                         }
-                        scope.polyLineTypes = gmapLineTypes;
-                        drawController.setLineTypes(gmapLineTypes);
-                        scope.currentLineType = gmapLineTypes[0];
+                        //check if user returned not empty array
+                        if (!Array.isArray(scope.polyLineTypes) || scope.polyLineTypes.length < 1) {
+                            throw new Error('Line types array can\'t be null or empty. If you are overriding line types please ensure that callback returns new array!');
+                        }
+                        scope.currentLineType = scope.polyLineTypes[0];
 
                         function customStyling(overlay, type) {
                             if (type !== 'marker' && type !== 'circle') {
-                                var points = null;
+                                var points = null, polyLine;
                                 if (type !== 'polyline') {
                                     switch (type) {
                                         case 'polygon':
@@ -129,7 +134,7 @@
                                             points = [NE, SE, SW, NW, NE];
                                             break;
                                     }
-                                    var polyLine = new google.maps.Polyline({
+                                    polyLine = new google.maps.Polyline({
                                         path: points
                                     });
                                     polyLine.set('icons', scope.currentLineType.icons);
@@ -139,6 +144,10 @@
                                 } else {
                                     overlay.set('icons', scope.currentLineType.icons);
                                     overlay.setOptions(scope.currentLineType.parentOptions);
+                                }
+                                //allow user to get custom styled overlay
+                                if (typeof onAfterDrawingOverlay === 'function') {
+                                    onAfterDrawingOverlay.apply(overlay, [scope.currentLineType, polyLine]);
                                 }
                             }
                         }

@@ -551,3 +551,6 @@ scope.ready = function (map) {
 };
 ```
 [jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
+###### Extending line types
+You can extend list of supported line types (dotted, dashed, arrow-dotted etc.)
+

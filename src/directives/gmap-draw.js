@@ -16,8 +16,7 @@
                     require: '^logicifyGmap',
                     scope: {
                         gmapEvents: '&gmapEvents',
-                        drawOptions: '&drawOptions',
-                        gmapLineTypes: '=gmapLineTypes'
+                        drawOptions: '&drawOptions'
                     },
                     controller: function ($scope, $element, $attrs) {
                         var self = this;
@@ -43,13 +42,6 @@
                         self.getEvents = function () {
                             return $scope.gmapEvents();
                         };
-                        self.getLineTypes = function () {
-                            return $scope.gmapLineTypes;
-                        };
-                        self.setLineTypes = function (lineTypes) {
-                            $scope.gmapLineTypes = lineTypes;
-                            return $scope.gmapLineTypes;
-                        }
                     },
                     link: function (scope, element, attrs, ctrl) {
                         if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {

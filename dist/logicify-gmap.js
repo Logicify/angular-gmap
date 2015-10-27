@@ -1,3 +1,19 @@
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module unless amdModuleId is set
+        define(["google", "angular"], function (a0, b1) {
+            return (factory(a0, b1));
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require("google"), require("angular"));
+    } else {
+        factory(google, angular);
+    }
+}(this, function (google, angular) {
+
 /**
  * Created by artem on 5/28/15.
  */
@@ -29,8 +45,9 @@
                             map = mapCtrl.getMap(),
                             listeners = [],
                             drawManager = drawController.getDrawingManager(),
-                            gmapLineTypes = drawController.getLineTypes(),
+                            overrideLineTypes = scope.$eval(attrs['overrideLineTypes']),
                             position = scope.$eval(attrs['lineTypesControlPosition']),
+                            onAfterDrawingOverlay = scope.$eval(attrs['onAfterDrawingOverlay']),
                             dropDownContentUrl = scope.$eval(attrs['gmapDropdownTemplateUrl']),
                             dropdownContent = scope.$eval(attrs['gmapDropdownTemplate']);
                         /**
@@ -110,18 +127,22 @@
 
                             }
                         ];
-                        if (Array.isArray(gmapLineTypes)) {
-                            gmapLineTypes = scope.polyLineTypes.concat(gmapLineTypes);
-                        } else {
-                            gmapLineTypes = scope.polyLineTypes;
+
+                        /**
+                         * Allow user to override all line types
+                         */
+                        if (typeof overrideLineTypes === 'function') {
+                            scope.polyLineTypes = overrideLineTypes(scope.polyLineTypes);
                         }
-                        scope.polyLineTypes = gmapLineTypes;
-                        drawController.setLineTypes(gmapLineTypes);
-                        scope.currentLineType = gmapLineTypes[0];
+                        //check if user returned not empty array
+                        if (!Array.isArray(scope.polyLineTypes) || scope.polyLineTypes.length < 1) {
+                            throw new Error('Line types array can\'t be null or empty. If you are overriding line types please ensure that callback returns new array!');
+                        }
+                        scope.currentLineType = scope.polyLineTypes[0];
 
                         function customStyling(overlay, type) {
                             if (type !== 'marker' && type !== 'circle') {
-                                var points = null;
+                                var points = null, polyLine;
                                 if (type !== 'polyline') {
                                     switch (type) {
                                         case 'polygon':
@@ -136,7 +157,7 @@
                                             points = [NE, SE, SW, NW, NE];
                                             break;
                                     }
-                                    var polyLine = new google.maps.Polyline({
+                                    polyLine = new google.maps.Polyline({
                                         path: points
                                     });
                                     polyLine.set('icons', scope.currentLineType.icons);
@@ -146,6 +167,10 @@
                                 } else {
                                     overlay.set('icons', scope.currentLineType.icons);
                                     overlay.setOptions(scope.currentLineType.parentOptions);
+                                }
+                                //allow user to get custom styled overlay
+                                if (typeof onAfterDrawingOverlay === 'function') {
+                                    onAfterDrawingOverlay.apply(overlay, [scope.currentLineType, polyLine]);
                                 }
                             }
                         }
@@ -221,8 +246,7 @@
                     require: '^logicifyGmap',
                     scope: {
                         gmapEvents: '&gmapEvents',
-                        drawOptions: '&drawOptions',
-                        gmapLineTypes: '=gmapLineTypes'
+                        drawOptions: '&drawOptions'
                     },
                     controller: function ($scope, $element, $attrs) {
                         var self = this;
@@ -248,13 +272,6 @@
                         self.getEvents = function () {
                             return $scope.gmapEvents();
                         };
-                        self.getLineTypes = function () {
-                            return $scope.gmapLineTypes;
-                        };
-                        self.setLineTypes = function (lineTypes) {
-                            $scope.gmapLineTypes = lineTypes;
-                            return $scope.gmapLineTypes;
-                        }
                     },
                     link: function (scope, element, attrs, ctrl) {
                         if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
@@ -1018,3 +1035,5 @@
             return SmartCollection;
         }]);
 })(angular);
+
+}));

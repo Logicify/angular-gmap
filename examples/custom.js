@@ -42,6 +42,22 @@
                 }
             }
         };
+        scope.overrideLineTypes = function (lineTypesArray) {
+            lineTypesArray.push({
+                name: 'My name is ...',
+                icons: [],
+                parentOptions: {
+                    strokeOpacity: 1,
+                    strokeColor: '#fa01fa'
+                }
+            });
+            return lineTypesArray;
+        };
+        scope.onAfterDraw = function (lineType, polyLine) {
+            //this - overlay
+            //lineType - is an item from array of line types
+            //polyLine - is poly line around rectangle or polygon, because only those figures can't be styled with strokeStyle (strokeOpacity of overlay is 0)
+        };
         scope.draw = {
             events: {
                 drawing: {
