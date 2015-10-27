@@ -553,4 +553,74 @@ scope.ready = function (map) {
 [jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
 ###### Extending line types
 You can extend list of supported line types (dotted, dashed, arrow-dotted etc.)
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <logicify-gmap-draw
+                gmap-events="draw.events"
+                draw-options="draw.options">
+            <gmap-extended-draw
+                    line-types-control-position="lineTypesControlPosition"
+                    gmap-dropdown-template-url="dropDownTemplate"
+                    override-line-types="overrideLineTypes"
+                    on-after-drawing-overlay="onAfterDraw">
+            </gmap-extended-draw>
+        </logicify-gmap-draw>
+    </logicify-gmap>
+```
+As can you see there are few attributes added. override-line-types="overrideLineTypes" and on-after-drawing-overlay="onAfterDraw"
+Controller code below:
+```js
+scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
+scope.overrideLineTypes = function (lineTypesArray) {
+    lineTypesArray.push({
+        name: 'My name is ...', //name displayed in dropdown list
+        icons: [],
+        //those options will be applied to overlay
+        parentOptions: {
+            strokeOpacity: 1, //if you want draw shapes without border you can set opacity to 0
+            strokeColor: '#fa01fa'
+        }
+    });
+    return lineTypesArray;//return array back to directive (Required!!!!!)
+};
+//will not fires if marker or circle was added
+scope.onAfterDraw = function (lineType, polyLine) {
+    this.set('fillColor','#0af10a');
+    //this - overlay
+    //lineType - is an item from array of line types
+    //polyLine - is poly line around rectangle or polygon, because only those figures can't be styled with strokeStyle (strokeOpacity of overlay is 0)
+    //polyLine can be null if overlay is polyLine!!!! Otherwise it will be google MVC object always
+    if(polyLine!=null){
+        //do something here
+    }
+};
+```
+What is "icons" in lineTypesArray exactly? For example:
 
+```js
+var dottedIcon =  {
+    path: 'M 0,-1 0,1', //it's svg path definition, please see w3 spec
+    //options below
+    strokeOpacity: 1,
+    strokeWeight: 4,
+    scale: 0.2
+}
+var arrow = {//arrow definition here}
+var lineType = {
+    name: 'My name is dotted line', //name displayed in dropdown list
+    icons: [dottedIcon, arrow], //set dotted line here
+    //those options will be applied to overlay
+    parentOptions: {
+        strokeOpacity: 0 //should be a 0, because you are drawing dotted line, we don't need any border
+    }
+}
+```
+[svg path definition](http://www.w3schools.com/svg/svg_path.asp)
+
+###### Please see on-after-drawing-overlay callback.
+This callback fires when custom lines applied to overlay (rectangle, polyline, polygon only).
+Border of shapes can't be styled as dotted or dashed for example, so we decided replace border of the shape overlay, and draw polyline instead.
