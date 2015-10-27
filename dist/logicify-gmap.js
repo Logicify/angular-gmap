@@ -14,8 +14,9 @@
         .directive('gmapColorPicker', [
             '$compile',
             '$http',
+            '$log',
             '$templateCache',
-            function ($compile, $http, $templateCache) {
+            function ($compile, $http, $log, $templateCache) {
                 /**
                  * Create styling once
                  * @type {HTMLElement}
@@ -24,7 +25,7 @@
                     restrict: 'EA',
                     require: ['^logicifyGmap', '^logicifyGmapDraw', '^gmapExtendedDraw'],
                     link: function (scope, element, attrs, ctrls) {
-                        var mapCtrl = ctrls[0], drawCtrl = ctrls[1], extendedDrawCtrl = ctrls[2],
+                        var mapCtrl = ctrls[0], extendedDrawCtrl = ctrls[2],
                             listeners = [],
                             map = mapCtrl.getMap(),
                             onColorOrOpacityChanged = scope.$eval(attrs['onColorOrOpacityChanged']),
@@ -75,6 +76,11 @@
                                 scope.destination = 0;
                             }
                         };
+                        function isColorInputSupported() {
+                            var colorInput = angular.element('<input type="color" value="!"/>')[0];
+                            return colorInput.type === 'color' && colorInput.value !== '!';
+                        }
+
                         function buildElement(content) {
                             var control = angular.element(content);
                             if (typeof position !== 'string') {
@@ -109,6 +115,11 @@
                         } else if (colorPickerContent) {
                             buildElement(colorPickerContent);
                         } else {
+                            if (!isColorInputSupported()) {
+                                $log.error('Your browser doesn\'nt support HTML5 color inputs.');
+                                scope.$destroy();
+                                return;
+                            }
                             var opacityRangeContent = '';
                             if (opacityRange === true) {
                                 opacityRangeContent = '<input min="1" max="100" type="range" ng-change="onSelectOpacity()" ng-model="destinations[destination].opacity.value"/>';
