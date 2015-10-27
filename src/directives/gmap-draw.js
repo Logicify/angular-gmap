@@ -26,11 +26,15 @@
                             drawingControlOptions: {
                                 position: google.maps.ControlPosition.TOP_CENTER,
                                 drawingModes: [
-                                    google.maps.drawing.OverlayType.MARKER
+                                    google.maps.drawing.OverlayType.MARKER,
+                                    google.maps.drawing.OverlayType.CIRCLE,
+                                    google.maps.drawing.OverlayType.POLYGON,
+                                    google.maps.drawing.OverlayType.POLYLINE,
+                                    google.maps.drawing.OverlayType.RECTANGLE
                                 ]
                             }
                         };
-                        var options = angular.extend(minimalOptions, $scope.drawOptions());
+                        var options = $scope.drawOptions() || minimalOptions;
                         var drawManager = new google.maps.drawing.DrawingManager(options);
                         $scope.drawingManager = drawManager;
                         self.getDrawingManager = function () {
