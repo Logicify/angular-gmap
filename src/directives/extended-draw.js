@@ -16,6 +16,23 @@
                 return {
                     restrict: 'EA',
                     require: ['^logicifyGmap', '^logicifyGmapDraw'],
+                    controller: function ($scope, $element, $attrs) {
+                        var self = this;
+                        $scope.defaultColors = {};
+                        $scope.defaultOpacity = {};
+                        self.setColor = function (destination, value) {
+                            $scope.defaultColors[destination] = value;
+                        };
+                        self.getColor = function (destination) {
+                            return $scope.defaultColors[destination];
+                        };
+                        self.setOpacity = function (destination, value) {
+                            $scope.defaultOpacity[destination] = value / 100;
+                        };
+                        self.getOpacity = function (destination) {
+                            return $scope.defaultOpacity[destination];
+                        };
+                    },
                     link: function (scope, element, attrs, ctrls) {
                         var mapCtrl = ctrls[0],
                             drawController = ctrls[1],
@@ -117,10 +134,23 @@
                         }
                         scope.currentLineType = scope.polyLineTypes[0];
 
+                        function applyStylingToIcons(icons) {
+                            if (Array.isArray(icons)) {
+                                icons.forEach(function (icon) {
+                                    icon.icon.strokeOpacity = scope.defaultOpacity.strokeOpacity;
+                                    icon.icon.strokeColor = scope.defaultColors.strokeColor;
+                                });
+                            } else {
+                                return [];
+                            }
+                        }
+
                         function customStyling(overlay, type) {
                             if (type !== 'marker' && type !== 'circle') {
                                 var points = null, polyLine;
-                                if (type !== 'polyline') {
+                                var newIcons = angular.copy(scope.currentLineType.icons);
+                                applyStylingToIcons(newIcons);
+                                if (type !== 'polyline' && Array.isArray(scope.currentLineType.icons) && scope.currentLineType.icons.length > 0) {
                                     switch (type) {
                                         case 'polygon':
                                             points = overlay.getPath().getArray();
@@ -137,19 +167,32 @@
                                     polyLine = new google.maps.Polyline({
                                         path: points
                                     });
-                                    polyLine.set('icons', scope.currentLineType.icons);
+                                    polyLine.set('icons', newIcons);
                                     polyLine.setOptions(scope.currentLineType.parentOptions);//hide border
                                     overlay.setOptions(scope.currentLineType.parentOptions);//hide border
+                                    polyLine.set('strokeColor', scope.defaultColors.strokeColor);//override default color
+                                    //polyLine.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
                                     polyLine.setMap(map);
+                                    overlay.set('fillColor', scope.defaultColors.fillColor);
+                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                    overlay.set('strokeOpacity', 0);
                                     overlay.border = polyLine;
                                 } else {
-                                    overlay.set('icons', scope.currentLineType.icons);
+                                    overlay.set('icons', newIcons);
                                     overlay.setOptions(scope.currentLineType.parentOptions);
+                                    overlay.set('strokeColor', scope.defaultColors.strokeColor);
+                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                    if (Array.isArray(newIcons) && newIcons.length < 1) {
+                                        overlay.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                    }
                                 }
                                 //allow user to get custom styled overlay
                                 if (typeof onAfterDrawingOverlay === 'function') {
                                     onAfterDrawingOverlay.apply(overlay, [scope.currentLineType]);
                                 }
+                            } else {
+                                overlay.setOptions(scope.defaultColors);//set colors
+                                overlay.setOptions(scope.defaultOpacity);//set opacity
                             }
                         }
 

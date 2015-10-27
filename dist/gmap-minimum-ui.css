@@ -74,3 +74,34 @@
     -ms-transform: scaleY(-1);
     transform: scaleY(-1);
 }
+
+.gmap-color-picker-container {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.gmap-color-picker-container input {
+    border-radius: 5px;
+    height: 20px;
+    cursor: pointer;
+    float: left;
+}
+
+.gmap-color-picker-container .toggle-color-button {
+    width: 100px;
+    height: 24px;
+    margin-right: 5px;
+    float: left;
+    background-color: #fefffd;
+    border-radius: 5px;
+    border: none;
+}
+
+.gmap-color-picker-container .toggle-color-button:hover {
+    cursor: pointer;
+    background-color: #c0ccce;
+}
+
+.gmap-color-picker-container .toggle-color-button:active {
+    background-color: #8a8887;
+}

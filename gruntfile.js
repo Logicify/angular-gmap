@@ -47,8 +47,8 @@ module.exports = function (grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['concat:logicifyGmap'],
+                files: ['src/**/*.*'],
+                tasks: ['concat:logicifyGmap', 'copy:all'],
                 options: {
                     spawn: false
                 }
