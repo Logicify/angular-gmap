@@ -440,7 +440,7 @@ scope.draw = {
                         //note that "this" can be overlay or marker, you need to be careful, because marker doesn't have "center" property and overlay has.
                         if (scope.overlaysInfowindow) {
                             scope.overlaysInfowindow.$ready(function (wnd) {
-                                wnd.setPosition(self.center || self.position);//info window position
+                                wnd.setPosition(e.latLng);//info window position
                                 wnd.open(map);
                                 wnd.$scope.mvcObject = self;
                                 wnd.$scope.applyConfig = applyConfig;
@@ -588,13 +588,13 @@ scope.overrideLineTypes = function (lineTypesArray) {
     return lineTypesArray;//return array back to directive (Required!!!!!)
 };
 //will not fires if marker or circle was added
-scope.onAfterDraw = function (lineType, polyLine) {
+scope.onAfterDraw = function (lineType) {
     this.set('fillColor','#0af10a');
     //this - overlay
     //lineType - is an item from array of line types
-    //polyLine - is poly line around rectangle or polygon, because only those figures can't be styled with strokeStyle (strokeOpacity of overlay is 0)
-    //polyLine can be null if overlay is polyLine!!!! Otherwise it will be google MVC object always
-    if(polyLine!=null){
+    //this.border - is poly line around rectangle or polygon, because only those figures can't be styled with strokeStyle (strokeOpacity of overlay is 0)
+    //border can be null if overlay is polyLine!!!! Otherwise it will be google MVC object always
+    if(this.border!=null){
         //do something here
     }
 };

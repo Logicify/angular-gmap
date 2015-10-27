@@ -81,17 +81,17 @@
                     }
                 },
                 overlays: {
-                    click: function (e, map) {
+                    /*click: function (e, map) {
                         var self = this;
                         if (scope.overlaysInfowindow) {
                             scope.overlaysInfowindow.$ready(function (wnd) {
-                                wnd.setPosition(self.center || self.position);//info window position
+                     wnd.setPosition(e.latLng);//info window position
                                 wnd.open(map);
                                 wnd.$scope.mvcObject = self;
                                 wnd.$scope.applyConfig = applyConfig;
                             });
                         }
-                    }
+                     }*/
                 }
             },
             options: {
@@ -152,9 +152,9 @@
         }
 
         scope.ready = function (map) {
-            var infowindow = new infoWindow({templateUrl: 'template.html'});
+            //var infowindow = new infoWindow({templateUrl: 'template.html'});
             scope.gmap = map;
-            scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
+            /* scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
             scope.overlaysInfowindow.$ready(overlayInfowindowReady);
             function attach(marker) {
                 google.maps.event.addListener(marker, 'click', function (markerObj) {
@@ -184,7 +184,7 @@
                 });
                 scope.markers.push(marker);
                 attach(marker);
-            }
+             }*/
         };
     }
 
