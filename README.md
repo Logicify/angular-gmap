@@ -649,3 +649,4 @@ $scope.draw = {
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
 [jsfiddle example](https://jsfiddle.net/nzm72vLh/4/)
+######

@@ -42,12 +42,12 @@
                             }
                         ];
                         /**
-                         * Default colors
+                         * Setup default colors and opacity
                          */
-                        extendedDrawCtrl.setColor(scope.destinations[0].color.property, scope.destinations[0].color.value);
-                        extendedDrawCtrl.setColor(scope.destinations[1].color.property, scope.destinations[1].color.value);
-                        extendedDrawCtrl.setOpacity(scope.destinations[0].opacity.property, scope.destinations[0].opacity.value);
-                        extendedDrawCtrl.setOpacity(scope.destinations[1].opacity.property, scope.destinations[1].opacity.value);
+                        scope.destinations.forEach(function (destination) {
+                            extendedDrawCtrl.setColor(destination.color.property, destination.color.value);
+                            extendedDrawCtrl.setOpacity(destination.opacity.property, destination.opacity.value);
+                        });
                         scope.destination = 0;
                         scope.onSelectColor = function () {
                             extendedDrawCtrl.setColor(scope.destinations[scope.destination].color.property, scope.destinations[scope.destination].color.value);
