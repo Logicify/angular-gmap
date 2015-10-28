@@ -345,7 +345,7 @@ There is one more option fit-bounds-afterAll
                 fit-bounds-afterAll="false">
 </xml-overlays>
 ```
-This option is true by default. When you are disabling this option the last layer will be displayed on the map. 
+This option is true by default. When you are disabling this option the last layer will be displayed on the map.
 To view all layers you need modify zoom and center of the map by mouse.
 If this options is enabled, then all layers will be displayed on the map, and you don't need to scroll and dragging the map to view all layers
 ###### Progress callback
@@ -694,7 +694,8 @@ Or
                                 color-picker-control-position="colorPickerControlPosition"
                                 enable-opacity-range="true"
                                 gmap-color-picker-template-url="dropDownTemplate"
-                                gmap-color-picker-template="dropDownContent">
+                                gmap-color-picker-template="dropDownContent"
+                                override-destinations="overrideCallback">
                         </gmap-color-picker>
             </gmap-extended-draw>
         </logicify-gmap-draw>
@@ -708,5 +709,31 @@ scope.colorPickerControlPosition = google.maps.ControlPosition.TOP_CENTER;
 //define colorPicker template as string
 //if you wouldn't define any template, then 'gmap-color-picker' directive will use internal html,
 //so you don't need define your own color picker
+```
+you can override destinations (border, fill). Attribute "override-destinations" contains overrideCallback.
+This callback calls when directive initialize.
+```js
+scope.overrideCallback = function(destinations){
+    destinations.forEach(function(destination){
+        destination.name += ' color or opacity';//you can see on the button "Fill color or opacity"
+    });
+    return destinations; //required!!! You need return array back to directive.
+}
+```
+For custom color pickers you need to keep next rules:
+- if there's opacity input, then "onSelectOpacity" callback should be called in your html
+- ng-model is "destinations[destination].opacity.value" or "destinations[destination].color.value"
+- Destination name could be "Border" or "Fill" (or you can override it, but only two cases), for example in your html: "destinations[destination].name"
+Example html:
+```html
+<input min="1" max="100" type="range" ng-change="onSelectOpacity()" ng-model="destinations[destination].opacity.value"/>
+```
+- Button "toggle destination" should call "toggleDestination" callback (you can use any DOM event for this, "ng-click" for example)
+- For color picker you should use "onSelectColor" callback in your html
+- Note that all examples are with ng-model. So all callbacks ("onSelectOpacity" or "onSelectColor") calls to update drawing manager only, because it's in a parent directive
+Example for color picker and change destination button:
+```html
+<button ng-click="toggleDestination()" ng-bind="destinations[destination].name"></button>
+<input type="color" ng-model="destinations[destination].color.value" ng-change="onSelectColor()"/>
 ```
 ###### Internal color picker - it's html5 input (type="color"). Please see browser capability

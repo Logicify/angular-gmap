@@ -22,6 +22,7 @@
                             listeners = [],
                             map = mapCtrl.getMap(),
                             onColorOrOpacityChanged = scope.$eval(attrs['onColorOrOpacityChanged']),
+                            overrideDestinations = scope.$eval(attrs['overrideDestinations']),
                             opacityRange = scope.$eval(attrs['enableOpacityRange']),
                             position = scope.$eval(attrs['colorPickerControlPosition']),
                             colorPickerContentUrl = scope.$eval(attrs['gmapColorPickerTemplateUrl']),
@@ -42,6 +43,12 @@
                                 opacity: {property: 'strokeOpacity', value: 100}
                             }
                         ];
+                        if (typeof overrideDestinations === 'function') {
+                            scope.destinations = overrideDestinations(scope.destinations);
+                        }
+                        if (!Array.isArray(scope.destination) && scope.destinations.length > 0) {
+                            throw new Error('Destinations shouldn\'t be an empty array');
+                        }
                         /**
                          * Setup default colors and opacity
                          */
