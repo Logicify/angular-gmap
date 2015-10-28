@@ -56,17 +56,22 @@
                             var circleOptions = drawManager.get('circleOptions') || {},
                                 rectangleOptions = drawManager.get('rectangleOptions') || {},
                                 polygonOptions = drawManager.get('polygonOptions') || {},
-                                polylineOptions = drawManager.get('polylineOptions') || {};
-                            angular.extend(circleOptions, colorOrOpacity);
-                            angular.extend(rectangleOptions, colorOrOpacity);
-                            angular.extend(polygonOptions, colorOrOpacity);
-                            angular.extend(polylineOptions, colorOrOpacity);
-                            drawManager.setOptions({
+                                polylineOptions = drawManager.get('polylineOptions') || {},
+                                markerOptions = drawManager.get('markerOptions');
+                            var opts = {
                                 circleOptions: circleOptions,
                                 rectangleOptions: rectangleOptions,
                                 polygonOptions: polygonOptions,
-                                polylineOptions: polylineOptions
+                                polylineOptions: polylineOptions,
+                                markerOptions: markerOptions
+                            };
+                            angular.extend(opts, {
+                                circleOptions: colorOrOpacity,
+                                rectangleOptions: colorOrOpacity,
+                                polygonOptions: colorOrOpacity,
+                                polylineOptions: colorOrOpacity
                             });
+                            drawManager.setOptions(opts);
                         };
                         /**
                          * Private declarations
