@@ -2,6 +2,7 @@
  * Created by artem on 10/20/15.
  */
 (function (angular) {
+    'use strict';
     angular.module('LogicifyGMap')
         .directive('gmapDropdown', [
             '$compile',

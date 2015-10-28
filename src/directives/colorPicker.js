@@ -3,13 +3,15 @@
  */
 (function (angular) {
     /*global google*/
+    'use strict';
     angular.module('LogicifyGMap')
         .directive('gmapColorPicker', [
             '$compile',
             '$http',
             '$log',
             '$templateCache',
-            function ($compile, $http, $log, $templateCache) {
+            'GmapSmallUtil',
+            function ($compile, $http, $log, $templateCache, GmapSmallUtil) {
                 /**
                  * Create styling once
                  * @type {HTMLElement}
@@ -30,7 +32,6 @@
                         scope.$on('$destroy', function () {
                             listeners.forEach(mapCtrl.detachListener);
                         });
-                        var controlPosition = null;
                         scope.destinations = [
                             {
                                 name: 'Fill',
@@ -83,15 +84,7 @@
 
                         function buildElement(content) {
                             var control = angular.element(content);
-                            if (typeof position !== 'string') {
-                                Object.keys(google.maps.ControlPosition).forEach(function (key) {
-                                    if (google.maps.ControlPosition[key] == position) {
-                                        controlPosition = key;
-                                    }
-                                });
-                            } else {
-                                controlPosition = position;
-                            }
+                            var controlPosition = GmapSmallUtil.getControlPosition(position);
                             if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
                                 map.controls[google.maps.ControlPosition[controlPosition]].push(control[0]);
                             } else {

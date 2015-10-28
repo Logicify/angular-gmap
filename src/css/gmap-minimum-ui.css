@@ -1,3 +1,4 @@
+/*dropdown select line type*/
 .gmap-dropdown-holder {
     margin: 5px;
     height: 16px;
@@ -75,6 +76,7 @@
     transform: scaleY(-1);
 }
 
+/*color picker*/
 .gmap-color-picker-container {
     margin-bottom: 5px;
     margin-top: 5px;
@@ -107,4 +109,49 @@
 
 .gmap-color-picker-container .toggle-color-button:active {
     background-color: #8a8887;
+}
+
+/*autocomplete*/
+.autocomplete-control-container {
+    margin: 5px;
+}
+
+#gmap-type-selector {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+    float: right;
+    margin-left: 5px;
+    height: 22px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+    background-color: #ffffff;
+}
+
+#gmap-type-selector label:hover {
+    font-weight: 400;
+}
+
+#gmap-auto-complete-input {
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#gmap-auto-complete-input {
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    padding: 3px 0px 3px 3px;
+    /*margin: 5px 1px 3px 0px;*/
+    border: 1px solid #DDDDDD;
+}
+
+#gmap-auto-complete-input:focus {
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+    padding: 3px 0px 3px 3px;
+    /*margin: 5px 1px 3px 0px;*/
+    border: 1px solid rgba(81, 203, 238, 1);
 }

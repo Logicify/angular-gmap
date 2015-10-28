@@ -5,14 +5,17 @@
     <title>Google map</title>
     <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="stylesheet" type="text/css" href="../dist/gmap-minimum-ui.css">
-    <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing,places"></script>
 </head>
 <body ng-app="Application">
 <div ng-controller="TestController">
-    <script type="text/ng-template" id="template.html">
+    <!--<script type="text/ng-template" id="template.html">
         <div>{{$infoWND.infoWindowName}} - {{$infoWND.anchor.id}}</div>
+    </script>-->
+    <script type="text/ng-template" id="place.html">
+        <div>{{$infoWND.place.name}}</div>
     </script>
-    <script type="text/ng-template" id="infowindow.html">
+    <!--<script type="text/ng-template" id="infowindow.html">
         <div class="info-window-container">
             <div class="title">{{mvcObject.title}}</div>
             <div>
@@ -43,7 +46,7 @@
                 <button ng-click="applyConfig(mvcObject)">Save</button>
             </div>
         </div>
-    </script>
+    </script>-->
     <!--<script type="text/ng-template" id="dropdown.html">
         <div class="custom-holder">
             <span class="custom-title" title="it's google baby <(^_^)>">G(.)(.)gle</span>
@@ -55,7 +58,15 @@
             gm-options="gmOpts"
             gm-ready="ready"
             css-options="cssOpts">
-        <logicify-gmap-control
+        <gmap-auto-complete
+                auto-complete-place-holder="placeHolder"
+                default-zoom-on-placeChange="16"
+                gmap-on-place-changed="onPlaceChanged"
+                auto-complete-control-position="autoCompleteControlPosition"
+                enable-auto-complete-type-selectors="true"
+                enable-default-marker="enableDefaultMarker">
+        </gmap-auto-complete>
+        <!--<logicify-gmap-control
                 control-position="position"
                 control-index="1"
                 events="controlEvents">
@@ -78,7 +89,7 @@
                     color-picker-control-position="colorPickerControlPosition"
                     enable-opacity-range="true">
             </gmap-extended-draw>
-        </logicify-gmap-draw>
+        </logicify-gmap-draw>-->
     </logicify-gmap>
 </div>
 <script type="text/javascript" src="../dist/geoxml3.js"></script>

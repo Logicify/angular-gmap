@@ -3,7 +3,25 @@
  */
 /*global google*/
 (function (google, angular) {
+    'use strict';
     angular.module('LogicifyGMap')
+        //small service
+        .service('GmapSmallUtil', ['$log', function ($log) {
+            var self = this;
+            self.getControlPosition = function (position) {
+                var controlPosition = null;
+                if (typeof position !== 'string' && position != null) {
+                    Object.keys(google.maps.ControlPosition).forEach(function (key) {
+                        if (google.maps.ControlPosition[key] == position) {
+                            controlPosition = key;
+                        }
+                    });
+                } else {
+                    controlPosition = position;
+                }
+                return controlPosition;
+            }
+        }])
         .service('InfoWindow', ['$log', '$rootScope', '$templateCache', '$timeout', '$http', '$compile', function ($log, $rootScope, $templateCache, $timeout, $http, $compile) {
             function InfoWindow() {
                 var self = this;

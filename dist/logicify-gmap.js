@@ -6,17 +6,114 @@
     angular.module('LogicifyGMap',[]);
 })(angular);
 /**
+ * Created by artem on 10/28/15.
+ */
+(function (angular) {
+    'use strict';
+    /*global google*/
+    angular.module('LogicifyGMap')
+        .directive('gmapAutoComplete', [
+            '$compile',
+            '$timeout',
+            'GmapSmallUtil',
+            function ($compile, $timeout, GmapSmallUtil) {
+                return {
+                    restrict: 'E',
+                    require: '^logicifyGmap',
+                    link: function (scope, element, attrs, ctrl) {
+                        scope.placeHolder = scope.$eval(attrs['autoCompletePlaceHolder']);
+                        scope.isTypesSelectorsVisible = scope.$eval(attrs['enableAutoCompleteTypeSelectors']);
+                        scope.defaultZoomOnPlaceChange = scope.$eval(attrs['defaultZoomOnPlaceChange']);
+                        scope.onPlaceChanged = scope.$eval(attrs['gmapOnPlaceChanged']);
+                        scope.enableDefaultMarker = scope.$eval(attrs['enableDefaultMarker']);
+                        var position = scope.$eval(attrs['autoCompleteControlPosition']);
+                        var map = ctrl.getMap();
+                        var autoCompleteInput = angular.element('<input id="gmap-auto-complete-input" type="text" placeholder="{{placeHolder}}">');
+                        var typeSelector = angular.element(
+                            '<div id="gmap-type-selector">' +
+                            '<input class="gmap-autocomplete-type-selector" type="radio" name="type" id="gmap-changetype-all" checked="checked">' +
+                            '<label for="gmap-changetype-all">All</label>' +
+                            '<input class="gmap-autocomplete-type-selector" type="radio" name="type" id="gmap-changetype-establishment">' +
+                            '<label for="gmap-changetype-establishment">Establishments</label>' +
+                            '<input class="gmap-autocomplete-type-selector" type="radio" name="type" id="gmap-changetype-address">' +
+                            '<label for="gmap-changetype-address">Addresses</label>' +
+                            '<input class="gmap-autocomplete-type-selector" type="radio" name="type" id="gmap-changetype-geocode">' +
+                            '<label for="gmap-changetype-geocode">Geocodes</label>' +
+                            '</div>');
+                        if (element[0].innerHTML.trim().length < 1) {
+                            $compile(autoCompleteInput)(scope);
+                            element.append(autoCompleteInput);
+                            if (scope.isTypesSelectorsVisible) {
+                                $compile(typeSelector)(scope);
+                                element.append(typeSelector);
+                            }
+                            $timeout(function () {
+                            });//run new digest
+                        }
+                        var input = angular.element(document.querySelector('#gmap-auto-complete-input'));
+                        var types = angular.element(document.querySelector('#gmap-type-selector'));
+                        if (input.length < 1) {
+                            throw new Error('There\'s no text input in your html.')
+                        }
+                        var controlPosition = GmapSmallUtil.getControlPosition(position);
+                        if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
+                            var div = angular.element('<div class="autocomplete-control-container"></div>');
+                            div.append(input);
+                            map.controls[google.maps.ControlPosition[controlPosition]].push(div[0]);
+                            if (scope.isTypesSelectorsVisible === true) {
+                                div.append(types);
+                            }
+                        } else {
+                            //else append it to current element
+                            element.append(input);
+                            if (scope.isTypesSelectorsVisible === true) {
+                                element.append(types);
+                            }
+                        }
+                        var autocomplete = new google.maps.places.Autocomplete(input[0]);
+                        autocomplete.bindTo('bounds', map);
+                        if (scope.enableDefaultMarker) {
+                            scope.marker = new google.maps.Marker({map: map});
+                        }
+                        autocomplete.addListener('place_changed', function () {
+                            var place = autocomplete.getPlace();
+                            if (typeof scope.onPlaceChanged === 'function') {
+                                scope.onPlaceChanged(map, place, input[0].value);
+                            }
+                            if (!place.geometry) {
+                                return;
+                            }
+                            // If the place has a geometry, then present it on a map.
+                            if (place.geometry.viewport) {
+                                map.fitBounds(place.geometry.viewport);
+                            } else {
+                                map.setCenter(place.geometry.location);
+                                map.setZoom(scope.defaultZoomOnPlaceChange || 17);
+                            }
+                            if (scope.marker) {
+                                scope.marker.setPosition(place.geometry.location);
+                                scope.marker.setVisible(true);
+                            }
+                        });
+                    }
+                }
+            }
+        ]);
+})(angular);
+/**
  * Created by artem on 10/27/15.
  */
 (function (angular) {
     /*global google*/
+    'use strict';
     angular.module('LogicifyGMap')
         .directive('gmapColorPicker', [
             '$compile',
             '$http',
             '$log',
             '$templateCache',
-            function ($compile, $http, $log, $templateCache) {
+            'GmapSmallUtil',
+            function ($compile, $http, $log, $templateCache, GmapSmallUtil) {
                 /**
                  * Create styling once
                  * @type {HTMLElement}
@@ -29,6 +126,7 @@
                             listeners = [],
                             map = mapCtrl.getMap(),
                             onColorOrOpacityChanged = scope.$eval(attrs['onColorOrOpacityChanged']),
+                            overrideDestinations = scope.$eval(attrs['overrideDestinations']),
                             opacityRange = scope.$eval(attrs['enableOpacityRange']),
                             position = scope.$eval(attrs['colorPickerControlPosition']),
                             colorPickerContentUrl = scope.$eval(attrs['gmapColorPickerTemplateUrl']),
@@ -36,7 +134,6 @@
                         scope.$on('$destroy', function () {
                             listeners.forEach(mapCtrl.detachListener);
                         });
-                        var controlPosition = null;
                         scope.destinations = [
                             {
                                 name: 'Fill',
@@ -49,6 +146,12 @@
                                 opacity: {property: 'strokeOpacity', value: 100}
                             }
                         ];
+                        if (typeof overrideDestinations === 'function') {
+                            scope.destinations = overrideDestinations(scope.destinations);
+                        }
+                        if (!Array.isArray(scope.destination) && scope.destinations.length > 0) {
+                            throw new Error('Destinations shouldn\'t be an empty array');
+                        }
                         /**
                          * Setup default colors and opacity
                          */
@@ -83,15 +186,7 @@
 
                         function buildElement(content) {
                             var control = angular.element(content);
-                            if (typeof position !== 'string') {
-                                Object.keys(google.maps.ControlPosition).forEach(function (key) {
-                                    if (google.maps.ControlPosition[key] == position) {
-                                        controlPosition = key;
-                                    }
-                                });
-                            } else {
-                                controlPosition = position;
-                            }
+                            var controlPosition = GmapSmallUtil.getControlPosition(position);
                             if (google.maps.ControlPosition.hasOwnProperty(controlPosition)) {
                                 map.controls[google.maps.ControlPosition[controlPosition]].push(control[0]);
                             } else {
@@ -194,17 +289,22 @@
                             var circleOptions = drawManager.get('circleOptions') || {},
                                 rectangleOptions = drawManager.get('rectangleOptions') || {},
                                 polygonOptions = drawManager.get('polygonOptions') || {},
-                                polylineOptions = drawManager.get('polylineOptions') || {};
-                            angular.extend(circleOptions, colorOrOpacity);
-                            angular.extend(rectangleOptions, colorOrOpacity);
-                            angular.extend(polygonOptions, colorOrOpacity);
-                            angular.extend(polylineOptions, colorOrOpacity);
-                            drawManager.setOptions({
+                                polylineOptions = drawManager.get('polylineOptions') || {},
+                                markerOptions = drawManager.get('markerOptions');
+                            var opts = {
                                 circleOptions: circleOptions,
                                 rectangleOptions: rectangleOptions,
                                 polygonOptions: polygonOptions,
-                                polylineOptions: polylineOptions
+                                polylineOptions: polylineOptions,
+                                markerOptions: markerOptions
+                            };
+                            angular.extend(opts, {
+                                circleOptions: colorOrOpacity,
+                                rectangleOptions: colorOrOpacity,
+                                polygonOptions: colorOrOpacity,
+                                polylineOptions: colorOrOpacity
                             });
+                            drawManager.setOptions(opts);
                         };
                         /**
                          * Private declarations
@@ -512,6 +612,7 @@
  * Created by artem on 10/20/15.
  */
 (function (angular) {
+    'use strict';
     angular.module('LogicifyGMap')
         .directive('gmapDropdown', [
             '$compile',
@@ -1038,7 +1139,25 @@
  */
 /*global google*/
 (function (google, angular) {
+    'use strict';
     angular.module('LogicifyGMap')
+        //small service
+        .service('GmapSmallUtil', ['$log', function ($log) {
+            var self = this;
+            self.getControlPosition = function (position) {
+                var controlPosition = null;
+                if (typeof position !== 'string' && position != null) {
+                    Object.keys(google.maps.ControlPosition).forEach(function (key) {
+                        if (google.maps.ControlPosition[key] == position) {
+                            controlPosition = key;
+                        }
+                    });
+                } else {
+                    controlPosition = position;
+                }
+                return controlPosition;
+            }
+        }])
         .service('InfoWindow', ['$log', '$rootScope', '$templateCache', '$timeout', '$http', '$compile', function ($log, $rootScope, $templateCache, $timeout, $http, $compile) {
             function InfoWindow() {
                 var self = this;
