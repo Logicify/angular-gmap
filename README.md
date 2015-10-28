@@ -2,7 +2,9 @@
 
 * This product is a wrapper for [google maps api](https://developers.google.com/maps/documentation/javascript/tutorial) based on angular.
 * Stable Version 0.1.13
-[![NPM](https://www.npmjs.com/package/logicify-gmap.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/logicify-gmap)
+
+[![NPM](https://nodei.co/npm/logicify-gmap.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/logicify-gmap)
+
 ### For developers ###
 
 * node.js and npm
