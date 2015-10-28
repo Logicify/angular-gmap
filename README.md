@@ -731,6 +731,7 @@ Example html:
 - Button "toggle destination" should call "toggleDestination" callback (you can use any DOM event for this, "ng-click" for example)
 - For color picker you should use "onSelectColor" callback in your html
 - Note that all examples are with ng-model. So all callbacks ("onSelectOpacity" or "onSelectColor") calls to update drawing manager only, because it's in a parent directive
+
 Example for color picker and change destination button:
 ```html
 <button ng-click="toggleDestination()" ng-bind="destinations[destination].name"></button>
