@@ -8,7 +8,7 @@
   },
   "main": "dist/logicify-gmap.js",
   "homepage": "http://logicify.com/",
-  "author": "Artem Fedorov <artem.fedorov@logicify.com> (https://github.com/artemijan)",
+  "author": "Logicify (http://logicify.com/)",
   "license": "MIT",
   "dependencies": {
     "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.2"
@@ -43,7 +43,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/artemijan/logicify-gmap/blob/master/LICENSE"
+      "url": "https://github.com/Logicify/angular-gmap/blob/master/LICENSE"
     }
   ]
 }
