@@ -7,9 +7,10 @@
     angular.module('LogicifyGMap')
         .directive('gmapAutoComplete', [
             '$compile',
+            '$log',
             '$timeout',
             'GmapSmallUtil',
-            function ($compile, $timeout, GmapSmallUtil) {
+            function ($compile, $log, $timeout, GmapSmallUtil) {
                 return {
                     restrict: 'E',
                     require: '^logicifyGmap',
@@ -19,6 +20,7 @@
                         scope.defaultZoomOnPlaceChange = scope.$eval(attrs['defaultZoomOnPlaceChange']);
                         scope.onPlaceChanged = scope.$eval(attrs['gmapOnPlaceChanged']);
                         scope.enableDefaultMarker = scope.$eval(attrs['enableDefaultMarker']);
+                        var geocoder = new google.maps.Geocoder();
                         var position = scope.$eval(attrs['autoCompleteControlPosition']);
                         var map = ctrl.getMap();
                         var autoCompleteInput = angular.element('<input id="gmap-auto-complete-input" type="text" placeholder="{{placeHolder}}">');
@@ -88,6 +90,22 @@
                                 scope.marker.setVisible(true);
                             }
                         });
+                        scope.$on('gmap-auto-complete:reverse', function (e, position) {
+                            if (position instanceof google.maps.LatLng) {
+                                var verboseAddress = '';
+                                geocoder.geocode({latLng: position}, function (results, status) {
+                                    if (status == google.maps.GeocoderStatus.OK && results.length > 0) {
+                                        verboseAddress = results[0].formatted_address;
+                                        if (typeof scope.onReverseAddressComplete === 'function') {
+                                            verboseAddress = scope.onReverseAddressComplete(results) || verboseAddress;
+                                        }
+                                        input.val(verboseAddress);
+                                    }
+                                });
+                            } else {
+                                $log.error('For reverse auto complete you should pass an instance of google.maps.LatLng!');
+                            }
+                        })
                     }
                 }
             }

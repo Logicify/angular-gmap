@@ -47,6 +47,10 @@
         scope.autoCompleteControlPosition = google.maps.ControlPosition.TOP_CENTER;
         scope.placeHolder = 'Enter location';
         scope.enableDefaultMarker = false;
+        //custom formatted string
+        scope.onReverseAddressComplete = function (searchResults) {
+            return searchResults[0].formatted_address.split(',').splice(0, 1).join(',');
+        };
         scope.onPlaceChanged = function (map, place, inputValue) {
             if (!scope.placesInfoWindow) {
                 scope.placesInfoWindow = new infoWindow({templateUrl: 'place.html'});
@@ -55,6 +59,10 @@
                 scope.placeMarker = new google.maps.Marker({
                     id: 'places_marker',
                     map: map
+                });
+                scope.placeMarker.setDraggable(true);
+                google.maps.event.addListener(scope.placeMarker, 'dragend', function () {
+                    scope.$broadcast('gmap-auto-complete:reverse', this.position);
                 });
             }
             var position = null;
@@ -65,7 +73,7 @@
                         latitude = splitLatLon[0] * 1,
                         longitude = splitLatLon[1] * 1;
                     if (splitLatLon.length == 2 && angular.isNumber(latitude) && angular.isNumber(longitude) && !isNaN(latitude) && !isNaN(longitude)) {
-                        position = {lat: latitude, lng: longitude};
+                        position = new google.maps.LatLng(latitude, longitude);
                         map.setCenter(position);
                     }
                 }
