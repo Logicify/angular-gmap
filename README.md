@@ -234,7 +234,9 @@ infowindow.close();
 why only after opening? Because "open" method rewrites infowindow scope and applies digest. So you can access the scope only after calling method "open".
 
 ## XML overlays support
-[jsfiddle example](https://jsfiddle.net/rfgzw63r/7/)
+
+[![jsfiddle example](http://i.imgur.com/ulcqPif.png)](https://jsfiddle.net/rfgzw63r/7/)
+
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files.
 XML files can be: .zip, .kmz, .kml, or just a string.
