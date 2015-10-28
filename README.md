@@ -345,7 +345,7 @@ There is one more option fit-bounds-afterAll
                 fit-bounds-afterAll="false">
 </xml-overlays>
 ```
-This option is true by default. When you are disabling this option the last layer will be displayed on the map. ]
+This option is true by default. When you are disabling this option the last layer will be displayed on the map. 
 To view all layers you need modify zoom and center of the map by mouse.
 If this options is enabled, then all layers will be displayed on the map, and you don't need to scroll and dragging the map to view all layers
 ###### Progress callback
