@@ -738,3 +738,73 @@ Example for color picker and change destination button:
 <input type="color" ng-model="destinations[destination].color.value" ng-change="onSelectColor()"/>
 ```
 ###### Internal color picker - it's html5 input (type="color"). Please see browser capability
+
+##Auto complete address search support
+Your html
+```html
+<logicify-gmap
+            center="gmOpts.center"
+            gm-options="gmOpts"
+            gm-ready="ready"
+            css-options="cssOpts">
+        <gmap-auto-complete
+                auto-complete-place-holder="placeHolder"
+                default-zoom-on-placeChange="16"
+                gmap-on-place-changed="onPlaceChanged"
+                auto-complete-control-position="autoCompleteControlPosition"
+                enable-auto-complete-type-selectors="true"
+                enable-default-marker="enableDefaultMarker">
+        </gmap-auto-complete>
+</logicify-gmap>
+```
+Controller code:
+```js
+scope.autoCompleteControlPosition = google.maps.ControlPosition.TOP_CENTER;
+scope.placeHolder = 'Enter location';
+scope.enableDefaultMarker = false;
+scope.onPlaceChanged = function (map, place, inputValue) {
+//if no infowindow then create
+    if (!scope.placesInfoWindow) {
+        scope.placesInfoWindow = new infoWindow({templateUrl: 'place.html'});
+    }
+    //if no marker then create
+    if (!scope.placeMarker) {
+        scope.placeMarker = new google.maps.Marker({
+            id: 'places_marker',
+            map: map
+        });
+    }
+    var position = null;
+    if (!place.geometry) {
+        //if no geometry then check for latitude and longitude in address box
+        var searchFor = inputValue;
+        if (typeof searchFor === 'string' && searchFor.length > 0) {
+            var splitLatLon = searchFor.split(','),
+                latitude = splitLatLon[0] * 1,
+                longitude = splitLatLon[1] * 1;
+            if (splitLatLon.length == 2 && angular.isNumber(latitude) && angular.isNumber(longitude) && !isNaN(latitude) && !isNaN(longitude)) {
+                position = {lat: latitude, lng: longitude};
+                map.setCenter(position);
+            }
+        }
+        //if no position then do nothing
+        if (!position) {
+            scope.placeMarker.setVisible(false);
+            scope.placesInfoWindow.$ready(function (wnd) {
+                wnd.close();
+            });
+            return;
+        }
+     } else {
+        //if there's geometry
+        position = place.geometry.location;
+     }
+     scope.placeMarker.setPosition(position);
+     scope.placeMarker.setVisible(true);
+     scope.placesInfoWindow.$ready(function (wnd) {
+        wnd.place = place;
+        wnd.open(map, scope.placeMarker);
+     });
+};
+```
+[jsfiddle example](https://jsfiddle.net/gwdcf9c0/8/)
