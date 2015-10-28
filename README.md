@@ -740,6 +740,8 @@ Example for color picker and change destination button:
 ###### Internal color picker - it's html5 input (type="color"). Please see browser capability
 
 ##Auto complete address search support
+Note that "places" library is required.
+
 Your html
 ```html
 <logicify-gmap
@@ -757,6 +759,7 @@ Your html
                 on-reverse-address-complete="onReverseAddressComplete">
         </gmap-auto-complete>
 </logicify-gmap>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 ```
 Controller code:
 ```js
