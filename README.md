@@ -555,10 +555,14 @@ scope.ready = function (map) {
     scope.gmap = map;
 };
 ```
+
 ######Note that if you would use yor own dropdown, then please keep following rules:
+
 - "onSelectPolyLineType(item)" use this callback name in your html to select
 - "polyLineTypes" use this object name to display poly line types in the dropdown
+
 [jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
+
 ###### Extending line types
 You can extend list of supported line types (dotted, dashed, arrow-dotted etc.)
 ```html

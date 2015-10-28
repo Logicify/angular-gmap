@@ -158,13 +158,17 @@
                         scope.currentLineType = scope.polyLineTypes[0];
 
                         function applyStylingToIcons(icons) {
-                            if (Array.isArray(icons)) {
-                                icons.forEach(function (icon) {
-                                    icon.icon.strokeOpacity = scope.defaultOpacity.strokeOpacity;
-                                    icon.icon.strokeColor = scope.defaultColors.strokeColor;
-                                });
+                            if (scope.defaultOpacity || scope.defaultColors) {
+                                if (Array.isArray(icons)) {
+                                    icons.forEach(function (icon) {
+                                        icon.icon.strokeOpacity = scope.defaultOpacity.strokeOpacity;
+                                        icon.icon.strokeColor = scope.defaultColors.strokeColor;
+                                    });
+                                } else {
+                                    return [];
+                                }
                             } else {
-                                return [];
+                                return icons;
                             }
                         }
 
@@ -193,20 +197,28 @@
                                     polyLine.set('icons', newIcons);
                                     polyLine.setOptions(scope.currentLineType.parentOptions);//hide border
                                     overlay.setOptions(scope.currentLineType.parentOptions);//hide border
-                                    polyLine.set('strokeColor', scope.defaultColors.strokeColor);//override default color
-                                    //polyLine.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                    if (scope.defaultColors) {
+                                        polyLine.set('strokeColor', scope.defaultColors.strokeColor);//override default color
+                                        //polyLine.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                        overlay.set('fillColor', scope.defaultColors.fillColor);
+                                    }
                                     polyLine.setMap(map);
-                                    overlay.set('fillColor', scope.defaultColors.fillColor);
-                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
-                                    overlay.set('strokeOpacity', 0);
+                                    if (scope.defaultOpacity) {
+                                        overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                        overlay.set('strokeOpacity', 0);
+                                    }
                                     overlay.border = polyLine;
                                 } else {
                                     overlay.set('icons', newIcons);
                                     overlay.setOptions(scope.currentLineType.parentOptions);
-                                    overlay.set('strokeColor', scope.defaultColors.strokeColor);
-                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
-                                    if (Array.isArray(newIcons) && newIcons.length < 1) {
-                                        overlay.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                    if (scope.defaultColors) {
+                                        overlay.set('strokeColor', scope.defaultColors.strokeColor);
+                                    }
+                                    if (scope.defaultOpacity) {
+                                        overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                        if (Array.isArray(newIcons) && newIcons.length < 1) {
+                                            overlay.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                        }
                                     }
                                 }
                                 //allow user to get custom styled overlay
@@ -214,8 +226,12 @@
                                     onAfterDrawingOverlay.apply(overlay, [scope.currentLineType]);
                                 }
                             } else {
-                                overlay.setOptions(scope.defaultColors);//set colors
-                                overlay.setOptions(scope.defaultOpacity);//set opacity
+                                if (scope.defaultColors) {
+                                    overlay.setOptions(scope.defaultColors);//set colors
+                                }
+                                if (scope.defaultOpacity) {
+                                    overlay.setOptions(scope.defaultOpacity);//set opacity
+                                }
                             }
                         }
 
