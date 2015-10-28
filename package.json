@@ -4,7 +4,7 @@
   "description": "Create google maps based on angular framework.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/artemijan/logicify-gmap.git"
+    "url": "https://github.com/Logicify/angular-gmap"
   },
   "main": "dist/logicify-gmap.js",
   "homepage": "http://logicify.com/",
