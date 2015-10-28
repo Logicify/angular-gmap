@@ -753,7 +753,8 @@ Your html
                 gmap-on-place-changed="onPlaceChanged"
                 auto-complete-control-position="autoCompleteControlPosition"
                 enable-auto-complete-type-selectors="true"
-                enable-default-marker="enableDefaultMarker">
+                enable-default-marker="enableDefaultMarker"
+                on-reverse-address-complete="onReverseAddressComplete">
         </gmap-auto-complete>
 </logicify-gmap>
 ```
@@ -808,3 +809,18 @@ scope.onPlaceChanged = function (map, place, inputValue) {
 };
 ```
 [jsfiddle example](https://jsfiddle.net/gwdcf9c0/8/)
+###### Reverse auto complete search
+For example we handle 'dragend' event of marker.
+```js
+scope.onReverseAddressComplete = function (searchResults) {
+    return searchResults[0].formatted_address.split(',').splice(0, 1).join(',');
+};
+scope.placeMarker.setDraggable(true);
+google.maps.event.addListener(scope.placeMarker, 'dragend', function () {
+    //broadcast event to directive scope, and pass marker position
+    scope.$broadcast('gmap-auto-complete:reverse', this.position);
+});
+```
+Take a look please on "onReverseAddressComplete" callback.
+This callback fires each time if there are some results while searching by position (only for reverse).
+You just need define attribute in the directive element (on-reverse-address-complete="callback") and you can modify address string that will be displayed in the input.
