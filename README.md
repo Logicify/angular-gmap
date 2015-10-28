@@ -823,4 +823,6 @@ google.maps.event.addListener(scope.placeMarker, 'dragend', function () {
 ```
 Take a look please on "onReverseAddressComplete" callback.
 This callback fires each time if there are some results while searching by position (only for reverse).
-You just need define attribute in the directive element (on-reverse-address-complete="callback") and you can modify address string that will be displayed in the input.
+You just need define attribute in the directive element (on-reverse-address-complete="callback")
+and you can modify address string that will be displayed in the input.
+[jsfiddle example](https://jsfiddle.net/1yxrzr82/2/)
