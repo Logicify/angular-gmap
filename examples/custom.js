@@ -30,8 +30,8 @@
         var infoWindow = this.getDependency('InfoWindow');
         var $timeout = this.getDependency('$timeout');
         //scope.markers = [];
-        //scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
-        //scope.colorPickerControlPosition = google.maps.ControlPosition.TOP_CENTER;
+        scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
+        scope.colorPickerControlPosition = google.maps.ControlPosition.TOP_CENTER;
         //scope.dropDownTemplate = 'dropdown.html';
         /*scope.controlEvents = {
          click: function (event) {

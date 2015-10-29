@@ -47,7 +47,7 @@
                         if (typeof overrideDestinations === 'function') {
                             scope.destinations = overrideDestinations(scope.destinations);
                         }
-                        if (!Array.isArray(scope.destination) && scope.destinations.length > 0) {
+                        if (!Array.isArray(scope.destinations) && scope.destinations.length > 0) {
                             throw new Error('Destinations shouldn\'t be an empty array');
                         }
                         /**

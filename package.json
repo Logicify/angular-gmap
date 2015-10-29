@@ -11,7 +11,8 @@
   "author": "Logicify (http://logicify.com/)",
   "license": "MIT",
   "dependencies": {
-    "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.2"
+    "geoxml3": "https://github.com/artemijan/geoxml3.git#0.1.2",
+    "angular": "^1.2"
   },
   "keywords": [
     "angular",

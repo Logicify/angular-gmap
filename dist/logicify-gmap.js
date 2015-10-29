@@ -167,7 +167,7 @@
                         if (typeof overrideDestinations === 'function') {
                             scope.destinations = overrideDestinations(scope.destinations);
                         }
-                        if (!Array.isArray(scope.destination) && scope.destinations.length > 0) {
+                        if (!Array.isArray(scope.destinations) && scope.destinations.length > 0) {
                             throw new Error('Destinations shouldn\'t be an empty array');
                         }
                         /**
@@ -271,16 +271,18 @@
                         var self = this;
                         $scope.defaultColors = {};
                         $scope.defaultOpacity = {};
+                        $scope.isColorPickerEnabled = false;
                         self.setColor = function (destination, value) {
+                            $scope.isColorPickerEnabled = true;//if this method calls even once then color picker is enabled
                             $scope.defaultColors[destination] = value;
-                            $scope.setDefault($scope.defaultColors);
+                            $scope.setDefault($scope.defaultOpacity, $scope.defaultColors);
                         };
                         self.getColor = function (destination) {
                             return $scope.defaultColors[destination];
                         };
                         self.setOpacity = function (destination, value) {
                             $scope.defaultOpacity[destination] = value / 100;
-                            $scope.setDefault($scope.defaultOpacity);
+                            $scope.setDefault($scope.defaultOpacity, $scope.defaultColors);
                         };
                         self.getOpacity = function (destination) {
                             return $scope.defaultOpacity[destination];
@@ -303,7 +305,7 @@
                         scope.$on('$destroy', function () {
                             listeners.forEach(mapCtrl.detachListener);
                         });
-                        scope.setDefault = function (colorOrOpacity) {
+                        scope.setDefault = function (color, opacity) {
                             var circleOptions = drawManager.get('circleOptions') || {},
                                 rectangleOptions = drawManager.get('rectangleOptions') || {},
                                 polygonOptions = drawManager.get('polygonOptions') || {},
@@ -316,11 +318,13 @@
                                 polylineOptions: polylineOptions,
                                 markerOptions: markerOptions
                             };
+                            var colorAndOpacity = {};
+                            angular.extend(colorAndOpacity, color, opacity);
                             angular.extend(opts, {
-                                circleOptions: colorOrOpacity,
-                                rectangleOptions: colorOrOpacity,
-                                polygonOptions: colorOrOpacity,
-                                polylineOptions: colorOrOpacity
+                                circleOptions: colorAndOpacity,
+                                rectangleOptions: colorAndOpacity,
+                                polygonOptions: colorAndOpacity,
+                                polylineOptions: colorAndOpacity
                             });
                             drawManager.setOptions(opts);
                         };
@@ -409,13 +413,17 @@
                         scope.currentLineType = scope.polyLineTypes[0];
 
                         function applyStylingToIcons(icons) {
-                            if (Array.isArray(icons)) {
-                                icons.forEach(function (icon) {
-                                    icon.icon.strokeOpacity = scope.defaultOpacity.strokeOpacity;
-                                    icon.icon.strokeColor = scope.defaultColors.strokeColor;
-                                });
+                            if (scope.isColorPickerEnabled === true) {
+                                if (Array.isArray(icons)) {
+                                    icons.forEach(function (icon) {
+                                        icon.icon.strokeOpacity = scope.defaultOpacity.strokeOpacity;
+                                        icon.icon.strokeColor = scope.defaultColors.strokeColor;
+                                    });
+                                } else {
+                                    return [];
+                                }
                             } else {
-                                return [];
+                                return icons;
                             }
                         }
 
@@ -444,20 +452,26 @@
                                     polyLine.set('icons', newIcons);
                                     polyLine.setOptions(scope.currentLineType.parentOptions);//hide border
                                     overlay.setOptions(scope.currentLineType.parentOptions);//hide border
-                                    polyLine.set('strokeColor', scope.defaultColors.strokeColor);//override default color
-                                    //polyLine.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                    if (scope.isColorPickerEnabled === true) {
+                                        polyLine.set('strokeColor', scope.defaultColors.strokeColor);//override default color
+                                        //polyLine.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                        overlay.set('fillColor', scope.defaultColors.fillColor);
+                                        overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                        overlay.set('strokeOpacity', 0);
+                                    }
                                     polyLine.setMap(map);
-                                    overlay.set('fillColor', scope.defaultColors.fillColor);
-                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
-                                    overlay.set('strokeOpacity', 0);
                                     overlay.border = polyLine;
                                 } else {
                                     overlay.set('icons', newIcons);
                                     overlay.setOptions(scope.currentLineType.parentOptions);
-                                    overlay.set('strokeColor', scope.defaultColors.strokeColor);
-                                    overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
-                                    if (Array.isArray(newIcons) && newIcons.length < 1) {
-                                        overlay.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                    if (scope.defaultColors) {
+                                        overlay.set('strokeColor', scope.defaultColors.strokeColor);
+                                    }
+                                    if (scope.isColorPickerEnabled === true) {
+                                        overlay.set('fillOpacity', scope.defaultOpacity.fillOpacity);
+                                        if (Array.isArray(newIcons) && newIcons.length < 1) {
+                                            overlay.set('strokeOpacity', scope.defaultOpacity.strokeOpacity);
+                                        }
                                     }
                                 }
                                 //allow user to get custom styled overlay
@@ -465,8 +479,10 @@
                                     onAfterDrawingOverlay.apply(overlay, [scope.currentLineType]);
                                 }
                             } else {
-                                overlay.setOptions(scope.defaultColors);//set colors
-                                overlay.setOptions(scope.defaultOpacity);//set opacity
+                                if (scope.isColorPickerEnabled === true) {
+                                    overlay.setOptions(scope.defaultColors);//set colors
+                                    overlay.setOptions(scope.defaultOpacity);//set opacity
+                                }
                             }
                         }
 
