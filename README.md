@@ -17,7 +17,7 @@
 ### Usage ###
 
 #### JSFiddle example ####
-[![example](http://i.imgur.com/BRZKfPm.png)](https://jsfiddle.net/s6s4mbc5/71/)
+[![example](http://i.imgur.com/BRZKfPm.png)](https://jsfiddle.net/s6s4mbc5/73/)
 ```shell
 bower install logicify-gmap
 ```
@@ -235,7 +235,7 @@ why only after opening? Because "open" method rewrites infowindow scope and appl
 
 ## XML overlays support
 
-[![jsfiddle example](http://i.imgur.com/ulcqPif.png)](https://jsfiddle.net/rfgzw63r/7/)
+[![jsfiddle example](http://i.imgur.com/ulcqPif.png)](https://jsfiddle.net/rfgzw63r/9/)
 
 There is a way to display xml overlays on google map using "xml-overlays" directive.
 Note that we are using [geoxml3](https://github.com/artemijan/geoxml3) library to parse xml files.
@@ -395,7 +395,7 @@ HTML
 see more information about [google mvc object](https://developers.google.com/maps/documentation/javascript/reference#MVCObject)
 ###### Load kml\kmz file via HTML file input:
 
-[![jsfiddle example](http://i.imgur.com/VDYVUJw.png)](https://jsfiddle.net/7gu8cksn/4/)
+[![jsfiddle example](http://i.imgur.com/VDYVUJw.png)](https://jsfiddle.net/7gu8cksn/5/)
 
 ###### How it works
 The kml\kmz collection is instance of "SmartCollection" (you can inject it just by adding "SmartCollection"-service to your dependency).
@@ -410,7 +410,11 @@ scope.kmlCollection.splice(1,scope.kmlCollection.length) // delete last 2 items 
 scope.kmlCollection = [file1]; //reload file1 and delete rest
 ```
 #### Drawing support
-First of all you need to see [google maps spec](https://developers.google.com/maps/documentation/javascript/drawinglayer).
+
+####### First of all you need to see
+
+[![google maps spec](http://atendesigngroup.com/sites/default/files/styles/very_large/public/GoogleMapsAPI.png?itok=acFlX03s)](https://developers.google.com/maps/documentation/javascript/drawinglayer).
+
 ###### Usage:
 - Add dependency injection for google maps drawing api (taken from google maps drawing spec):
 ```html
@@ -561,7 +565,7 @@ scope.ready = function (map) {
 - "onSelectPolyLineType(item)" use this callback name in your html to select
 - "polyLineTypes" use this object name to display poly line types in the dropdown
 
-[jsfiddle example](https://jsfiddle.net/m2dpme1d/6/)
+[![jsfiddle example](http://i.imgur.com/1ly0fvZ.png)](https://jsfiddle.net/m2dpme1d/7/)
 
 ###### Extending line types
 You can extend list of supported line types (dotted, dashed, arrow-dotted etc.)
@@ -631,7 +635,9 @@ var lineType = {
     }
 }
 ```
-[svg path definition](http://www.w3schools.com/svg/svg_path.asp)
+You should check w3 org spec at first
+
+[![svg path definition](http://www.designfridge.co.uk/web-design/wp-content/uploads/2009/11/w3.gif)](http://www.w3schools.com/svg/svg_path.asp)
 
 ###### Please see on-after-drawing-overlay callback.
 This callback fires when custom lines applied to overlay (rectangle, polyline, polygon only).
@@ -660,7 +666,9 @@ $scope.draw = {
 	};
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
-[jsfiddle example](https://jsfiddle.net/nzm72vLh/9/)
+
+[![jsfiddle example](http://i.imgur.com/g9kMqzk.png)](https://jsfiddle.net/nzm72vLh/10/)
+
 ###### Color picker
 You can pick a color for lines and shapes. You need to do the next:
 ```html
@@ -820,7 +828,9 @@ scope.onPlaceChanged = function (map, place, inputValue) {
      });
 };
 ```
-[jsfiddle example](https://jsfiddle.net/gwdcf9c0/8/)
+
+[![jsfiddle example](http://i.imgur.com/TaPLAaP.png)](https://jsfiddle.net/gwdcf9c0/8/)
+
 ###### Reverse auto complete search
 For example we handle 'dragend' event of marker.
 ```js
@@ -837,4 +847,5 @@ Take a look please on "onReverseAddressComplete" callback.
 This callback fires each time if there are some results while searching by position (only for reverse).
 You just need define attribute in the directive element (on-reverse-address-complete="callback")
 and you can modify address string that will be displayed in the input.
+
 [jsfiddle example](https://jsfiddle.net/1yxrzr82/2/)
