@@ -562,9 +562,21 @@ scope.ready = function (map) {
 
 ######Note that if you would use yor own dropdown, then please keep following rules:
 
-- "onSelectPolyLineType(item)" use this callback name in your html to select
-- "polyLineTypes" use this object name to display poly line types in the dropdown
-
+- "onSelectPolyLineType(item)" use this callback name in your html to select;
+- Use "current" object name to access selected item;
+- "polyLineTypes" use this object name to display poly line types in the dropdown;
+Example for custom bootstrap dropdown:
+```html
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <span class="gmap-dropdown-header" ng-bind="current.name||current"></span>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li ng-repeat="item in dropDownItems" ng-click="onSelectItemLocally(item)"><a ng-bind="item.name || item"></a></li>
+  </ul>
+</div>
+```
 [![jsfiddle example](http://i.imgur.com/1ly0fvZ.png)](https://jsfiddle.net/m2dpme1d/7/)
 
 ###### Extending line types
