@@ -653,9 +653,41 @@ You should check w3 org spec at first
 
 ###### Please see on-after-drawing-overlay callback.
 This callback fires when custom lines applied to overlay (rectangle, polyline, polygon only).
-Border of shapes can't be styled as dotted or dashed for example, so we decided replace border of the shape overlay, and draw polyline instead.
+Border of shapes can't be styled as dotted or dashed for example, so we decided remove border of the shape overlay, and draw polyline instead.
+So each "overlay" object passed via this callback should have "overlay.border" property (it's poly line).
+
+###### Editable mode.
+
+You need to put all overlays to some collection. And then by clicking on some control, just set "editable" to true for all overlays.
+
+```js
+scope.drawOptions = {
+    events: {
+        drawing: {
+            overlaycomplete: function (e) {
+                var self = this;
+                overlaysCollection.push(e.overlay);
+            }
+        }
+    }
+};
+scope.onAfterDraw = function (lineType) {
+    overlaysCollection.push(this);
+};
+scope.toggleEditMode = function(){
+    scope.isEditModeEnabled = !scope.isEditModeEnabled;
+    overlaysCollection.forEach(function(overlay){
+        overlay.set("editable",scope.isEditableModeEnabled);
+        if(overlay.border){
+            //do something with custom border (if it's polyline)
+            border.set("editable", scope.isEditableModeEnabled)
+        }
+    });
+};
+```
 
 ###### If you want remove overlay you can do the next:
+
 ```js
 $scope.draw = {
     	events: {
