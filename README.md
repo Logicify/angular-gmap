@@ -861,3 +861,27 @@ You just need define attribute in the directive element (on-reverse-address-comp
 and you can modify address string that will be displayed in the input.
 
 [jsfiddle example](https://jsfiddle.net/1yxrzr82/2/)
+
+#### Marker cluster
+We don't provide any support for markers and clustering.
+If you want to use markers, please use standard google maps api (such as google.maps.Marker).
+See examples on top of this page (for markers creation).
+
+Why we don't support this feature?
+
+Because markers collection can be huge. And watching this collection by angular "$watch" can cause performance issues.
+So all markers staff rely on user.
+
+###### Example
+How to use clustering:
+At first you need include script ["markerclusterer.js"](https://rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js) (direct raw link)
+
+Here is [git reference](https://github.com/googlemaps/js-marker-clusterer)
+
+You can use bower install to get this library:
+```shell
+bower install js-marker-cluster
+```
+And then you can find this script in "src" folder!
+
+here is [examples page](https://googlemaps.github.io/js-marker-clusterer/docs/examples.html)

@@ -20,7 +20,9 @@
     "map",
     "logicify",
     "wrapper",
-    "javascript"
+    "javascript",
+    "draw",
+    "drawing"
   ],
   "license": "MIT",
   "ignore": [
