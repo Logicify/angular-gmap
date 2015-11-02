@@ -29,6 +29,7 @@
         var scope = this.getDependency('$scope');
         var infoWindow = this.getDependency('InfoWindow');
         var $timeout = this.getDependency('$timeout');
+        scope.svgPath = '';
         //scope.markers = [];
         scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
         scope.colorPickerControlPosition = google.maps.ControlPosition.TOP_CENTER;
@@ -94,17 +95,22 @@
                 wnd.open(map, scope.placeMarker);
             });
         };
-        /*scope.overrideLineTypes = function (lineTypesArray) {
-         lineTypesArray.push({
-         name: 'My name is ...',
-         icons: [],
-         parentOptions: {
-         strokeOpacity: 1,
-         strokeColor: '#fa01fa'
-         }
-         });
-         return lineTypesArray;
-         };*/
+        scope.overrideLineTypes = function (lineTypesArray) {
+            var icon = {
+                path: 'M0 0, L5 10, 10 -5',
+                strokeWeight: 2,
+                scale: 0.4
+            };
+            var layer = {
+                name: 'My name is ...',
+                icons: [{icon: icon, offset: '100%', repeat: '20px'}],
+                parentOptions: {
+                    strokeOpacity: 0
+                }
+            };
+            lineTypesArray.push(layer);
+            return lineTypesArray;
+        };
         /*scope.onAfterDraw = function (lineType, polyLine) {
          //this - overlay
          //lineType - is an item from array of line types

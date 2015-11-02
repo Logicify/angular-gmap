@@ -505,8 +505,11 @@ scope.draw = {
             scope.overlaysInfowindow = new infoWindow({templateUrl: 'infowindow.html'});
         };
 ```
+
 ##### Custom lines (requires drawing manager)
+
 If you want custom lines, overlay borders then you need to do the next:
+
 - include css file to your html (gmap-minimum-ui.css) to allow dropdown to work correctly (gmap-dropdown based on css transitions)
 - include html code to your gmap directive (into logicify-gmap-draw directive):
 ```html
@@ -560,7 +563,7 @@ scope.ready = function (map) {
 };
 ```
 
-######Note that if you would use yor own dropdown, then please keep following rules:
+######Note that if you would use your own dropdown, then please keep following rules:
 
 - "onSelectPolyLineType(item)" use this callback name in your html to select;
 - Use "current" object name to access selected item;
@@ -604,15 +607,19 @@ Controller code below:
 ```js
 scope.lineTypesControlPosition = google.maps.ControlPosition.TOP_CENTER;
 scope.overrideLineTypes = function (lineTypesArray) {
-    lineTypesArray.push({
-        name: 'My name is ...', //name displayed in dropdown list
-        icons: [],
-        //those options will be applied to overlay
+    var icon = {
+        path: 'M0 0, L5 10, 10 -5', //svg path definition
+        strokeWeight: 2,
+        scale: 0.4
+    };
+    var layer = {
+        name: 'Nice line',
+        icons: [{icon: icon, offset: '100%', repeat: '20px'}],
         parentOptions: {
-            strokeOpacity: 1, //if you want draw shapes without border you can set opacity to 0
-            strokeColor: '#fa01fa'
+            strokeOpacity: 0
         }
-    });
+    };
+    lineTypesArray.push(layer);
     return lineTypesArray;//return array back to directive (Required!!!!!)
 };
 //will not fires if marker or circle was added
@@ -711,7 +718,7 @@ $scope.draw = {
 ```
 ###### Please don't forget cleanup after you self. Remove all listeners from google instance if it's not needed any more.
 
-[![jsfiddle example](http://i.imgur.com/g9kMqzk.png)](https://jsfiddle.net/nzm72vLh/10/)
+[![jsfiddle example](http://i.imgur.com/g9kMqzk.png)](https://jsfiddle.net/nzm72vLh/11/)
 
 ###### Color picker
 You can pick a color for lines and shapes. You need to do the next:
