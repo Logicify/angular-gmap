@@ -22,7 +22,7 @@
                         gmReady: '&gmReady',
                         cssOptions: '&cssOptions'
                     },
-                    controller: function ($scope, $element, $attrs) {
+                    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         /*global google*/
                         var options = $scope.gmOptions();
@@ -93,7 +93,7 @@
                             overrideCloseMethod.apply(infoWnd, []);
                         };
                         return self;
-                    }
+                    }]
                 }
             }
         ]);
