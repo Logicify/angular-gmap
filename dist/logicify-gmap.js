@@ -283,7 +283,7 @@
                 return {
                     restrict: 'EA',
                     require: ['^logicifyGmap', '^logicifyGmapDraw'],
-                    controller: function ($scope, $element, $attrs) {
+                    controller:['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         $scope.defaultColors = {};
                         $scope.defaultOpacity = {};
@@ -303,7 +303,7 @@
                         self.getOpacity = function (destination) {
                             return $scope.defaultOpacity[destination];
                         };
-                    },
+                    }],
                     link: function (scope, element, attrs, ctrls) {
                         var mapCtrl = ctrls[0],
                             drawController = ctrls[1],
@@ -575,7 +575,7 @@
                         gmapEvents: '&gmapEvents',
                         drawOptions: '&drawOptions'
                     },
-                    controller: function ($scope, $element, $attrs) {
+                    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         var minimalOptions = {
                             drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -603,7 +603,7 @@
                         self.getEvents = function () {
                             return $scope.gmapEvents();
                         };
-                    },
+                    }],
                     link: function (scope, element, attrs, ctrl) {
                         if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
                             throw new Error('"Drawing" API of google maps is not available! Probably you forgot load it. Please check google maps spec. to load "Drawing" API.');
@@ -824,7 +824,7 @@
                         gmReady: '&gmReady',
                         cssOptions: '&cssOptions'
                     },
-                    controller: function ($scope, $element, $attrs) {
+                    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         /*global google*/
                         var options = $scope.gmOptions();
@@ -895,7 +895,7 @@
                             overrideCloseMethod.apply(infoWnd, []);
                         };
                         return self;
-                    }
+                    }]
                 }
             }
         ]);

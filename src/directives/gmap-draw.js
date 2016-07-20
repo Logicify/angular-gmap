@@ -18,7 +18,7 @@
                         gmapEvents: '&gmapEvents',
                         drawOptions: '&drawOptions'
                     },
-                    controller: function ($scope, $element, $attrs) {
+                    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         var minimalOptions = {
                             drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -46,7 +46,7 @@
                         self.getEvents = function () {
                             return $scope.gmapEvents();
                         };
-                    },
+                    }],
                     link: function (scope, element, attrs, ctrl) {
                         if (google.maps.drawing == null || google.maps.drawing.DrawingManager == null) {
                             throw new Error('"Drawing" API of google maps is not available! Probably you forgot load it. Please check google maps spec. to load "Drawing" API.');

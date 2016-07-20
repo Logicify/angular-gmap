@@ -16,7 +16,7 @@
                 return {
                     restrict: 'EA',
                     require: ['^logicifyGmap', '^logicifyGmapDraw'],
-                    controller: function ($scope, $element, $attrs) {
+                    controller:['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                         var self = this;
                         $scope.defaultColors = {};
                         $scope.defaultOpacity = {};
@@ -36,7 +36,7 @@
                         self.getOpacity = function (destination) {
                             return $scope.defaultOpacity[destination];
                         };
-                    },
+                    }],
                     link: function (scope, element, attrs, ctrls) {
                         var mapCtrl = ctrls[0],
                             drawController = ctrls[1],
